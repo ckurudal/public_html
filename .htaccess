@@ -1,0 +1,62 @@
+RewriteBase /
+RewriteEngine On
+RewriteCond %{HTTPS} off
+RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+Options +FollowSymLinks
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+DirectoryIndex ilk.html index.htm index.html index.php
+
+RewriteRule ^sitemap.xml$ sitemap.php [L,NC]
+RewriteRule ^emlak-talep-formu 							index.php?do=emlak-talep-formu [L,QSA]
+RewriteRule	^kategori/(.*?)$ 							index.php?do=emlak_kategori&kat_seo=$1 [L,QSA]
+RewriteRule	^harita/(.*?)$ 								index.php?do=emlak_harita&kat_seo=$1 [L,QSA]
+RewriteRule ^ilanara(.*?)$ 								index.php?do=ilanara [L,QSA]
+RewriteRule ^(.*?)-ilan-(.*?)$ 							index.php?do=emlakdetay&ilanseo=$1&id=$2 [L,QSA] 
+RewriteRule ^danismanlar(.*?)$							index.php?do=danismanlar	 																			[QSA] 
+RewriteRule ^danisman/(.*?)$ 							index.php?do=danisman&id=$1 [L,QSA]
+RewriteRule ^danismanlarim/(.*?)$ 						index.php?do=hesabim&s=danismanlar&ayar=danisman-listesi [L,QSA]
+RewriteRule ^uye-paneli(.*?)$ 							index.php?do=panel/uye-paneli [QSA]
+RewriteRule ^hesabim(.*?)$ 								index.php?do=hesabim&s=panel [QSA]
+RewriteRule ^uyeligim(.*?)$ 							index.php?do=hesabim&s=profil&ayar=profilayar [L,QSA]
+RewriteRule ^sifredegistir(.*?)$ 						index.php?do=hesabim&s=profil&ayar=sifre [L,QSA]
+RewriteRule ^cikis-yap(.*?)$ 							index.php?do=hesabim&islem=cikis [L,QSA]
+RewriteRule ^giris-yap(.*?)$ 							index.php?do=hesabim&islem=girisyap [L,QSA]
+RewriteRule ^uye-ol(.*?)$ 								index.php?do=hesabim&islem=uyelik-sec
+RewriteRule ^gelen-mesajlar(.*?)$ 						index.php?do=hesabim&s=bildirim&ayar=gelenmesaj [L,QSA]
+RewriteRule ^sosyalmedya(.*?)$ 							index.php?do=hesabim&s=profil&ayar=sosyal [L,QSA]
+RewriteRule ^ilanlarim(.*?)$ 							index.php?do=hesabim&s=ilanlar&onay=aktif [L,QSA]
+RewriteRule ^odeme-ayarlari(.*?)$ 						index.php?do=hesabim&islem=odeme_ayarlari [L,QSA]
+RewriteRule ^magaza-paketleri(.*?)$ 					index.php?do=hesabim&islem=magaza_paketleri [L,QSA]
+RewriteRule ^magaza-paketim(.*?)$ 						index.php?do=hesabim&islem=magaza_paketim [L,QSA]
+RewriteRule ^dopinglerim(.*?)$ 							index.php?do=hesabim&islem=dopinglerim [L,QSA]
+RewriteRule ^gelen-mesajlar(.*?)$ 						index.php?do=hesabim&s=bildirim&ayar=gelenmesaj [L,QSA]
+RewriteRule ^uyelik-sec(.*?)$ 							index.php?do=hesabim&islem=uyelik-sec [L,QSA]
+RewriteRule ^kurumsal-uyelik(.*?)$ 						index.php?do=hesabim&islem=kurumsal-uyelik [L,QSA]
+RewriteRule ^bireysel-uyelik(.*?)$ 						index.php?do=hesabim&islem=bireysel-uyelik [L,QSA]
+RewriteRule ^uyelik(.*?)$ 								index.php?do=hesabim&islem=uyelik-sec [L,QSA]
+RewriteRule ^ofisler(.*?)$								index.php?do=ofisler	 																				[L,QSA]
+RewriteRule ^ofis/danisman/(.*?)$						index.php?do=ofis&hareket=danismanlar&ofisid=$1&id=$2													[L,QSA]
+RewriteRule ^oda-kirala(.*?)$							index.php?do=oda-kirala																			[L,QSA]
+RewriteRule ^oda-odeme(.*?)$						    index.php?do=oda-kirala-odeme																			[L,QSA]
+RewriteRule ^ofis/(.*?)$								index.php?do=ofis&hareket=ilanlar&id=$1	 																[L,QSA]
+RewriteRule ^(.*?)-sayfa-(.*?)$							index.php?do=sayfa&sayfaseo=$1&id=$2																				[L,QSA]
+RewriteRule ^haberler(.*?)$								index.php?do=haberler																			[L,QSA]
+RewriteRule ^blog(.*?)$									index.php?do=blog																			[L,QSA]
+RewriteRule ^iletisim(.*?)$								index.php?do=iletisim																			[L,QSA]
+RewriteRule ^(.*?)-haber-(.*?)$							index.php?do=haberler&seo=$1&detay=$2																				[L,QSA]
+RewriteRule ^(.*?)-haberkategori-(.*?)$					index.php?do=haberler&seo=$1&kategori=$2																				[L,QSA]
+RewriteRule ^(.*?)-blog-(.*?)$							index.php?do=blog&seo=$1&detay=$2																				[L,QSA]
+RewriteRule ^(.*?)-blogkategori-(.*?)$					index.php?do=blog&seo=$1&kategori=$2																				[L,QSA]
+
+ErrorDocument 401 /index.php?do=hata
+ErrorDocument 403 /index.php?do=hata
+ErrorDocument 404 /index.php?do=hata
+ErrorDocument 500 /index.php?do=hata
+
+<ifmodule mod_headers.c="">
+    Allow from all
+    Header add Access-Control-Allow-Origin "*"
+    Header add Access-Control-Allow-Headers "origin, x-requested-with, content-type"
+    Header add Access-Control-Allow-Methods "PUT, GET, POST, DELETE, OPTIONS"
+</ifmodule>
