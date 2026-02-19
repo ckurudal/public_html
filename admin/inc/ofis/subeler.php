@@ -4,7 +4,7 @@
 	uyeYasak(yetki());
 	
 	$islem = $_GET["islem"];
-	$subeler = mysql_query("SELECT * FROM subeler order by id desc");
+	$subeler = $vt->query("SELECT * FROM subeler order by id desc");
 	$id = $_GET["id"];
 	$durum = $_GET["durum"];
 ?>
@@ -32,28 +32,28 @@
 
 				if ($islem == "sil") {
 
-					$subeid = mysql_query("SELECT * FROM subeler where id = '$id'");
-					$sube = mysql_fetch_array($subeid);
+					$subeid = $vt->query("SELECT * FROM subeler where id = '$id'");
+					$sube = $subeid->fetch();
 
 					$targetDir = '../'.$sube['resim'];
 
 					unlink("$targetDir");
 
-					$yoneticisil = mysql_query("DELETE FROM yonetici where id = '".$sube["yetkiliuye"]."'");
+					$yoneticisil = $vt->query("DELETE FROM yonetici where id = '".$sube["yetkiliuye"]."'");
 
-					$sosyalsil = mysql_query("DELETE FROM yonetici_sosyal where yoneticiid = '".$sube["yetkiliuye"]."'");
+					$sosyalsil = $vt->query("DELETE FROM yonetici_sosyal where yoneticiid = '".$sube["yetkiliuye"]."'");
 
-					$sil = mysql_query("DELETE FROM subeler where id = '$id'");
+					$sil = $vt->query("DELETE FROM subeler where id = '$id'");
 
 					go("index.php?do=islem&ofis=subeler",0);
 				}
 
 				if ($durum == "0") {
-					$d = mysql_query("UPDATE subeler SET durum = '0' where id = '$id'");
+					$d = $vt->query("UPDATE subeler SET durum = '0' where id = '$id'");
 					go("index.php?do=islem&ofis=subeler",0);
 				}
 				if ($durum == "1") {
-					$d = mysql_query("UPDATE subeler SET durum = '1' where id = '$id'");
+					$d = $vt->query("UPDATE subeler SET durum = '1' where id = '$id'");
 					go("index.php?do=islem&ofis=subeler",0);
 				}
 			?>
@@ -74,10 +74,10 @@
 		        </thead>
 		        <tbody>
 		        	<?php
-		        		while($s = mysql_fetch_array($subeler)) {
+		        		while($s = $subeler->fetch()) {
 
-		        			$yetkiliid = mysql_query("SELECT * FROM yonetici where id = '".$s["yetkiliuye"]."' && yetki = 2");
-		        			$yetkili = mysql_fetch_array($yetkiliid);
+		        			$yetkiliid = $vt->query("SELECT * FROM yonetici where id = '".$s["yetkiliuye"]."' AND yetki = 2");
+		        			$yetkili = $yetkiliid->fetch();
 		        	?>
 		        	<tr>
 		        		<th class="text-center">

@@ -27,7 +27,7 @@
         $mahalle_ekle       = $_POST["mahalle_ekle"]; 
         $mahalle_ilcekey    = $_POST["ilcesec"];
 
-        $mahekle = mysql_query("INSERT INTO mahalle (mahalle_title, mahalle_ilcekey) values ('$mahalle_ekle','$mahalle_ilcekey')");
+        $mahekle = $vt->query("INSERT INTO mahalle (mahalle_title, mahalle_ilcekey) values ('$mahalle_ekle','$mahalle_ilcekey')");
 
         echo $mahalle_ilcekey."<br>";
         echo $mahalle_ekle."<br>";
@@ -52,7 +52,7 @@
         }
 
         if ($islem == "sil") {
-            $mahallesil = mysql_query("DELETE from mahalle where mahalle_id = '$mahalleid'");
+            $mahallesil = $vt->query("DELETE from mahalle where mahalle_id = '$mahalleid'");
 
             if ($mahallesil) {
                 onay();
@@ -64,7 +64,7 @@
             $mahalle_title      = $_POST["mahalle_title"];
             $mahalle_ilcekey    = $_POST["ilcesec"];
  
-            $kaydetmah = mysql_query("UPDATE mahalle SET 
+            $kaydetmah = $vt->query("UPDATE mahalle SET 
 
                 mahalle_title   = '$mahalle_title',
                 mahalle_ilcekey = '$mahalle_ilcekey'
@@ -76,7 +76,7 @@
             if ($kaydetmah) {
                 go("index.php?do=islem&emlak=mahallebul&islem=onay",0);
             } else {
-                echo mysql_error();
+                
             }
 
         }
@@ -106,8 +106,8 @@
                     <select class="form-control select2" name="ilsec" id="ilsec"> 
                         <option> Seçiniz </option>
                         <?php 
-                            $iller = mysql_query("select * from sehir order by sehir_key asc");
-                            while($il = mysql_fetch_array($iller)) {
+                            $iller = $vt->query("select * from sehir order by sehir_key asc");
+                            while($il = $iller->fetch()) {
                         ?>
                         <?php 
                             if ($islem == "duzenle" || $islem == "ekle") {
@@ -148,8 +148,8 @@
                             if ($islem == "duzenle") {
                         ?>
                         <?php 
-                            $ilceler = mysql_query("select * from ilce where ilce_sehirkey = '$id'");
-                            while($ilce = mysql_fetch_array($ilceler)) {
+                            $ilceler = $vt->query("select * from ilce where ilce_sehirkey = '$id'");
+                            while($ilce = $ilceler->fetch()) {
                         ?>
                         <?php 
                             if ($ilce["ilce_key"] == $mahalle) {
@@ -163,8 +163,8 @@
 
                         <?php 
                             if ($islem == "ekle") {  
-                            $ilcever = mysql_query("select * from ilce where ilce_sehirkey = '".$ilkey = $_GET['ilkey']."'");
-                            while($ilc = mysql_fetch_array($ilcever)) { 
+                            $ilcever = $vt->query("select * from ilce where ilce_sehirkey = '".$ilkey = $_GET['ilkey']."'");
+                            while($ilc = $ilcever->fetch()) { 
                         ?>
                         <?php 
                             if ($ilc["ilce_key"] == $ilcesehirkey) {
@@ -216,21 +216,21 @@
         </thead>
         <tbody>
             <?php 
-                $mahalle = mysql_query("select * from mahalle where mahalle_ilcekey = '$ilcesec'");
-                while($m = mysql_fetch_array($mahalle)) {
+                $mahalle = $vt->query("select * from mahalle where mahalle_ilcekey = '$ilcesec'");
+                while($m = $mahalle->fetch()) {
             ?>
             <tr>
                 <th><?=$m["mahalle_id"];?></th>
                 <th><?=$m["mahalle_title"];?></th>
                 <th>
                 <?php   
-                    $ilcead = mysql_fetch_array($ilceadi = mysql_query("select * from ilce where ilce_key = '$ilcesec'"));
+                    $ilcead = $ilceadi = $vt->query("select * from ilce where ilce_key = '$ilcesec'")->fetch();
                     echo $ilcead["ilce_title"];
                 ?>
                 </th>
                 <th>
                 <?php   
-                    $ilad = mysql_fetch_array($iladi = mysql_query("select * from sehir where sehir_key = '$ilsec'"));
+                    $ilad = $iladi = $vt->query("select * from sehir where sehir_key = '$ilsec'")->fetch();
                     echo $ilad["adi"];
                 ?>
                 </th>

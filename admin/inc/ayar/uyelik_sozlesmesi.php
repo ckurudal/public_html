@@ -13,9 +13,9 @@
     <?php 
 	if (isset($_POST["kaydet"])) { 
 		$uyelik_sozlesmesi = addslashes($_POST["uyelik_sozlesmesi"]);
-		$gizlilik = mysql_real_escape_string($_POST["gizlilik"]);
-		$ilan_verme_kurallari= mysql_real_escape_string($_POST["ilan_verme_kurallari"]);
-		$mailayarkaydet = mysql_query("UPDATE ayar_site SET uyelik_sozlesmesi = '$uyelik_sozlesmesi', gizlilik = '$gizlilik', ilan_verme_kurallari = '$ilan_verme_kurallari' where id = '1'");
+		$gizlilik = $_POST["gizlilik"];
+		$ilan_verme_kurallari= $_POST["ilan_verme_kurallari"];
+		$mailayarkaydet = $vt->query("UPDATE ayar_site SET uyelik_sozlesmesi = '$uyelik_sozlesmesi', gizlilik = '$gizlilik', ilan_verme_kurallari = '$ilan_verme_kurallari' where id = '1'");
 		go("index.php?do=islem&webmaster=uyelik_sozlesmesi&hareket=onay",0);		
 	}
 ?>

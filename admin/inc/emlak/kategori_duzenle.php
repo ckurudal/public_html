@@ -37,13 +37,13 @@
 				$kat_kattip = $_POST["kat_kattip"];
 				$kat_kattipid = $_POST["kat_kattipid"];
 
-				$guncelle = mysql_query("UPDATE emlak_kategori SET kat_adi = '$kat_adi', seo = '$seo', kat_seo_title = '$kat_seo_title', kat_desc = '$kat_desc', kat_keyw = '$kat_keyw', kat_durum = '$kat_durum', sira_no = '$sira_no', kat_ustid = '$kat_ustid', ilansekli = '$ilansekli', anasayfa_goster = '$anasayfa_goster', anasayfa_baslik = '$anasayfa_baslik', anasayfa_link = '$anasayfa_link' WHERE kat_id = '$id' ");
+				$guncelle = $vt->query("UPDATE emlak_kategori SET kat_adi = '$kat_adi', seo = '$seo', kat_seo_title = '$kat_seo_title', kat_desc = '$kat_desc', kat_keyw = '$kat_keyw', kat_durum = '$kat_durum', sira_no = '$sira_no', kat_ustid = '$kat_ustid', ilansekli = '$ilansekli', anasayfa_goster = '$anasayfa_goster', anasayfa_baslik = '$anasayfa_baslik', anasayfa_link = '$anasayfa_link' WHERE kat_id = '$id' ");
 
-				$ilantipsil = mysql_query("DELETE FROM emlak_ilantipi_katliste where katid = '$id'");
+				$ilantipsil = $vt->query("DELETE FROM emlak_ilantipi_katliste where katid = '$id'");
 
 				for ($i=0; $i < count($kat_kattipid); $i++) { 	
 
-					$kattipekle = mysql_query("INSERT INTO emlak_ilantipi_katliste 
+					$kattipekle = $vt->query("INSERT INTO emlak_ilantipi_katliste 
 
 						(katid, ilantipid, ilantipdurum) values ('".$id."', '".$kat_kattipid[$i]."', '".$kat_kattip[$i]."')"); 
 				}
@@ -57,16 +57,16 @@
 
 			} else {
 
-			$query = mysql_query("SELECT * FROM emlak_kategori WHERE kat_id = '$id'");
-			if (mysql_affected_rows()) {
-			$row = mysql_fetch_array($query);
+			$query = $vt->query("SELECT * FROM emlak_kategori WHERE kat_id = '$id'");
+			if ($query->rowCount()) {
+			$row = $query->fetch();
 
 				// ust ve ana kategorileri listeler
 
 				function kategori($id = 0, $string = 0, $ustid) {
-				  $query = mysql_query("SELECT * FROM emlak_kategori WHERE kat_ustid = '$id'");
-				  if (mysql_affected_rows()) {
-					while ($row = mysql_fetch_array($query)) {
+				  $query = $vt->query("SELECT * FROM emlak_kategori WHERE kat_ustid = '$id'");
+				  if ($query->rowCount()) {
+					while ($row = $query->fetch()) {
 					  echo '<option';
 					  if ($row["kat_id"] == $ustid) {
 						echo ' selected ';
@@ -125,10 +125,10 @@
 					  <div class="col-sm-10">
 
 					  	<?php 
-					  		$ilansekli=mysql_query("SELECT * FROM emlak_ilansekli where id");
+					  		$ilansekli=$vt->query("SELECT * FROM emlak_ilansekli where id");
 					  	?> 
 
-						<?php while ($isekli=mysql_fetch_array($ilansekli)) { ?>
+						<?php while ($isekli=$ilansekli->fetch()) { ?>
 							<?php
 								if ($isekli[id]==$row[ilansekli]) { ?>
 										
@@ -212,16 +212,16 @@
 						<div class="col-md-10">
 							<?php
 								// Emlak Tipi
-								$emlaktip = mysql_query("select * from emlak_ilantipi where id");							
-								while ($tipver = mysql_fetch_array($emlaktip)) {
+								$emlaktip = $vt->query("select * from emlak_ilantipi where id");							
+								while ($tipver = $emlaktip->fetch()) {
 
 							 ?>
 							<?php if ($tipver["durum"]=="0") { ?>
 							<label for="kat_kattip">
 
 							<?php
-								$kattipver = mysql_query("SELECT * FROM emlak_ilantipi_katliste where ilantipid = '".$tipver["id"]."' && katid = '$id'");
-								$kver = mysql_fetch_array($kattipver);
+								$kattipver = $vt->query("SELECT * FROM emlak_ilantipi_katliste where ilantipid = '".$tipver["id"]."' AND katid = '$id'");
+								$kver = $kattipver->fetch();
 							?>
 						  		<input type="checkbox" name="kat_kattipid[]" <?php if ($kver) {echo "checked";} ?> value="<?=$tipver["id"];?>" class="minimal">
 							

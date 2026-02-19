@@ -127,9 +127,9 @@ if (!$chunks || $chunk == $chunks - 1) {
 	rename("{$filePath}.part", $filePath);
  
 		
-	$sayiuret = mysql_query("select * from emlak_ilan where id = '$id'");
+	$sayiuret = $vt->query("select * from emlak_ilan where id = '$id'");
 	
-	$emlaknouret = mysql_fetch_array($sayiuret);
+	$emlaknouret = $sayiuret->fetch();
 	
 	$islemno = $emlaknouret['emlakno'];
 	
@@ -145,7 +145,7 @@ if (!$chunks || $chunk == $chunks - 1) {
 	$resimyolu = "/uploads/resim/".$resimad;
 	$minilink = "/uploads/resim/mini-".$resimad;
  
- 	$ekle = mysql_query("insert into emlak_resim (resimad,emlakno,sira) values ('$resimad','$islemno','$sira2')");
+ 	$ekle = $vt->query("insert into emlak_resim (resimad,emlakno,sira) values ('$resimad','$islemno','$sira2')");
 
 	resim_damga($dosya,"../../../uploads/resim/watermark.png",$dosya);
 	

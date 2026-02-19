@@ -51,7 +51,7 @@
             }  
         }
         if ($_GET["hareketIslem"]=="sil") {
-            $silsosyal = mysql_query("DELETE FROM siparis_oda where id = '$id'");
+            $silsosyal = $vt->query("DELETE FROM siparis_oda where id = '$id'");
             if ($action=true) {
                 onay();
                 go("index.php?do=siparisler/siparis_daire_kirala",1);

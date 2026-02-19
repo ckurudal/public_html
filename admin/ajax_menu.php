@@ -5,9 +5,9 @@
 
 	echo '<option>Seçiniz</option>';
 
-	$ilceler = mysql_query("SELECT * FROM ilce where ilce_sehirkey = '$ilid'"); 
+	$ilceler = $vt->query("SELECT * FROM ilce where ilce_sehirkey = '$ilid'"); 
 	
-	while($ilce=mysql_fetch_array($ilceler)) { 	
+	while($ilce=$ilceler->fetch()) { 	
 
 		echo '<option value="'.$ilce["ilce_key"].'">'.$ilce["ilce_title"].'</option>';
 
@@ -15,9 +15,9 @@
 
 	$ilceid = $_POST["ilce"];
 
-	$mahalleler = mysql_query("SELECT * FROM mahalle where mahalle_ilcekey = '$ilceid'"); 
+	$mahalleler = $vt->query("SELECT * FROM mahalle where mahalle_ilcekey = '$ilceid'"); 
 	
-	while($mahalle=mysql_fetch_array($mahalleler)) { 	
+	while($mahalle=$mahalleler->fetch()) { 	
 
 		echo '<option value="'.$mahalle["mahalle_id"].'">'.$mahalle["mahalle_title"].'</option>';
 
@@ -27,9 +27,9 @@
 
 	$ilsec = $_POST["ilsec"];  
 
-	$ilceler2 = mysql_query("SELECT * FROM ilce where ilce_sehirkey = '$ilsec'"); 
+	$ilceler2 = $vt->query("SELECT * FROM ilce where ilce_sehirkey = '$ilsec'"); 
 	
-	while($ilce=mysql_fetch_array($ilceler2)) { 	
+	while($ilce=$ilceler2->fetch()) { 	
 
 		echo '<option value="'.$ilce["ilce_key"].'">'.$ilce["ilce_title"].'</option>';
 

@@ -142,7 +142,7 @@
 							$email = $kimden["email"];
 							$mesaj = $_POST["giden_mesaj"];
 							$tarih = date('d/m/Y');
-							$gonder = mysql_query("INSERT INTO emlak_dangelenmesaj (kimden, kime, email, tel, mesaj, tarih) values ('".$_SESSION["id"]."','".$kimden["id"]."','$email','$tel','$mesaj','$tarih')");
+							$gonder = $vt->query("INSERT INTO emlak_dangelenmesaj (kimden, kime, email, tel, mesaj, tarih) values ('".$_SESSION["id"]."','".$kimden["id"]."','$email','$tel','$mesaj','$tarih')");
 							go("index.php?do=islem&ofis=yonetici&islem=duzenle&id={$id}&tab_goster=mesajlari&oku={$oku}",0);
 						}
 					?>

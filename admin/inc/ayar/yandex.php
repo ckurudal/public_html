@@ -20,9 +20,9 @@
 
 	if (isset($_POST["kaydet"])) { 
 
-		$yandex = mysql_real_escape_string($_POST["yandex"]);
+		$yandex = $_POST["yandex"];
 
-		$mailayarkaydet = mysql_query("UPDATE ayar_site SET yandex = '$yandex' where id = '1'");
+		$mailayarkaydet = $vt->query("UPDATE ayar_site SET yandex = '$yandex' where id = '1'");
 
 		go("index.php?do=islem&webmaster=yandex&hareket=onay",0);		
 

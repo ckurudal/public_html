@@ -31,7 +31,7 @@
 		<?php
 			$sil=$_GET["sil"];
 			if ($sil) {
-				$silid=mysql_query("DELETE FROM $db where id = '$sil'");
+				$silid=$vt->query("DELETE FROM $db where id = '$sil'");
 				if ($silid) {
 					go("index.php?do=islem&emlak=emlak_ilansekli&hareket=onay",0);			
 				}
@@ -40,13 +40,13 @@
 			$durum=$_GET["durum"];
 
 			if ($durum) {
-	            $ver = mysql_fetch_array(mysql_query("SELECT * FROM $db WHERE id = '$durum'"));
+	            $ver = $vt->query("SELECT * FROM $db WHERE id = '$durum'")->fetch();
 	            $kdurum = $ver["durum"];
 	            if ($ver["durum"] == 1) {
-	                    mysql_query("UPDATE $db SET durum = '0' WHERE id = '$durum'");
+	                    $vt->query("UPDATE $db SET durum = '0' WHERE id = '$durum'");
 	                    go("index.php?do=islem&emlak=emlak_ilansekli&hareket=onay",0);
 	                } else {
-	                    mysql_query("UPDATE $db SET durum  = '1' WHERE id = '$durum'");
+	                    $vt->query("UPDATE $db SET durum  = '1' WHERE id = '$durum'");
 	                    go("index.php?do=islem&emlak=emlak_ilansekli&hareket=onay",0);
 	            }
 	        }
@@ -68,8 +68,8 @@
                     </thead>
                     <tbody>
                     	<?php 
-                    		$ilansekli=mysql_query("SELECT * FROM $db ORDER BY id DESC");
-                    		while ($row=mysql_fetch_array($ilansekli)) { 
+                    		$ilansekli=$vt->query("SELECT * FROM $db ORDER BY id DESC");
+                    		while ($row=$ilansekli->fetch()) { 
                     	?>
                     	<tr>
                     		<th class="text-center"> 
@@ -154,13 +154,13 @@
 
 		 			} else {
 
-		 				$ekle=mysql_query("INSERT INTO $db (baslik,seo,odasayisi,gorunum,kat_tipi) VALUES ('$baslik','$seo','$odasayisi','$gorunum','$kat_tipi')");
+		 				$ekle=$vt->query("INSERT INTO $db (baslik,seo,odasayisi,gorunum,kat_tipi) VALUES ('$baslik','$seo','$odasayisi','$gorunum','$kat_tipi')");
 
 			 			if ($ekle) {
 			 				go("index.php?do=islem&emlak=emlak_ilansekli&hareket=onay",0);
 			 			} else {
 			 				hata();
-			 				echo mysql_error();
+			 				
 			 			}		 			
 		 				
 		 			}
@@ -277,15 +277,15 @@
 		 			$gorunum=$_POST["gorunum"];
 		 			$kat_tipi=$_POST["kat_tipi"];
 
-		 			$g=mysql_query("UPDATE $db SET baslik='$baslik', seo='$seo', odasayisi='$odasayisi', durum='$durum', gorunum='$gorunum', kat_tipi='$kat_tipi' where id = '$id'");
+		 			$g=$vt->query("UPDATE $db SET baslik='$baslik', seo='$seo', odasayisi='$odasayisi', durum='$durum', gorunum='$gorunum', kat_tipi='$kat_tipi' where id = '$id'");
 
 		 			if ($g) {
 		 				go("index.php?do=islem&emlak=emlak_ilansekli&hareket=onay",0);
 		 			}
 		 		}
 
-		 		$duzenle=mysql_query("SELECT *  from emlak_ilansekli where id = '$id'");
-		 		$ver=mysql_fetch_array($duzenle);
+		 		$duzenle=$vt->query("SELECT *  from emlak_ilansekli where id = '$id'");
+		 		$ver=$duzenle->fetch();
 
 		 	?>
 		 	<form method="post" action="" enctype="multipart/form-data">	

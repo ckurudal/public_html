@@ -1,14 +1,14 @@
 <?php
 echo !defined("ADMIN") ? die("Güvenlik Duvarı...") : null;
 // emlak numarasi uret
-$sayiuret = mysql_query("select * from emlak_islem order by islemno desc limit 1");
-$emlaknouret = mysql_fetch_array($sayiuret);
+$sayiuret = $vt->query("select * from emlak_islem order by islemno desc limit 1");
+$emlaknouret = $sayiuret->fetch();
 $islemno = $emlaknouret["islemno"]+1;
-$emlaknokaydet = mysql_query("update emlak_islem set islemno ='$islemno'");
+$emlaknokaydet = $vt->query("update emlak_islem set islemno ='$islemno'");
 $id=$_GET["id"];
 $kategori=$_GET["kategori"];
-$query = mysql_query("SELECT * FROM emlak_kategori WHERE kat_id = '$kategori'");
-$q=mysql_fetch_array($query);
+$query = $vt->query("SELECT * FROM emlak_kategori WHERE kat_id = '$kategori'");
+$q=$query->fetch();
 $kullanici = $vt->query("SELECT * FROM yonetici WHERE id = '".$_SESSION["id"]."'")->fetch(PDO::FETCH_ASSOC);
 if ($_GET["islem"] != "sec"):
 $ilan_sekli = $vt->query("SELECT * FROM emlak_ilansekli WHERE id = {$q["ilansekli"]}")->fetch();
@@ -53,8 +53,8 @@ if ($islem=="sec") {
                             <hr>
                             <select multiple name="kat" id="kat" class="form-control" size="12" style="padding:15px; background-color: #e5f0ff; border: 1px solid #b9d6ff;">
                                 <?php
-                                $katler=mysql_query("SELECT * FROM emlak_kategori where kat_ustid = 0");
-                                while ($k=mysql_fetch_array($katler)) {
+                                $katler=$vt->query("SELECT * FROM emlak_kategori where kat_ustid = 0");
+                                while ($k=$katler->fetch()) {
                                 ?>
                                 <option value="<?=$k["kat_id"];?>"><?=$k["kat_adi"];?></option>
                                 <?php } ?>
@@ -90,8 +90,8 @@ if ($islem=="sec") {
                     </style>
                     <ul class="nav navbar hidden" style="margin:0 12px;">
                         <?php
-                        $katler=mysql_query("SELECT * FROM emlak_kategori order by kat_ustid = 0 DESC");
-                        while ($k=mysql_fetch_array($katler)) {
+                        $katler=$vt->query("SELECT * FROM emlak_kategori order by kat_ustid = 0 DESC");
+                        while ($k=$katler->fetch()) {
                             ?>
                             <li class="<?php if ($kullanici["yetki"] != 0) { ?> col-md-3 <?php } else { ?> col-md-2 <?php } ?> <?php if ($k["kat_durum"] == 0 ) {echo "hidden";} ?>" style="padding:0 2px;">
                                 <a class="btn bg-primary text-left" href="index.php?do=islem&emlak=emlak_ekle&kategori=<?=$k["kat_id"];?>">
@@ -171,8 +171,8 @@ if (isset($_POST["emlakekle"]))
     $seo=seo($il_adi["adi"])."-".seo($ilce_adi["ilce_title"])."-".seo($ilantipi_adi["ad"])."-".seo($q["kat_adi"])."-".seo($_POST["baslik"]);
     $icerik= addslashes($_POST["icerik"]);
     $katid=$_POST["katid"];	// query ile seçilen kategoriye gore otomatik eklenecektir.
-    $ilansekli=mysql_query("SELECT * FROM emlak_kategori where kat_id='$q[kat_id]'"); // ilan sekli buradan eklenecektir.
-    $i=mysql_fetch_array($ilansekli); // ilan sekli buradan eklenecektir.
+    $ilansekli=$vt->query("SELECT * FROM emlak_kategori where kat_id='$q[kat_id]'"); // ilan sekli buradan eklenecektir.
+    $i=$ilansekli->fetch(); // ilan sekli buradan eklenecektir.
     $title=addslashes($_POST["title"]);
     $godesc=addslashes($_POST["godesc"]);
     $keyw=addslashes($_POST["keyw"]);
@@ -188,8 +188,8 @@ if (isset($_POST["emlakekle"]))
     $eklemetarihi = date("d-m-Y");
     $emlak_sahibi=$_POST["emlak_sahibi"];
     $ilantipi=$_POST["emlak_tipi"];
-    $ilantipi=mysql_query("SELECT * FROM emlak_ilantipi where id = '$ilantipi'");
-    $it=mysql_fetch_array($ilantipi);
+    $ilantipi=$vt->query("SELECT * FROM emlak_ilantipi where id = '$ilantipi'");
+    $it=$ilantipi->fetch();
     $fiyat = $_POST["fiyat"];
     if (empty($fiyat)) $fiyat = 0;
     $fiyatkur=$_POST["fiyatkur"];
@@ -224,15 +224,15 @@ if (isset($_POST["emlakekle"]))
     $ozel_metin_2			= $_POST["ozel_metin_2"];
     $ozel_metin_3			= $_POST["ozel_metin_3"];
     $gunluk_fiyat_birim			= $_POST["gunluk_fiyat_birim"];
-    $yoneticibilgigoster = mysql_query("SELECT * FROM yonetici where id = '".$_SESSION['id']."'");
-    $yoneticigoster = mysql_fetch_array($yoneticibilgigoster);
+    $yoneticibilgigoster = $vt->query("SELECT * FROM yonetici where id = '".$_SESSION['id']."'");
+    $yoneticigoster = $yoneticibilgigoster->fetch();
     if ($_SESSION["yetki"] == 0) {
         $onay = 1;
     } else {
         $onay = 0;
     }
     if ($yoneticigoster["yetki"] == 0) {
-        $ekle = mysql_query("INSERT INTO emlak_ilan (
+        $ekle = $vt->query("INSERT INTO emlak_ilan (
             baslik,
             referans_kodu,
             sifreli,
@@ -323,7 +323,7 @@ if (isset($_POST["emlakekle"]))
             '$zoom',
             '$sokak');");
     } else {
-        $ekle = mysql_query("INSERT INTO emlak_ilan ( baslik, referans_kodu, sifreli, ilan_sifre, eklemetarihi, seo, yonetici_id, icerik, katid, ilansekli, title, godesc, keyw, aciklama, emlakno, ilantipi, fiyat, fiyatkur, il, ilce, mahalle, adres, anavitrin, katvitrin, firsatvitrin, slidervitrin, onecikan, acil, video, gunluk_onay, periyot, yetiskin_fiyat,cocuk_fiyat, bebek_fiyat, ozel_metin_1, ozel_metin_2, ozel_metin_3, gunluk_fiyat_birim, enlem, boylam, zoom, sokak ) VALUES ( '$baslik', '$referans_kodu', '$sifreli', '$ilan_sifre', '$eklemetarihi', '$seo', '$yonetici_id', '$icerik', '$q[kat_id]', '$i[ilansekli]', '$title', '$godesc', '$keyw', '$aciklama', '$emlakno', '$it[id]', '$fiyat', '$fiyatkur', '$il', '$ilce', '$mahalle', '$adres', '$anavitrin', '$katvitrin', '$firsatvitrin', '$slidervitrin', '$onecikan', '$acil', '$video', '$gunluk_onay', '$periyot', '$yetiskin_fiyat', '$cocuk_fiyat', '$bebek_fiyat', '$ozel_metin_1', '$ozel_metin_2', '$ozel_metin_3', '$gunluk_fiyat_birim', '$enlem', '$boylam', '$zoom', '$sokak');");
+        $ekle = $vt->query("INSERT INTO emlak_ilan ( baslik, referans_kodu, sifreli, ilan_sifre, eklemetarihi, seo, yonetici_id, icerik, katid, ilansekli, title, godesc, keyw, aciklama, emlakno, ilantipi, fiyat, fiyatkur, il, ilce, mahalle, adres, anavitrin, katvitrin, firsatvitrin, slidervitrin, onecikan, acil, video, gunluk_onay, periyot, yetiskin_fiyat,cocuk_fiyat, bebek_fiyat, ozel_metin_1, ozel_metin_2, ozel_metin_3, gunluk_fiyat_birim, enlem, boylam, zoom, sokak ) VALUES ( '$baslik', '$referans_kodu', '$sifreli', '$ilan_sifre', '$eklemetarihi', '$seo', '$yonetici_id', '$icerik', '$q[kat_id]', '$i[ilansekli]', '$title', '$godesc', '$keyw', '$aciklama', '$emlakno', '$it[id]', '$fiyat', '$fiyatkur', '$il', '$ilce', '$mahalle', '$adres', '$anavitrin', '$katvitrin', '$firsatvitrin', '$slidervitrin', '$onecikan', '$acil', '$video', '$gunluk_onay', '$periyot', '$yetiskin_fiyat', '$cocuk_fiyat', '$bebek_fiyat', '$ozel_metin_1', '$ozel_metin_2', '$ozel_metin_3', '$gunluk_fiyat_birim', '$enlem', '$boylam', '$zoom', '$sokak');");
     }
     if (empty($baslik))
     {
@@ -488,8 +488,8 @@ if (isset($_POST["emlakekle"]))
                                         <select name="fiyatkur" class="form-control select2">
                                             <?php
                                             // Para Birimi
-                                            $parabirim = mysql_query("select * from para_birimi where id");
-                                            while ($paraver = mysql_fetch_array($parabirim)) {
+                                            $parabirim = $vt->query("select * from para_birimi where id");
+                                            while ($paraver = $parabirim->fetch()) {
                                                 ?>
                                                 <option> <?=$paraver["ad"];?> </option>
                                             <?php } ?>
@@ -599,8 +599,8 @@ if (isset($_POST["emlakekle"]))
                                         <select name="gunluk_fiyat_birim" class="form-control sele ct2"> 
                                             <?php
                                                 // Para Birimi
-                                                    $parabirim = mysql_query("select * from para_birimi where id");
-                                                    while ($paraver = mysql_fetch_array($parabirim)) { ?>
+                                                    $parabirim = $vt->query("select * from para_birimi where id");
+                                                    while ($paraver = $parabirim->fetch()) { ?>
                                                     <option value="<?=$paraver["ad"];?>"> <?=$paraver["ad"];?> </option>
                                             <?php } ?>
                                         </select>
@@ -642,10 +642,10 @@ if (isset($_POST["emlakekle"]))
                             $eformdetay=$_POST["eformdetay"];
                             $formid=$_POST["formid"];
                             for ($i=0; $i<count($eformdetay);$i++){
-                                $ilanid=mysql_query("SELECT * FROM emlak_ilan order by id desc");
-                                $i2=mysql_fetch_array($ilanid);
+                                $ilanid=$vt->query("SELECT * FROM emlak_ilan order by id desc");
+                                $i2=$ilanid->fetch();
                                 if (!empty($eformdetay[$i]) AND $eformdetay[$i]!="Seçiniz") {
-                                $ekle=mysql_query("INSERT INTO emlak_ilandetay (eformdetay, seo, formid, ilanid, emlakno, ilansekli) values ('".$eformdetay[$i]."','".seo($eformdetay[$i])."','".$formid[$i]."','$i2[id]','$islemno','$i2[ilansekli]')");
+                                $ekle=$vt->query("INSERT INTO emlak_ilandetay (eformdetay, seo, formid, ilanid, emlakno, ilansekli) values ('".$eformdetay[$i]."','".seo($eformdetay[$i])."','".$formid[$i]."','$i2[id]','$islemno','$i2[ilansekli]')");
                                 }
                             }
                         }
@@ -654,11 +654,11 @@ if (isset($_POST["emlakekle"]))
                             <div class="">
 								<div class="form-horizontal">
 									<?php
-									$formkat=mysql_query("SELECT emlak_form_kat.* FROM emlak_form_kat INNER JOIN emlak_form ON emlak_form_kat.eformid=emlak_form.id where emlak_form_kat.kat = '$kategori' ORDER BY emlak_form.sira ASC");
-									while ($f=mysql_fetch_array($formkat)) {
+									$formkat=$vt->query("SELECT emlak_form_kat.* FROM emlak_form_kat INNER JOIN emlak_form ON emlak_form_kat.eformid=emlak_form.id where emlak_form_kat.kat = '$kategori' ORDER BY emlak_form.sira ASC");
+									while ($f=$formkat->fetch()) {
 										// Emlak Form
-										$eform = mysql_query("select * from emlak_form where id = '$f[eformid]'");
-										$formrow = mysql_fetch_array($eform);
+										$eform = $vt->query("select * from emlak_form where id = '$f[eformid]'");
+										$formrow = $eform->fetch();
 										$deg = trim($formrow[deg]);
 										$ayir = explode(",", $deg);
 										$say = trim(count($ayir));
@@ -698,22 +698,22 @@ if (isset($_POST["emlakekle"]))
                                     $oztip=$_POST["oztip"];
                                     if (!$_POST["ozid"]=="") {
                                         foreach ($ozid as $oid) {
-                                            $liste=mysql_query("SELECT * FROM emlak_ozellik where id = '$oid'");
-                                            while ($l=mysql_fetch_array($liste)) {
-                                                $ilanid=mysql_query("SELECT * FROM emlak_ilan order by id desc");
-                                                $i=mysql_fetch_array($ilanid);
-                                                $ekle=mysql_query("INSERT INTO emlak_ozellikdetay (ozelliktip, ad, ilanid, ilansekli, ozellik) values ('$l[ozelliktipi]','$l[ad]','$i[id]','$q[ilansekli]','$l[id]')");
+                                            $liste=$vt->query("SELECT * FROM emlak_ozellik where id = '$oid'");
+                                            while ($l=$liste->fetch()) {
+                                                $ilanid=$vt->query("SELECT * FROM emlak_ilan order by id desc");
+                                                $i=$ilanid->fetch();
+                                                $ekle=$vt->query("INSERT INTO emlak_ozellikdetay (ozelliktip, ad, ilanid, ilansekli, ozellik) values ('$l[ozelliktipi]','$l[ad]','$i[id]','$q[ilansekli]','$l[id]')");
                                             }
                                         }
                                     }
                                 }
                                 ?>
                                 <?php
-                                $ozelliktipliste2 = mysql_query("SELECT * FROM emlak_ozelliktipliste where kat = '$q[kat_id]'");
-                                while ($ot2=mysql_fetch_array($ozelliktipliste2)) {
+                                $ozelliktipliste2 = $vt->query("SELECT * FROM emlak_ozelliktipliste where kat = '$q[kat_id]'");
+                                while ($ot2=$ozelliktipliste2->fetch()) {
                                     // Emlak Ozellik Tipi
-                                    $ozelliktip = mysql_query("SELECT * FROM emlak_ozelliktip where id = '$ot2[ozellikid]'");
-                                    $ot = mysql_fetch_array($ozelliktip);
+                                    $ozelliktip = $vt->query("SELECT * FROM emlak_ozelliktip where id = '$ot2[ozellikid]'");
+                                    $ot = $ozelliktip->fetch();
                                     ?>
                                     <div class="form-group" <?php if ($ot["durum"]==1) {echo "hidden";} ?>>
                                         <input type="text" name="oztip[]" value="<?=$ot['id']?>" class="hidden">
@@ -722,8 +722,8 @@ if (isset($_POST["emlakekle"]))
                                             <div class="row">
                                                 <?php
                                                 // Emlak Ozellikleri
-                                                $ozellik = mysql_query("select * from emlak_ozellik where ozelliktipi = '$ot[id]'");
-                                                while ($o = mysql_fetch_array($ozellik)) {
+                                                $ozellik = $vt->query("select * from emlak_ozellik where ozelliktipi = '$ot[id]'");
+                                                while ($o = $ozellik->fetch()) {
                                                     ?>
                                                     <div class="col-md-3 col-xs-6" <?php if ($o["durum"]==1) {echo "hidden";} ?>>
                                                         <label for="ozad" class="">
@@ -794,12 +794,12 @@ if (isset($_POST["emlakekle"]))
                                             <div>
                                                 <?php
                                                 // Emlak Tipi
-                                                $emlaktip = mysql_query("select * from emlak_ilantipi where id");
-                                                while ($t = mysql_fetch_array($emlaktip)) {
-                                                    $tipkatliste = mysql_query("SELECT * FROM emlak_ilantipi_katliste where katid = '".$q["kat_id"]."' && ilantipid = '".$t["id"]."'");
+                                                $emlaktip = $vt->query("select * from emlak_ilantipi where id");
+                                                while ($t = $emlaktip->fetch()) {
+                                                    $tipkatliste = $vt->query("SELECT * FROM emlak_ilantipi_katliste where katid = '".$q["kat_id"]."' AND ilantipid = '".$t["id"]."'");
                                                     ?>
                                                     <?php if ($t["durum"]=="0") { ?>
-                                                        <?php if (mysql_num_rows($tipkatliste)) { ?>
+                                                        <?php if ($tipkatliste->rowCount()) { ?>
                                                             <label for="ilan_tipi">
                                                                 <input type="radio" name="emlak_tipi" value="<?=$t["id"];?>" class="minimal">
                                                                 <?=$t["ad"];?>
@@ -879,8 +879,8 @@ if (isset($_POST["emlakekle"]))
                                                 <select name="il" id="il" class="form-control select2">
                                                     <option selected="selected"> İl Seçiniz </option>
                                                     <?php
-                                                    $iller = mysql_query("select * from sehir order by sehir_key asc");
-                                                    while($il=mysql_fetch_array($iller)) {
+                                                    $iller = $vt->query("select * from sehir order by sehir_key asc");
+                                                    while($il=$iller->fetch()) {
                                                         ?>
                                                         <option value="<?=$il['sehir_key'];?>"> <?=$il['adi'];?> </option>
                                                     <?php } ?>
@@ -1202,8 +1202,8 @@ if (isset($_POST["emlakekle"]))
                                         <select name="fiyatkur" class="form-control select2">
                                             <?php
                                             // Para Birimi
-                                            $parabirim = mysql_query("select * from para_birimi where id");
-                                            while ($paraver = mysql_fetch_array($parabirim)) {
+                                            $parabirim = $vt->query("select * from para_birimi where id");
+                                            while ($paraver = $parabirim->fetch()) {
                                                 ?>
                                                 <option> <?=$paraver["ad"];?> </option>
                                             <?php } ?>
@@ -1314,8 +1314,8 @@ if (isset($_POST["emlakekle"]))
                                         <select name="gunluk_fiyat_birim" class="form-control sele ct2"> 
                                             <?php
                                                 // Para Birimi
-                                                    $parabirim = mysql_query("select * from para_birimi where id");
-                                                    while ($paraver = mysql_fetch_array($parabirim)) { ?>
+                                                    $parabirim = $vt->query("select * from para_birimi where id");
+                                                    while ($paraver = $parabirim->fetch()) { ?>
                                                     <option value="<?=$paraver["ad"];?>"> <?=$paraver["ad"];?> </option>
                                             <?php } ?>
                                         </select>
@@ -1401,10 +1401,10 @@ if (isset($_POST["emlakekle"]))
                         $eformdetay=$_POST["eformdetay"];
                         $formid=$_POST["formid"];
                         for ($i=0; $i<count($eformdetay);$i++){
-                            $ilanid=mysql_query("SELECT * FROM emlak_ilan order by id desc");
-                            $i2=mysql_fetch_array($ilanid);
+                            $ilanid=$vt->query("SELECT * FROM emlak_ilan order by id desc");
+                            $i2=$ilanid->fetch();
                             if (!empty($eformdetay[$i]) AND $eformdetay[$i]!="Seçiniz") {
-                            $ekle=mysql_query("INSERT INTO emlak_ilandetay (eformdetay, seo, formid, ilanid, emlakno, ilansekli) values ('".$eformdetay[$i]."','".seo($eformdetay[$i])."','".$formid[$i]."','$i2[id]','$islemno','$i2[ilansekli]')");
+                            $ekle=$vt->query("INSERT INTO emlak_ilandetay (eformdetay, seo, formid, ilanid, emlakno, ilansekli) values ('".$eformdetay[$i]."','".seo($eformdetay[$i])."','".$formid[$i]."','$i2[id]','$islemno','$i2[ilansekli]')");
                             }
                         }
                     }
@@ -1413,11 +1413,11 @@ if (isset($_POST["emlakekle"]))
                         <div class="form-horizontal">
 							<div class="row">
 								<?php
-								$formkat=mysql_query("SELECT emlak_form_kat.* FROM emlak_form_kat INNER JOIN emlak_form ON emlak_form_kat.eformid=emlak_form.id where emlak_form_kat.kat = '$kategori' ORDER BY emlak_form.sira ASC");
-								while ($f=mysql_fetch_array($formkat)) {
+								$formkat=$vt->query("SELECT emlak_form_kat.* FROM emlak_form_kat INNER JOIN emlak_form ON emlak_form_kat.eformid=emlak_form.id where emlak_form_kat.kat = '$kategori' ORDER BY emlak_form.sira ASC");
+								while ($f=$formkat->fetch()) {
 									// Emlak Form
-									$eform = mysql_query("select * from emlak_form where id = '$f[eformid]'");
-									$formrow = mysql_fetch_array($eform);
+									$eform = $vt->query("select * from emlak_form where id = '$f[eformid]'");
+									$formrow = $eform->fetch();
 									$deg = trim($formrow[deg]);
 									$ayir = explode(",", $deg);
 									$say = trim(count($ayir));
@@ -1457,22 +1457,22 @@ if (isset($_POST["emlakekle"]))
                                 $oztip=$_POST["oztip"];
                                 if (!$_POST["ozid"]=="") {
                                     foreach ($ozid as $oid) {
-                                        $liste=mysql_query("SELECT * FROM emlak_ozellik where id = '$oid'");
-                                        while ($l=mysql_fetch_array($liste)) {
-                                            $ilanid=mysql_query("SELECT * FROM emlak_ilan order by id desc");
-                                            $i=mysql_fetch_array($ilanid);
-                                            $ekle=mysql_query("INSERT INTO emlak_ozellikdetay (ozelliktip, ad, ilanid, ilansekli, ozellik) values ('$l[ozelliktipi]','$l[ad]','$i[id]','$q[ilansekli]','$l[id]')");
+                                        $liste=$vt->query("SELECT * FROM emlak_ozellik where id = '$oid'");
+                                        while ($l=$liste->fetch()) {
+                                            $ilanid=$vt->query("SELECT * FROM emlak_ilan order by id desc");
+                                            $i=$ilanid->fetch();
+                                            $ekle=$vt->query("INSERT INTO emlak_ozellikdetay (ozelliktip, ad, ilanid, ilansekli, ozellik) values ('$l[ozelliktipi]','$l[ad]','$i[id]','$q[ilansekli]','$l[id]')");
                                         }
                                     }
                                 }
                             }
                             ?>
                             <?php
-                            $ozelliktipliste2 = mysql_query("SELECT * FROM emlak_ozelliktipliste where kat = '$q[kat_id]'");
-                            while ($ot2=mysql_fetch_array($ozelliktipliste2)) {
+                            $ozelliktipliste2 = $vt->query("SELECT * FROM emlak_ozelliktipliste where kat = '$q[kat_id]'");
+                            while ($ot2=$ozelliktipliste2->fetch()) {
                                 // Emlak Ozellik Tipi
-                                $ozelliktip = mysql_query("SELECT * FROM emlak_ozelliktip where id = '$ot2[ozellikid]'");
-                                $ot = mysql_fetch_array($ozelliktip);
+                                $ozelliktip = $vt->query("SELECT * FROM emlak_ozelliktip where id = '$ot2[ozellikid]'");
+                                $ot = $ozelliktip->fetch();
                                 ?>
                                 <div class="form-group" <?php if ($ot["durum"]==1) {echo "hidden";} ?>>
                                     <input type="text" name="oztip[]" value="<?=$ot['id']?>" class="hidden">
@@ -1481,8 +1481,8 @@ if (isset($_POST["emlakekle"]))
                                         <div class="row">
                                             <?php
                                             // Emlak Ozellikleri
-                                            $ozellik = mysql_query("select * from emlak_ozellik where ozelliktipi = '$ot[id]'");
-                                            while ($o = mysql_fetch_array($ozellik)) {
+                                            $ozellik = $vt->query("select * from emlak_ozellik where ozelliktipi = '$ot[id]'");
+                                            while ($o = $ozellik->fetch()) {
                                                 ?>
                                                 <div class="col-md-3 col-xs-6" <?php if ($o["durum"]==1) {echo "hidden";} ?>>
                                                     <label for="ozad" class="">
@@ -1553,12 +1553,12 @@ if (isset($_POST["emlakekle"]))
                                         <div>
                                             <?php
                                             // Emlak Tipi
-                                            $emlaktip = mysql_query("select * from emlak_ilantipi where id");
-                                            while ($t = mysql_fetch_array($emlaktip)) {
-                                                $tipkatliste = mysql_query("SELECT * FROM emlak_ilantipi_katliste where katid = '".$q["kat_id"]."' && ilantipid = '".$t["id"]."'");
+                                            $emlaktip = $vt->query("select * from emlak_ilantipi where id");
+                                            while ($t = $emlaktip->fetch()) {
+                                                $tipkatliste = $vt->query("SELECT * FROM emlak_ilantipi_katliste where katid = '".$q["kat_id"]."' AND ilantipid = '".$t["id"]."'");
                                                 ?>
                                                 <?php if ($t["durum"]=="0") { ?>
-                                                    <?php if (mysql_num_rows($tipkatliste)) { ?>
+                                                    <?php if ($tipkatliste->rowCount()) { ?>
                                                         <label for="ilan_tipi">
                                                             <input type="radio" name="emlak_tipi" value="<?=$t["id"];?>" class="minimal">
                                                             <?=$t["ad"];?>
@@ -1638,8 +1638,8 @@ if (isset($_POST["emlakekle"]))
                                             <select name="il" id="il" class="form-control select2">
                                                 <option selected="selected"> İl Seçiniz </option>
                                                 <?php
-                                                $iller = mysql_query("select * from sehir order by sehir_key asc");
-                                                while($il=mysql_fetch_array($iller)) {
+                                                $iller = $vt->query("select * from sehir order by sehir_key asc");
+                                                while($il=$iller->fetch()) {
                                                     ?>
                                                     <option value="<?=$il['sehir_key'];?>"> <?=$il['adi'];?> </option>
                                                 <?php } ?>

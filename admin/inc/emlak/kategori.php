@@ -35,8 +35,8 @@
 		$sil = (@$_GET["sil"]);
 
 		if ($sil) {
-			$katsil = mysql_query("DELETE FROM emlak_kategori WHERE kat_id = '$sil'");
-			$kattipsil = mysql_query("DELETE FROM emlak_ilantipi_katliste WHERE katid = '$sil'");
+			$katsil = $vt->query("DELETE FROM emlak_kategori WHERE kat_id = '$sil'");
+			$kattipsil = $vt->query("DELETE FROM emlak_ilantipi_katliste WHERE katid = '$sil'");
 			if ($katsil) {
 				onay();
 			} else {
@@ -49,13 +49,13 @@
 		$durum = (@$_GET["durum"]);
 		
 		if ($durum) {
-			$ver = mysql_fetch_array(mysql_query("SELECT * FROM emlak_kategori WHERE kat_id = '$durum'"));
+			$ver = $vt->query("SELECT * FROM emlak_kategori WHERE kat_id = '$durum'")->fetch();
 			$kdurum = $ver["kat_durum"];
 			if ($ver["kat_durum"] == 1) {
-					mysql_query("UPDATE emlak_kategori SET kat_durum  = '0' WHERE kat_id = '$durum'");
+					$vt->query("UPDATE emlak_kategori SET kat_durum  = '0' WHERE kat_id = '$durum'");
 					onay();
 				} else {
-					mysql_query("UPDATE emlak_kategori SET kat_durum  = '1' WHERE kat_id = '$durum'");
+					$vt->query("UPDATE emlak_kategori SET kat_durum  = '1' WHERE kat_id = '$durum'");
 					onay();
 			}
 		}
@@ -75,7 +75,7 @@
 
 			for ($i=0; $i < count($sira); $i++) { 
 
-				$sirakaydet = mysql_query("UPDATE emlak_kategori SET sira_no = '$sira[$i]' where kat_id = '$siraid[$i]'");
+				$sirakaydet = $vt->query("UPDATE emlak_kategori SET sira_no = '$sira[$i]' where kat_id = '$siraid[$i]'");
 			}
 
 		} ?>
@@ -103,9 +103,9 @@
 	                        kategori();
 
 	                        function kategori($id = 0, $i = 0) {
-	                            $query = mysql_query("SELECT * FROM emlak_kategori WHERE kat_ustid = '$id' && kat_id");
-	                            if (mysql_affected_rows()) {
-	                                while ($row = mysql_fetch_array($query)) {
+	                            $query = $vt->query("SELECT * FROM emlak_kategori WHERE kat_ustid = '$id' AND kat_id");
+	                            if ($query->rowCount()) {
+	                                while ($row = $query->fetch()) {
 
 	                                    echo '<tr>';
 	                                    echo '<th class="text-center"><span>'.$row["kat_id"].'</span></th>';
@@ -120,8 +120,8 @@
 
 	                                    echo '<th>';
 
-	                                   	$ilansekliver = mysql_query("SELECT * FROM emlak_ilansekli where id = '".$row["ilansekli"]."'");
-										$isekli = mysql_fetch_array($ilansekliver);
+	                                   	$ilansekliver = $vt->query("SELECT * FROM emlak_ilansekli where id = '".$row["ilansekli"]."'");
+										$isekli = $ilansekliver->fetch();
 
 										echo '<span class="btn btn-default btn-xs"> <span>'.$isekli["baslik"].'</span></span> ';
 
@@ -129,11 +129,11 @@
 
 	                                    echo '<th>';
 
-										$kattipliste = mysql_query("SELECT * FROM emlak_ilantipi_katliste where katid = '".$row["kat_id"]."'");
-										while($kattip = mysql_fetch_array($kattipliste)) {
+										$kattipliste = $vt->query("SELECT * FROM emlak_ilantipi_katliste where katid = '".$row["kat_id"]."'");
+										while($kattip = $kattipliste->fetch()) {
 			                            
-			                                $tipliste = mysql_query("SELECT * FROM emlak_ilantipi where id = '".$kattip["ilantipid"]."'");
-											while($tip = mysql_fetch_array($tipliste)) {
+			                                $tipliste = $vt->query("SELECT * FROM emlak_ilantipi where id = '".$kattip["ilantipid"]."'");
+											while($tip = $tipliste->fetch()) {
 
 												echo '<span class="btn btn-default btn-xs" style="margin-right: 4px;"> '.$tip["ad"].' </span>';
 

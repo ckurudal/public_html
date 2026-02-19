@@ -7,8 +7,8 @@
 	$islem =  @$_GET["islem"];
 	$hareket =  @$_GET["hareket"];  
 
-	$ayariletisim = mysql_query("SELECT * FROM ayar_site where id");
-	$a = mysql_fetch_array($ayariletisim);
+	$ayariletisim = $vt->query("SELECT * FROM ayar_site where id");
+	$a = $ayariletisim->fetch();
 
 ?>
 
@@ -36,7 +36,7 @@
 		$boylam 	= $_POST["boylam"];
 		$zoom 	= $_POST["zoom"];
 
-		$kaydet = mysql_query("UPDATE ayar_site SET il = '$il', ilce = '$ilce', mahalle = '$mahalle', enlem = '$enlem', boylam = '$boylam', zoom = '$zoom' where id = '1'");	
+		$kaydet = $vt->query("UPDATE ayar_site SET il = '$il', ilce = '$ilce', mahalle = '$mahalle', enlem = '$enlem', boylam = '$boylam', zoom = '$zoom' where id = '1'");	
 
 		go("index.php?do=ayar/haritaadres",0);  
 
@@ -68,14 +68,14 @@
 								  <div class="row">
 								  <?php
 
-								  	$iller = mysql_query("SELECT * FROM sehir where sehir_key = '".$site["il"]."'");
-								  	$ilr = mysql_fetch_array($iller);
+								  	$iller = $vt->query("SELECT * FROM sehir where sehir_key = '".$site["il"]."'");
+								  	$ilr = $iller->fetch();
 
-								  	$ilceler = mysql_query("SELECT * FROM ilce where ilce_key = '".$site["ilce"]."'");
-								  	$ilcer = mysql_fetch_array($ilceler);
+								  	$ilceler = $vt->query("SELECT * FROM ilce where ilce_key = '".$site["ilce"]."'");
+								  	$ilcer = $ilceler->fetch();
 
-								  	$mahler = mysql_query("SELECT * FROM mahalle where mahalle_id = '".$site["mahalle"]."'");
-								  	$mah = mysql_fetch_array($mahler);
+								  	$mahler = $vt->query("SELECT * FROM mahalle where mahalle_id = '".$site["mahalle"]."'");
+								  	$mah = $mahler->fetch();
 
 
 								  ?>
@@ -87,8 +87,8 @@
 											<?php } ?>
 
 											<?php 
-												$iller = mysql_query("select * from sehir order by sehir_key asc");
-												while($il=mysql_fetch_array($iller)) {
+												$iller = $vt->query("select * from sehir order by sehir_key asc");
+												while($il=$iller->fetch()) {
 											?>
 											<option value="<?=$il['sehir_key'];?>"> <?=$il['adi'];?> </option>
 											<?php } ?>

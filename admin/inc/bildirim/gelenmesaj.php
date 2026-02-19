@@ -25,18 +25,18 @@
 
 		if ($hareket == "sil") {
 			
-			$sil = mysql_query("DELETE FROM emlak_mesajiletisim where id = '$id'"); 
+			$sil = $vt->query("DELETE FROM emlak_mesajiletisim where id = '$id'"); 
 
 			go("index.php?do=bildirim/gelenmesaj&hareket=onay",0);
 
 		}
 
 		if ($durum == "0") {
-			$d = mysql_query("UPDATE emlak_mesajiletisim SET onay = '0' where id = '$id'"); 
+			$d = $vt->query("UPDATE emlak_mesajiletisim SET onay = '0' where id = '$id'"); 
 			go("index.php?do=bildirim/gelenmesaj&hareket=onay&id=$id",0);
 		}
 		if ($durum == "1") {
-			$d = mysql_query("UPDATE emlak_mesajiletisim SET onay = '1' where id = '$id'"); 
+			$d = $vt->query("UPDATE emlak_mesajiletisim SET onay = '1' where id = '$id'"); 
 			go("index.php?do=bildirim/gelenmesaj&hareket=onay&id=$id",0);
 		}
 	?>
@@ -62,8 +62,8 @@
 			    	<tbody>
 
 			    		<?php 
-			    			$mesajliste = mysql_query("SELECT * FROM emlak_mesajiletisim where id order by onay desc");
-				    		while($mliste = mysql_fetch_array($mesajliste)) {
+			    			$mesajliste = $vt->query("SELECT * FROM emlak_mesajiletisim where id order by onay desc");
+				    		while($mliste = $mesajliste->fetch()) {
 				    	?>
 
 		    			<tr>

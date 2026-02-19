@@ -23,9 +23,9 @@
 
 	if (isset($_POST["kaydet"])) { 
 
-		$dogrulama = mysql_real_escape_string(addslashes($_POST["dogrulama"])); 
+		$dogrulama = addslashes($_POST["dogrulama"]); 
 
-		$kaydet = mysql_query("UPDATE ayar_site SET dogrulama = '$dogrulama' where id = '1'");
+		$kaydet = $vt->query("UPDATE ayar_site SET dogrulama = '$dogrulama' where id = '1'");
 
 		go("index.php?do=islem&webmaster=dogrulama&hareket=onay",0);		
 

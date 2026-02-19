@@ -9,33 +9,33 @@
 	$hareket = $_GET["hareket"];
 	$durum = $_GET["durum"];
 
-	$haberlar = mysql_query("SELECT * FROM haber_kategori where id = '$id'");
-	$haberkatliste = mysql_query("SELECT * FROM haber_kategori order by id desc");
+	$haberlar = $vt->query("SELECT * FROM haber_kategori where id = '$id'");
+	$haberkatliste = $vt->query("SELECT * FROM haber_kategori order by id desc");
 ?>
 <section class="cont ent"> 
 <?php 
 	if (isset($_POST["haberkategoriekle"]) || isset($_POST["haberkategorikaydet"])) {
 
-		$baslik 		= trim(mysql_real_escape_string($_POST["baslik"]));
+		$baslik 		= trim($_POST["baslik"]);
 		$seo 			= seo($_POST["baslik"]);
-		$title 			= trim(mysql_real_escape_string($_POST["title"]));
-		$aciklama 		= trim(mysql_real_escape_string($_POST["aciklama"]));
-		$keyw			= trim(mysql_real_escape_string($_POST["keyw"]));
+		$title 			= trim($_POST["title"]);
+		$aciklama 		= trim($_POST["aciklama"]);
+		$keyw			= trim($_POST["keyw"]);
 
 		if (isset($_POST["haberkategoriekle"])) {
 
-			$haberkategoriekle = mysql_query("INSERT INTO haber_kategori (baslik, seo, title, aciklama, keyw) values ('$baslik','$seo','$title','$aciklama','$keyw')");	
+			$haberkategoriekle = $vt->query("INSERT INTO haber_kategori (baslik, seo, title, aciklama, keyw) values ('$baslik','$seo','$title','$aciklama','$keyw')");	
 
 			if ($haberkategoriekle == true) {
 				go("index.php?do=islem&icerik=haberkategori&islem=liste&hareket=onay",0);
 			} else {
-				echo mysql_error();
+				
 			}
 		}
 
 		if (isset($_POST["haberkategorikaydet"])) {
 
-			$unvankaydet = mysql_query("UPDATE haber_kategori SET baslik = '$baslik', seo = '$seo', title = '$title', aciklama = '$aciklama', keyw = '$keyw'  where id = '$id'");	
+			$unvankaydet = $vt->query("UPDATE haber_kategori SET baslik = '$baslik', seo = '$seo', title = '$title', aciklama = '$aciklama', keyw = '$keyw'  where id = '$id'");	
 
 			if ($unvankaydet == true) {
 				go("index.php?do=islem&icerik=haberkategori&islem=liste&hareket=onay",0);
@@ -103,7 +103,7 @@
 <?php if ($islem == "duzenle") { ?>
 <form action="" method="post" enctype="multipart/form-data">
 	<?php 
-		$sk = mysql_fetch_array($haberlar);
+		$sk = $haberlar->fetch();
 	?>
 	<section class="content"> 
 		<div class="box"> 
@@ -158,18 +158,18 @@
 
 		if ($hareket == "sil") {
 				
-			$sil = mysql_query("DELETE FROM haber_kategori where id = '$id'"); 
+			$sil = $vt->query("DELETE FROM haber_kategori where id = '$id'"); 
 
 			go("index.php?do=islem&icerik=haberkategori&islem=liste&hareket=onay&id=$id",0);
 
 		}
 
 		if ($durum == "0") {
-			$d = mysql_query("UPDATE haber_kategori SET durum = '0' where id = '$id'"); 
+			$d = $vt->query("UPDATE haber_kategori SET durum = '0' where id = '$id'"); 
 			go("index.php?do=islem&icerik=haberkategori&islem=liste&hareket=onay&id=$id",0);
 		}
 		if ($durum == "1") {
-			$d = mysql_query("UPDATE haber_kategori SET durum = '1' where id = '$id'"); 
+			$d = $vt->query("UPDATE haber_kategori SET durum = '1' where id = '$id'"); 
 			go("index.php?do=islem&icerik=haberkategori&islem=liste&hareket=onay&id=$id",0);
 		}
 	?>
@@ -191,7 +191,7 @@
 		   		</thead>
 		    	<tbody>
 			    	<?php 
-			    		while($skliste = mysql_fetch_array($haberkatliste)) {
+			    		while($skliste = $haberkatliste->fetch()) {
 			    	?>
 		    		<tr>
 		    			<th class="text-center"><?=$skliste["id"];?></th>

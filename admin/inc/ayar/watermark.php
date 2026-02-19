@@ -44,13 +44,13 @@
 		            $dosya = "../uploads/resim/watermark.png";
 		            if (move_uploaded_file($_FILES["resim"]["tmp_name"][$i], $dosya)) {
 						
-		                $ids = mysql_query("SELECT * FROM ayar_site where id = '1'");
-		                $id = mysql_fetch_array($ids); 
+		                $ids = $vt->query("SELECT * FROM ayar_site where id = '1'");
+		                $id = $ids->fetch(); 
 
 		                $sil = @unlink("../watermark.png");
 
 		                $link = "/uploads/resim/watermark.png";
-		                $ekle = mysql_query("UPDATE ayar_site SET watermark = '$link' where id = '1'");
+		                $ekle = $vt->query("UPDATE ayar_site SET watermark = '$link' where id = '1'");
 		                $yuklenenler++; 
 
 		            }

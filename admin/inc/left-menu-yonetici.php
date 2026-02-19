@@ -343,14 +343,14 @@
                     </span>
                     <?php 
 
-                        $kiralik_say = mysql_query("SELECT COUNT(*) FROM siparis_oda where siparis_onay = ''");
-                        $kiralik_say = mysql_fetch_array($kiralik_say);
+                        $kiralik_say = $vt->query("SELECT COUNT(*) FROM siparis_oda where siparis_onay = ''");
+                        $kiralik_say = $kiralik_say->fetch();
 
-                        $doping_say = mysql_query("SELECT COUNT(*) FROM emlak_ilan where doping_onay = 0 AND doping = 'var'");
-                        $doping_onay_say = mysql_fetch_array($doping_say);
+                        $doping_say = $vt->query("SELECT COUNT(*) FROM emlak_ilan where doping_onay = 0 AND doping = 'var'");
+                        $doping_onay_say = $doping_say->fetch();
 
-                        $magaza_say = mysql_query("SELECT COUNT(*) FROM magaza_uye_paket where onay = 0");
-                        $magaza_onay_say = mysql_fetch_array($magaza_say);
+                        $magaza_say = $vt->query("SELECT COUNT(*) FROM magaza_uye_paket where onay = 0");
+                        $magaza_onay_say = $magaza_say->fetch();
 
                         $toplam = $kiralik_say[0] + $doping_onay_say[0] + $magaza_onay_say[0];
 
@@ -534,16 +534,16 @@
 
                 <?php 
 
-                    $emlakmesajver = mysql_query("SELECT COUNT(*) FROM emlak_mesaj where onay = 0");
-                    $emlakmesaj = mysql_fetch_array($emlakmesajver);
+                    $emlakmesajver = $vt->query("SELECT COUNT(*) FROM emlak_mesaj where onay = 0");
+                    $emlakmesaj = $emlakmesajver->fetch();
 
-                    $gelenmesajver = mysql_query("SELECT COUNT(*) FROM emlak_mesajiletisim where onay = 0");
-                    $gelenmesaj = mysql_fetch_array($gelenmesajver);
+                    $gelenmesajver = $vt->query("SELECT COUNT(*) FROM emlak_mesajiletisim where onay = 0");
+                    $gelenmesaj = $gelenmesajver->fetch();
 
-                    $emlaktalepver = mysql_query("SELECT COUNT(*) FROM emlak_mesajemlaktalep where onay = 0");
-                    $emlaktalep = mysql_fetch_array($emlaktalepver);
+                    $emlaktalepver = $vt->query("SELECT COUNT(*) FROM emlak_mesajemlaktalep where onay = 0");
+                    $emlaktalep = $emlaktalepver->fetch();
 
-                    $emlakonay = mysql_fetch_array(mysql_query("SELECT COUNT(*) FROM emlak_ilan where onay = 0"));
+                    $emlakonay = $vt->query("SELECT COUNT(*) FROM emlak_ilan where onay = 0")->fetch();
 
                     $toplam_mesaj = $emlakmesaj[0] + $gelenmesaj[0] + $emlaktalep[0] + gelen_mesaj($_SESSION["id"]); 
 

@@ -28,8 +28,8 @@
     <div class="user-panel">
         <div class="image hidden-xs">
           <?php 
-                $yoneticibilgi = mysql_query("SELECT * FROM yonetici where id = '".$_SESSION['id']."'");
-                $yoneticiver = mysql_fetch_array($yoneticibilgi);
+                $yoneticibilgi = $vt->query("SELECT * FROM yonetici where id = '".$_SESSION['id']."'");
+                $yoneticiver = $yoneticibilgi->fetch();
             ?>
             <?php if ($yoneticiver["resim"] == "") { ?>
                 <img src="/uploads/resim/resim.png" class="user-image img-circle" alt="<?=$yoneticiver["adsoyad"];?>" width="200">

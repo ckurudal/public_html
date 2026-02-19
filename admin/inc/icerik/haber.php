@@ -9,24 +9,24 @@
 	$hareket = $_GET["hareket"];
 	$durum = $_GET["durum"];
 
-	$haberlar = mysql_query("SELECT * FROM haber order by id DESC");
-	$haberlarid = mysql_query("SELECT * FROM haber where id = '$id'");
+	$haberlar = $vt->query("SELECT * FROM haber order by id DESC");
+	$haberlarid = $vt->query("SELECT * FROM haber where id = '$id'");
 
-	$haberkategori = mysql_query("SELECT * FROM haber_kategori order by id ASC");
+	$haberkategori = $vt->query("SELECT * FROM haber_kategori order by id ASC");
 
 ?>
 <section class="cont ent"> 
 <?php 
 	if (isset($_POST["haberekle"]) || isset($_POST["haberkaydet"]) || isset($_POST["sirakaydet"])) {
 
-		$baslik 		= trim(mysql_real_escape_string($_POST["baslik"]));
-		$icerik 		= trim(mysql_real_escape_string($_POST["icerik"]));
+		$baslik 		= trim($_POST["baslik"]);
+		$icerik 		= trim($_POST["icerik"]);
 		$seo 			= seo($_POST["baslik"]);
-		$title 			= trim(mysql_real_escape_string($_POST["title"]));
-		$aciklama 		= trim(mysql_real_escape_string($_POST["aciklama"]));
-		$keyw			= trim(mysql_real_escape_string($_POST["keyw"]));
+		$title 			= trim($_POST["title"]);
+		$aciklama 		= trim($_POST["aciklama"]);
+		$keyw			= trim($_POST["keyw"]);
 		$kategori		= $_POST["kategori"];
-		$video 			= trim(mysql_real_escape_string($_POST["video"]));
+		$video 			= trim($_POST["video"]);
 		$resim 			= $_POST["resim"];
 		$sira 			= "";
 		$siraid 		= $_POST["siraid"];
@@ -35,12 +35,12 @@
 
 		if (isset($_POST["haberekle"])) {
 
-			$haberekle = mysql_query("INSERT INTO haber (baslik, icerik, seo, title, aciklama, keyw, kategori, video, sira, tarih) values ('$baslik','$icerik','$seo','$title','$aciklama','$keyw','$kategori','$video','$sira','$tarih')");	
+			$haberekle = $vt->query("INSERT INTO haber (baslik, icerik, seo, title, aciklama, keyw, kategori, video, sira, tarih) values ('$baslik','$icerik','$seo','$title','$aciklama','$keyw','$kategori','$video','$sira','$tarih')");	
 
 			if ($haberekle == true) {
 				go("index.php?do=islem&icerik=haber&islem=liste&hareket=onay",0);
 			} else {
-				echo mysql_error();
+				
 			}
 
 			// resim yukleme
@@ -60,11 +60,11 @@
 				            $dosya = "../uploads/resim/".$saat.".jpg";
 				            if (move_uploaded_file($_FILES["resim"]["tmp_name"][$i], $dosya)) {
 								
-				                $ids = mysql_query("SELECT * FROM haber order by id desc limit 1");
-				                $id = mysql_fetch_array($ids); 
+				                $ids = $vt->query("SELECT * FROM haber order by id desc limit 1");
+				                $id = $ids->fetch(); 
 
 				                $link = "/uploads/resim/".$saat.".jpg";
-				                $ekle = mysql_query("UPDATE haber SET resim = '$link' where id = '".$id["id"]."'");
+				                $ekle = $vt->query("UPDATE haber SET resim = '$link' where id = '".$id["id"]."'");
 				                $yuklenenler++; 
 
 				            }
@@ -80,7 +80,7 @@
 
 		if (isset($_POST["haberkaydet"])) {
 
-			$unvankaydet = mysql_query("UPDATE haber SET baslik = '$baslik', icerik = '$icerik', seo = '$seo', title = '$title', aciklama = '$aciklama', keyw = '$keyw', kategori = '$kategori', video = '$video' where id = '$id'");	
+			$unvankaydet = $vt->query("UPDATE haber SET baslik = '$baslik', icerik = '$icerik', seo = '$seo', title = '$title', aciklama = '$aciklama', keyw = '$keyw', kategori = '$kategori', video = '$video' where id = '$id'");	
 
 			if ($unvankaydet == true) {
 
@@ -102,13 +102,13 @@
 				            if (move_uploaded_file($_FILES["resim"]["tmp_name"][$i], $dosya)) {
 								
 								
-				            	$resimal = mysql_query("SELECT * FROM haber where id = $id");
-				            	$ral = mysql_fetch_array($resimal);
+				            	$resimal = $vt->query("SELECT * FROM haber where id = $id");
+				            	$ral = $resimal->fetch();
 
 								$sil = @unlink("..".$ral['resim']);
 				                
 				                $link = "/uploads/resim/".$saat.".jpg";
-				                $ekle = mysql_query("UPDATE haber SET resim = '$link' where id = '$id'");
+				                $ekle = $vt->query("UPDATE haber SET resim = '$link' where id = '$id'");
 				                $yuklenenler++; 
 
 				            }
@@ -129,7 +129,7 @@
 
 			for ($i=0; $i < count($siraid) ; $i++) { 
 				
-				$sirakaydet = mysql_query("UPDATE haber SET sira = '$sira[$i]' where id = '$siraid[$i]'");
+				$sirakaydet = $vt->query("UPDATE haber SET sira = '$sira[$i]' where id = '$siraid[$i]'");
  				 
 				if ($sirakaydet == true) {
 					go("index.php?do=islem&icerik=haber&islem=liste&hareket=onay",0);
@@ -198,7 +198,7 @@
 						<select class="form-control select2" name="kategori">
 							<option>Seçiniz</option>
 							<?php 
-								while($sk = mysql_fetch_array($haberkategori)) {
+								while($sk = $haberkategori->fetch()) {
 							?> 
 							<?php 
 								if ($sk["durum"] == 0) {
@@ -240,7 +240,7 @@
 <?php if ($islem == "duzenle") { ?>
 <form action="" method="post" enctype="multipart/form-data">
 	<?php 
-		$s = mysql_fetch_array($haberlarid);
+		$s = $haberlarid->fetch();
 	?>
 	<section class="content"> 
 		<div class="box"> 
@@ -285,8 +285,8 @@
 					  <div class="col-sm-10"> 
 						<select class="form-control select2" name="kategori">
 							<?php
-								$sfkatadi = mysql_query("SELECT * FROM haber_kategori Where id = '".$s["kategori"]."'");
-								$sfkadi = mysql_fetch_array($sfkatadi);
+								$sfkatadi = $vt->query("SELECT * FROM haber_kategori Where id = '".$s["kategori"]."'");
+								$sfkadi = $sfkatadi->fetch();
 							?>
 							<?php 
 								if (!$s["kategori"] == 0) {
@@ -299,7 +299,7 @@
 							<option>Seçiniz</option>
 							<?php } ?>
 							<?php 
-								while($sk = mysql_fetch_array($haberkategori)) {
+								while($sk = $haberkategori->fetch()) {
 							?>
 							<?php 
 								if ($sk["durum"] == 0) {
@@ -358,9 +358,9 @@
 
 		if ($hareket == "sil") {
 				
-			$sil = mysql_query("DELETE FROM haber where id = '$id'"); 
+			$sil = $vt->query("DELETE FROM haber where id = '$id'"); 
 
-			$ral = mysql_fetch_array($haberlarid); 
+			$ral = $haberlarid->fetch(); 
 			$resimsil = @unlink("..".$ral['resim']);
 
 			go("index.php?do=islem&icerik=haber&islem=liste&hareket=onay&id=$id",0);
@@ -368,11 +368,11 @@
 		}
 
 		if ($durum == "0") {
-			$d = mysql_query("UPDATE haber SET durum = '0' where id = '$id'"); 
+			$d = $vt->query("UPDATE haber SET durum = '0' where id = '$id'"); 
 			go("index.php?do=islem&icerik=haber&islem=liste&hareket=onay&id=$id",0);
 		}
 		if ($durum == "1") {
-			$d = mysql_query("UPDATE haber SET durum = '1' where id = '$id'"); 
+			$d = $vt->query("UPDATE haber SET durum = '1' where id = '$id'"); 
 			go("index.php?do=islem&icerik=haber&islem=liste&hareket=onay&id=$id",0);
 		}
 	?>
@@ -398,7 +398,7 @@
 			   		</thead>
 			    	<tbody>
 				    	<?php 
-				    		while($sliste = mysql_fetch_array($haberlar)) {
+				    		while($sliste = $haberlar->fetch()) {
 				    	?>
 			    		<tr>
 			    			<th><?=$sliste["id"];?></th>
@@ -421,8 +421,8 @@
 			    			</th>
 			    			<th>
 			    				<?php 
-			    					$haberkatadi = mysql_query("SELECT * FROM haber_kategori where id = '".$sliste["kategori"]."'");
-			    					$sk = mysql_fetch_array($haberkatadi);
+			    					$haberkatadi = $vt->query("SELECT * FROM haber_kategori where id = '".$sliste["kategori"]."'");
+			    					$sk = $haberkatadi->fetch();
 			    				?>
 			    				<?=$sk["baslik"];?>
 			    			</th>

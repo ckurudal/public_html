@@ -8,7 +8,7 @@
 	$islem =  $_GET["islem"];
 	$hareket =  $_GET["hareket"];
 	$durum =  $_GET["durum"];
-	$sliderid = mysql_query("SELECT * FROM slider where id = '$id'");
+	$sliderid = $vt->query("SELECT * FROM slider where id = '$id'");
 ?>
 <section class="content-header">
 
@@ -24,9 +24,9 @@
 		
 		$baslik	= tirnak($_POST['baslik']); 
 		$link	= $_POST['link']; 
-		$font	= mysql_real_escape_string($_POST['font']); 
-		$font_family	= mysql_real_escape_string($_POST['font_family']); 
-		$font_size	= mysql_real_escape_string($_POST['font_size']); 
+		$font	= $_POST['font']; 
+		$font_family	= $_POST['font_family']; 
+		$font_size	= $_POST['font_size']; 
 		$harici	= $_POST['harici']; 
 		$sira	= $_POST['sira']; 
 		$aciklama	= $_POST['aciklama'];
@@ -35,7 +35,7 @@
 
 		if (isset($_POST["ekle"])) {
 
-			$ekle = mysql_query("INSERT INTO slider (baslik, link, harici, sira, aciklama, font, font_family, font_size) values ('$baslik','$link','$harici','$sira','$aciklama','$font','$font_family','$font_size')");
+			$ekle = $vt->query("INSERT INTO slider (baslik, link, harici, sira, aciklama, font, font_family, font_size) values ('$baslik','$link','$harici','$sira','$aciklama','$font','$font_family','$font_size')");
 
 			if ($ekle == true) {
 
@@ -56,11 +56,11 @@
 				            $dosya = "../uploads/resim/".$saat.".jpg";
 				            if (move_uploaded_file($_FILES["resim"]["tmp_name"][$i], $dosya)) {
 
-				            	$ids = mysql_query("SELECT * FROM slider order by id desc limit 1");
-				                $id = mysql_fetch_array($ids); 
+				            	$ids = $vt->query("SELECT * FROM slider order by id desc limit 1");
+				                $id = $ids->fetch(); 
 
 				                $link2 = "/uploads/resim/".$saat.".jpg";
-				                $ekle = mysql_query("UPDATE slider SET resim = '$link2' where id = '".$id["id"]."'");
+				                $ekle = $vt->query("UPDATE slider SET resim = '$link2' where id = '".$id["id"]."'");
 				                $yuklenenler++; 
 
 				            }
@@ -74,12 +74,12 @@
 				}
 				go("index.php?do=icerik/slider&hareket=onay",0);
 			} else {
-				echo mysql_error();
+				
 			}
 		}
 
 		if (isset($_POST["kaydet"])) {
-			$kaydet = mysql_query("UPDATE slider SET baslik = '$baslik', link = '$link', harici = '$harici', sira = '$sira', aciklama = '$aciklama', font = '$font', font_family = '$font_family', font_size = '$font_size' where id = '$id'");
+			$kaydet = $vt->query("UPDATE slider SET baslik = '$baslik', link = '$link', harici = '$harici', sira = '$sira', aciklama = '$aciklama', font = '$font', font_family = '$font_family', font_size = '$font_size' where id = '$id'");
 
 			if ($kaydet == true) {
 				// resim yukleme
@@ -99,13 +99,13 @@
 				            $dosya = "../uploads/resim/".$saat.".jpg";
 				            if (move_uploaded_file($_FILES["resim"]["tmp_name"][$i], $dosya)) {
 
-				            	$resimal = mysql_query("SELECT * FROM slider where id = '$id'");
-				                $ral = mysql_fetch_array($resimal); 
+				            	$resimal = $vt->query("SELECT * FROM slider where id = '$id'");
+				                $ral = $resimal->fetch(); 
 
 				                $sil = @unlink("..".$ral['resim']);
 
 				                $link2 = "/uploads/resim/".$saat.".jpg";
-				                $ekle = mysql_query("UPDATE slider SET resim = '$link2' where id = '$id'");
+				                $ekle = $vt->query("UPDATE slider SET resim = '$link2' where id = '$id'");
 				                $yuklenenler++; 
 
 				            }
@@ -119,7 +119,7 @@
 				}
 				go("index.php?do=icerik/slider&hareket=onay",0);
 			} else {
-				echo mysql_error();
+				
 			}
 		}
 
@@ -127,7 +127,7 @@
 
 			for ($i=0; $i < count($siraid) ; $i++) { 
 				
-				$sirakaydet = mysql_query("UPDATE slider SET sira = '$sira[$i]' where id = '$siraid[$i]'");
+				$sirakaydet = $vt->query("UPDATE slider SET sira = '$sira[$i]' where id = '$siraid[$i]'");
  				 
 				if ($sirakaydet == true) {
 					go("index.php?do=icerik/slider&hareket=onay",0);
@@ -223,8 +223,8 @@
 <?php if ($islem == "duzenle") { ?>
 <form action="" method="post" enctype="multipart/form-data">
 	<?php
-		$sliderler = mysql_query("SELECT * FROM slider where id = '$id'");
-		$s = mysql_fetch_array($sliderler);
+		$sliderler = $vt->query("SELECT * FROM slider where id = '$id'");
+		$s = $sliderler->fetch();
 	?> 
 	<section class="content">  
 		<div class="box"> 
@@ -340,19 +340,19 @@
 		}
 
 		if ($durum == "0") {
-			$d = mysql_query("UPDATE slider SET durum = '0' where id = '$id'"); 
+			$d = $vt->query("UPDATE slider SET durum = '0' where id = '$id'"); 
 			go("index.php?do=icerik/slider&hareket=onay&id=$id",0);
 		}
 		if ($durum == "1") {
-			$d = mysql_query("UPDATE slider SET durum = '1' where id = '$id'"); 
+			$d = $vt->query("UPDATE slider SET durum = '1' where id = '$id'"); 
 			go("index.php?do=icerik/slider&hareket=onay&id=$id",0);
 		}
 
 		if ($hareket == "sil") {
 			
-			$sil = mysql_query("DELETE FROM slider where id = '$id'"); 
+			$sil = $vt->query("DELETE FROM slider where id = '$id'"); 
 
-			$ral = mysql_fetch_array($sliderid); 
+			$ral = $sliderid->fetch(); 
 			$resimsil = @unlink("..".$ral['resim']);
 
 			go("index.php?do=icerik/slider&hareket=onay&id=$id",0);
@@ -379,8 +379,8 @@
 				    </thead>
 				    <tbody> 
 				    		<?php 
-				    			$sliderver = mysql_query("SELECT * FROM slider where id order by id desc");
-				    			while($liste = mysql_fetch_array($sliderver)) {
+				    			$sliderver = $vt->query("SELECT * FROM slider where id order by id desc");
+				    			while($liste = $sliderver->fetch()) {
 				    		?>
 							<tr> 		
 								<th class="text-center"><?=$liste["id"];?></th>			

@@ -25,7 +25,7 @@
 		$sil=$_GET["sil"];
 
 		if ($_GET["sil"]) {
-			$silid=mysql_query("DELETE FROM emlak_ozelliktip where id = '$sil'");
+			$silid=$vt->query("DELETE FROM emlak_ozelliktip where id = '$sil'");
 			if ($silid) {
 				onay("Başarılı bir şekilde silindi.");
 			}
@@ -36,13 +36,13 @@
 		$durum = $_GET["durum"];
 
         if ($durum) {
-            $ver = mysql_fetch_array(mysql_query("SELECT * FROM emlak_ozelliktip WHERE id = '$durum'"));
+            $ver = $vt->query("SELECT * FROM emlak_ozelliktip WHERE id = '$durum'")->fetch();
             $kdurum = $ver["durum"];
             if ($ver["durum"] == 1) {
-                    mysql_query("UPDATE emlak_ozelliktip SET durum = '0' WHERE id = '$durum'");
+                    $vt->query("UPDATE emlak_ozelliktip SET durum = '0' WHERE id = '$durum'");
                     onay();
                 } else {
-                    mysql_query("UPDATE emlak_ozelliktip SET durum  = '1' WHERE id = '$durum'");
+                    $vt->query("UPDATE emlak_ozelliktip SET durum  = '1' WHERE id = '$durum'");
                     onay();
             }
         }
@@ -81,8 +81,8 @@
                     <tbody>
                     	<?php
 
-                    		$query=mysql_query("select * from emlak_ozelliktip order by id desc");
-                    		while ($row=mysql_fetch_array($query)) {
+                    		$query=$vt->query("select * from emlak_ozelliktip order by id desc");
+                    		while ($row=$query->fetch()) {
 
                     	?>
                     	<tr> 
@@ -91,11 +91,11 @@
 	                    	<th class=""> 
 	                    	<?php
 
-	                    		$liste=mysql_query("SELECT * FROM emlak_ozelliktipliste where ozellikid = '$row[id]'");
-	                    		while ($listever=mysql_fetch_array($liste)) {
+	                    		$liste=$vt->query("SELECT * FROM emlak_ozelliktipliste where ozellikid = '$row[id]'");
+	                    		while ($listever=$liste->fetch()) {
 	                    			
-	                    		$kategori=mysql_query("SELECT * FROM emlak_kategori where kat_id = '$listever[kat]'");
-	                    		while ($kat=mysql_fetch_array($kategori)) {
+	                    		$kategori=$vt->query("SELECT * FROM emlak_kategori where kat_id = '$listever[kat]'");
+	                    		while ($kat=$kategori->fetch()) {
 
   							?>
 	                    		
@@ -170,7 +170,7 @@
 <section class="content">		
 <?php 
 
-	$s = mysql_fetch_assoc(mysql_query("SHOW TABLE STATUS LIKE 'emlak_ozelliktip'"));
+	$s = $vt->query("SHOW TABLE STATUS LIKE 'emlak_ozelliktip'")->fetch();
 	$s1 = $s['Auto_increment']; 
 
 	if (isset($_POST["ekle"])) {
@@ -186,11 +186,11 @@
 
 				foreach ($kat as $k) {
 
-					$ekle = mysql_query("INSERT INTO emlak_ozelliktipliste (kat, ozellikid) VALUES ('$k','$s1')");					
+					$ekle = $vt->query("INSERT INTO emlak_ozelliktipliste (kat, ozellikid) VALUES ('$k','$s1')");					
 
 				} 
 
-				$adekle = mysql_query("INSERT INTO emlak_ozelliktip (ad, seo) VALUES ('$ad','$seo')");
+				$adekle = $vt->query("INSERT INTO emlak_ozelliktip (ad, seo) VALUES ('$ad','$seo')");
 
 				if ($adekle) {
 					onay("Emlak formları başarılı bir şekilde eklenmiştir.");
@@ -226,15 +226,15 @@
 		                	<select name="kat[]" style="min-height: 500px;" multiple class="form-control">
 		                		<?php 
 
-		                			$qkat=mysql_query("SELECT * FROM emlak_kategori WHERE kat_ustid = 0");
-		                			while($kategori=mysql_fetch_assoc($qkat)) {
+		                			$qkat=$vt->query("SELECT * FROM emlak_kategori WHERE kat_ustid = 0");
+		                			while($kategori=$qkat->fetch()) {
 		                		?>
 			                    <optgroup label="<?=$kategori["kat_adi"];?>">
 									<option value="<?=$kategori["kat_id"];?>"> <?=$kategori["kat_adi"];?> </option>
 									<?php 
 										$katid = $kategori["kat_id"];
-										$qust = mysql_query("SELECT * FROM emlak_kategori where kat_ustid = '$katid'");
-										while($ustkat=mysql_fetch_array($qust)) {
+										$qust = $vt->query("SELECT * FROM emlak_kategori where kat_ustid = '$katid'");
+										while($ustkat=$qust->fetch()) {
 									?>
 									<option value="<?=$ustkat["kat_id"];?>"> -- <?=$ustkat["kat_adi"];?> </option>
 									<?php } ?>
@@ -258,8 +258,8 @@
 
 <?php if ($islem=="duzenle") { ?>
 <?php 
-	$duzenle=mysql_query("SELECT * FROM emlak_ozelliktip where id = '$id'");
-	$ver=mysql_fetch_array($duzenle);
+	$duzenle=$vt->query("SELECT * FROM emlak_ozelliktip where id = '$id'");
+	$ver=$duzenle->fetch();
 ?>
 <section class="content">
 	<?php 
@@ -269,14 +269,14 @@
  			$ad = trim($_POST['ad']); 				
  			$seo = seo($_POST['ad']); 				
 
-			$formd = mysql_query("UPDATE emlak_ozelliktip SET ad = '$ad', seo = '$seo', sira = '$sira' where id = '$id'");
-			$forms = mysql_query("DELETE FROM emlak_ozelliktipliste WHERE ozellikid = '$id'");
+			$formd = $vt->query("UPDATE emlak_ozelliktip SET ad = '$ad', seo = '$seo', sira = '$sira' where id = '$id'");
+			$forms = $vt->query("DELETE FROM emlak_ozelliktipliste WHERE ozellikid = '$id'");
 			foreach ($kat as $k) {
 
-  				$is=mysql_query("SELECT * FROM emlak_kategori where kat_id = $k");
-  				$i=mysql_fetch_array($is);
+  				$is=$vt->query("SELECT * FROM emlak_kategori where kat_id = $k");
+  				$i=$is->fetch();
 
-				$ekle = mysql_query("INSERT INTO emlak_ozelliktipliste (kat, ozellikid, ilansekli) VALUES ('$k','$id','$i[ilansekli]')");				
+				$ekle = $vt->query("INSERT INTO emlak_ozelliktipliste (kat, ozellikid, ilansekli) VALUES ('$k','$id','$i[ilansekli]')");				
 			}					
 
 			if ($forms) {
@@ -315,14 +315,14 @@
 					  <div class="col-sm-10">
 		                	<select name="kat[]" style="min-height: 500px;" multiple class="form-control">
 	                		<?php
-	                			$qkat=mysql_query("SELECT * FROM emlak_kategori WHERE kat_ustid = 0");
-	                			while($kategori=mysql_fetch_assoc($qkat)) {										
+	                			$qkat=$vt->query("SELECT * FROM emlak_kategori WHERE kat_ustid = 0");
+	                			while($kategori=$qkat->fetch()) {										
 	                		?>
 		                    <optgroup label="<?=$kategori["kat_adi"];?>">
 								<option 
 								<?php   
-									$formkatver = mysql_query("select * from emlak_ozelliktipliste where ozellikid = '$id'");
-			                		while ($efk=mysql_fetch_array($formkatver)) {
+									$formkatver = $vt->query("select * from emlak_ozelliktipliste where ozellikid = '$id'");
+			                		while ($efk=$formkatver->fetch()) {
 			                			if ($efk[kat] == $kategori["kat_id"]) {
 			                				echo "selected ";
 			                			}
@@ -331,15 +331,15 @@
 								value="<?=$kategori["kat_id"];?>"> <?=$kategori["kat_adi"];?> </option>									
 								<?php 
 									$katid = $kategori["kat_id"];
-									$qust = mysql_query("SELECT * FROM emlak_kategori where kat_ustid = '$katid'");
+									$qust = $vt->query("SELECT * FROM emlak_kategori where kat_ustid = '$katid'");
 
-									while($ustkat=mysql_fetch_array($qust)) {
+									while($ustkat=$qust->fetch()) {
 
 								?>
 								<option 
 								<?php   
-									$formkatver = mysql_query("select * from emlak_ozelliktipliste where ozellikid = '$id'");									
-			                		while ($efk=mysql_fetch_array($formkatver)) {
+									$formkatver = $vt->query("select * from emlak_ozelliktipliste where ozellikid = '$id'");									
+			                		while ($efk=$formkatver->fetch()) {
 			                			if ($efk[kat] == $ustkat["kat_id"]) {				                				
 			                				echo "selected ";
 			                			}

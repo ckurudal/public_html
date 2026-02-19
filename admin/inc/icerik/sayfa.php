@@ -9,10 +9,10 @@
 	$hareket = $_GET["hareket"];
 	$durum = $_GET["durum"];
 
-	$sayfalar = mysql_query("SELECT * FROM sayfa order by id DESC");
-	$sayfalarid = mysql_query("SELECT * FROM sayfa where id = '$id'");
+	$sayfalar = $vt->query("SELECT * FROM sayfa order by id DESC");
+	$sayfalarid = $vt->query("SELECT * FROM sayfa where id = '$id'");
 
-	$sayfakategori = mysql_query("SELECT * FROM sayfa_kategori order by id ASC");
+	$sayfakategori = $vt->query("SELECT * FROM sayfa_kategori order by id ASC");
 
 ?>
 <section class="co ntent">
@@ -20,13 +20,13 @@
 	if (isset($_POST["sayfaekle"]) || isset($_POST["sayfakaydet"]) || isset($_POST["sirakaydet"])) {
 
 		$baslik 		= addslashes($_POST["baslik"]);
-		$icerik 		= trim(mysql_real_escape_string($_POST["icerik"]));
+		$icerik 		= trim($_POST["icerik"]);
 		$seo 			= seo($baslik);
-		$title 			= trim(mysql_real_escape_string($_POST["title"]));
-		$aciklama 		= trim(mysql_real_escape_string($_POST["aciklama"]));
-		$keyw			= trim(mysql_real_escape_string($_POST["keyw"]));
+		$title 			= trim($_POST["title"]);
+		$aciklama 		= trim($_POST["aciklama"]);
+		$keyw			= trim($_POST["keyw"]);
 		$kategori		= $_POST["kategori"];
-		$video 			= trim(mysql_real_escape_string($_POST["video"]));
+		$video 			= trim($_POST["video"]);
 		$resim 			= $_POST["resim"];
 		$sira 			= "";
 		$siraid 		= $_POST["siraid"];
@@ -34,12 +34,12 @@
 
 		if (isset($_POST["sayfaekle"])) {
 
-			$sayfaekle = mysql_query("INSERT INTO sayfa (baslik, icerik, seo, title, aciklama, keyw, kategori, video, sira) values ('$baslik','$icerik','$seo','$title','$aciklama','$keyw','$kategori','$video','$sira')");
+			$sayfaekle = $vt->query("INSERT INTO sayfa (baslik, icerik, seo, title, aciklama, keyw, kategori, video, sira) values ('$baslik','$icerik','$seo','$title','$aciklama','$keyw','$kategori','$video','$sira')");
 
 			if ($sayfaekle == true) {
 				go("index.php?do=islem&icerik=sayfa&islem=liste&hareket=onay",0);
 			} else {
-				echo mysql_error();
+				
 			}
 
 			// resim yukleme
@@ -59,11 +59,11 @@
 				            $dosya = "../uploads/resim/".$saat.".jpg";
 				            if (move_uploaded_file($_FILES["resim"]["tmp_name"][$i], $dosya)) {
 
-				                $ids = mysql_query("SELECT * FROM sayfa order by id desc limit 1");
-				                $id = mysql_fetch_array($ids);
+				                $ids = $vt->query("SELECT * FROM sayfa order by id desc limit 1");
+				                $id = $ids->fetch();
 
 				                $link = "/uploads/resim/".$saat.".jpg";
-				                $ekle = mysql_query("UPDATE sayfa SET resim = '$link' where id = '".$id["id"]."'");
+				                $ekle = $vt->query("UPDATE sayfa SET resim = '$link' where id = '".$id["id"]."'");
 				                $yuklenenler++;
 
 				            }
@@ -79,7 +79,7 @@
 
 		if (isset($_POST["sayfakaydet"])) {
 
-			$unvankaydet = mysql_query("UPDATE sayfa SET baslik = '$baslik', icerik = '$icerik', seo = '$seo', title = '$title', aciklama = '$aciklama', keyw = '$keyw', kategori = '$kategori', video = '$video' where id = '$id'");
+			$unvankaydet = $vt->query("UPDATE sayfa SET baslik = '$baslik', icerik = '$icerik', seo = '$seo', title = '$title', aciklama = '$aciklama', keyw = '$keyw', kategori = '$kategori', video = '$video' where id = '$id'");
 
 			if ($unvankaydet == true) {
 
@@ -101,13 +101,13 @@
 				            if (move_uploaded_file($_FILES["resim"]["tmp_name"][$i], $dosya)) {
 
 
-				            	$resimal = mysql_query("SELECT * FROM sayfa where id = $id");
-				            	$ral = mysql_fetch_array($resimal);
+				            	$resimal = $vt->query("SELECT * FROM sayfa where id = $id");
+				            	$ral = $resimal->fetch();
 
 								$sil = @unlink("..".$ral['resim']);
 
 				                $link = "/uploads/resim/".$saat.".jpg";
-				                $ekle = mysql_query("UPDATE sayfa SET resim = '$link' where id = '$id'");
+				                $ekle = $vt->query("UPDATE sayfa SET resim = '$link' where id = '$id'");
 				                $yuklenenler++;
 
 				            }
@@ -128,7 +128,7 @@
 
 			for ($i=0; $i < count($siraid) ; $i++) {
 
-				$sirakaydet = mysql_query("UPDATE sayfa SET sira = '$sira[$i]' where id = '$siraid[$i]'");
+				$sirakaydet = $vt->query("UPDATE sayfa SET sira = '$sira[$i]' where id = '$siraid[$i]'");
 
 				if ($sirakaydet == true) {
 					go("index.php?do=islem&icerik=sayfa&islem=liste&hareket=onay",0);
@@ -197,7 +197,7 @@
 						<select class="form-control select2" name="kategori">
 							<option>Seçiniz</option>
 							<?php
-								while($sk = mysql_fetch_array($sayfakategori)) {
+								while($sk = $sayfakategori->fetch()) {
 							?>
 							<?php
 								if ($sk["durum"] == 0) {
@@ -239,7 +239,7 @@
 <?php if ($islem == "duzenle") { ?>
 <form action="" method="post" enctype="multipart/form-data">
 	<?php
-		$s = mysql_fetch_array($sayfalarid);
+		$s = $sayfalarid->fetch();
 	?>
 	<section class="content">
 		<div class="box">
@@ -284,8 +284,8 @@
 					  <div class="col-sm-10">
 						<select class="form-control select2" name="kategori">
 							<?php
-								$sfkatadi = mysql_query("SELECT * FROM sayfa_kategori Where id = '".$s["kategori"]."'");
-								$sfkadi = mysql_fetch_array($sfkatadi);
+								$sfkatadi = $vt->query("SELECT * FROM sayfa_kategori Where id = '".$s["kategori"]."'");
+								$sfkadi = $sfkatadi->fetch();
 							?>
 							<?php
 								if (!$s["kategori"] == 0) {
@@ -298,7 +298,7 @@
 							<option>Seçiniz</option>
 							<?php } ?>
 							<?php
-								while($sk = mysql_fetch_array($sayfakategori)) {
+								while($sk = $sayfakategori->fetch()) {
 							?>
 							<?php
 								if ($sk["durum"] == 0) {
@@ -358,9 +358,9 @@
 
 		if ($hareket == "sil") {
 
-			$sil = mysql_query("DELETE FROM sayfa where id = '$id'");
+			$sil = $vt->query("DELETE FROM sayfa where id = '$id'");
 
-			$ral = mysql_fetch_array($sayfalarid);
+			$ral = $sayfalarid->fetch();
 			$resimsil = @unlink("..".$ral['resim']);
 
 			go("index.php?do=islem&icerik=sayfa&islem=liste&hareket=onay&id=$id",0);
@@ -368,11 +368,11 @@
 		}
 
 		if ($durum == "0") {
-			$d = mysql_query("UPDATE sayfa SET durum = '0' where id = '$id'");
+			$d = $vt->query("UPDATE sayfa SET durum = '0' where id = '$id'");
 			go("index.php?do=islem&icerik=sayfa&islem=liste&hareket=onay&id=$id",0);
 		}
 		if ($durum == "1") {
-			$d = mysql_query("UPDATE sayfa SET durum = '1' where id = '$id'");
+			$d = $vt->query("UPDATE sayfa SET durum = '1' where id = '$id'");
 			go("index.php?do=islem&icerik=sayfa&islem=liste&hareket=onay&id=$id",0);
 		}
 	?>
@@ -398,7 +398,7 @@
 			   		</thead>
 			    	<tbody>
 				    	<?php
-				    		while($sliste = mysql_fetch_array($sayfalar)) {
+				    		while($sliste = $sayfalar->fetch()) {
 				    	?>
 			    		<tr>
 			    			<th><?=$sliste["id"];?></th>
@@ -418,8 +418,8 @@
 			    			<th><?=$sliste["baslik"];?></th>
 			    			<th>
 			    				<?php
-			    					$sayfakatadi = mysql_query("SELECT * FROM sayfa_kategori where id = '".$sliste["kategori"]."'");
-			    					$sk = mysql_fetch_array($sayfakatadi);
+			    					$sayfakatadi = $vt->query("SELECT * FROM sayfa_kategori where id = '".$sliste["kategori"]."'");
+			    					$sk = $sayfakatadi->fetch();
 			    				?>
 			    				<?=$sk["baslik"];?>
 			    			</th>

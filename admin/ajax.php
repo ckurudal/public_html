@@ -53,9 +53,9 @@
 	if ($do == "resimver")
 	{
 			
-		$resimver = mysql_query("SELECT * FROM emlak_resim WHERE emlakno='$islemno' ORDER BY id DESC");
+		$resimver = $vt->query("SELECT * FROM emlak_resim WHERE emlakno='$islemno' ORDER BY id DESC");
 			
-		while ($resimcek = mysql_fetch_array($resimver, MYSQL_ASSOC))
+		while ($resimcek = $resimver->fetch())
 			
 	{
 		
@@ -117,12 +117,12 @@
 	
     $id = $_GET["id"];
 
-    $query = mysql_query("select * from emlak_resim where id = '$id' and emlakno = '$islemno'");
-    $row = mysql_fetch_array($query);
+    $query = $vt->query("select * from emlak_resim where id = '$id' and emlakno = '$islemno'");
+    $row = $query->fetch();
     $resimad = $row["resimad"];
     unlink("../uploads/resim/".$resimad);
 
-    $resimsil = mysql_query("delete from emlak_resim where id = '$id' and emlakno = '$islemno'");
+    $resimsil = $vt->query("delete from emlak_resim where id = '$id' and emlakno = '$islemno'");
   } 
 ?>
 

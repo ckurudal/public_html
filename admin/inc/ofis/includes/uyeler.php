@@ -4,7 +4,7 @@
 
 		if ($sifre == "sifre") {
 
-		$ysifre=mysql_fetch_array($yonetici);
+		$ysifre=$yonetici->fetch();
 
 		if (isset($_POST["sifrekaydet"])) {
 
@@ -14,7 +14,7 @@
 
 			$yenisifre=trim(md5($_POST["yenisifre"]));
 
-				$sifreduzenle=mysql_query("UPDATE yonetici SET pass = '$yenisifre' where id = '$id'");
+				$sifreduzenle=$vt->query("UPDATE yonetici SET pass = '$yenisifre' where id = '$id'");
 
 			}
 
@@ -114,8 +114,8 @@
 
     	<?php if ($emlakofisi == true) { ?>
          <?php
-         	$subeleradi = mysql_query("SELECT * FROM subeler where id = '$emlakofisi'");
-         	$subeadi = mysql_fetch_array($subeleradi);
+         	$subeleradi = $vt->query("SELECT * FROM subeler where id = '$emlakofisi'");
+         	$subeadi = $subeleradi->fetch();
          ?>
          <h5 class="alert alert-success"><i class="fa fa-users"></i> <strong><?=$subeadi["adi"];?></strong> Gayrimenkul Danışmanları</h5>
          <?php } ?>
@@ -126,15 +126,15 @@
 
 				if ($hareket == "sil") {
 
-					$sil = mysql_query("DELETE FROM yonetici where id = '$id'");
+					$sil = $vt->query("DELETE FROM yonetici where id = '$id'");
 
-	            	$ral = mysql_fetch_array($yonetici);
+	            	$ral = $yonetici->fetch();
 					unlink("../".$ral['resim']);
 
-					$sosyalsil = mysql_query("DELETE FROM yonetici_sosyal where yoneticiid = '$id'");
+					$sosyalsil = $vt->query("DELETE FROM yonetici_sosyal where yoneticiid = '$id'");
 
 					if ($yetki == 2) {
-						$silofis = mysql_query("DELETE FROM subeler where yetkiliuye = '$id'");
+						$silofis = $vt->query("DELETE FROM subeler where yetkiliuye = '$id'");
 					}
 
 					if (yetki() == 0) {go("index.php?do=islem&ofis=yonetici&islem=liste&hareket=onay",0);}
@@ -145,7 +145,7 @@
 				}
 
 				if ($durum == "0") {
-					$d = mysql_query("UPDATE yonetici SET durum = '0' where id = '$id'");
+					$d = $vt->query("UPDATE yonetici SET durum = '0' where id = '$id'");
 
 					if ($yetki == 0) {go("index.php?do=islem&ofis=yonetici&islem=liste&uye=yonetici&hareket=onay",0);}
 					if ($yetki == 1) {go("index.php?do=islem&ofis=yonetici&islem=liste&uye=bireysel&hareket=onay",0);}
@@ -154,7 +154,7 @@
 
 				}
 				if ($durum == "1") {
-					$d = mysql_query("UPDATE yonetici SET durum = '1' where id = '$id'");
+					$d = $vt->query("UPDATE yonetici SET durum = '1' where id = '$id'");
 
 					if ($yetki == 0) {go("index.php?do=islem&ofis=yonetici&islem=liste&uye=yonetici&hareket=onay",0);}
 					if ($yetki == 1) {go("index.php?do=islem&ofis=yonetici&islem=liste&uye=bireysel&hareket=onay",0);}
@@ -185,7 +185,7 @@
 				    </thead>
 				    <tbody>
 				    	<?php
-				    		while($yliste = mysql_fetch_array($yoneticiliste)) {
+				    		while($yliste = $yoneticiliste->fetch()) {
 				    	?>
 				    	<tr>
 				    		<th>
@@ -210,8 +210,8 @@
 				    		<?php if ($uye == "danisman" || $emlakofisi == true) { ?>
 				    		<th>
 				    		<?php
-				    			$emlakofisliste = mysql_query("SELECT * FROM subeler where id = '".$yliste["ofis"]."'");
-				    			$ofisliste = mysql_fetch_array($emlakofisliste);
+				    			$emlakofisliste = $vt->query("SELECT * FROM subeler where id = '".$yliste["ofis"]."'");
+				    			$ofisliste = $emlakofisliste->fetch();
 				    		?>
 				    		<?=$ofisliste["adi"];?>
 				    		</th>
@@ -219,8 +219,8 @@
 				    		<?php if ($uye == "kurumsal") { ?>
 				    		<th>
 				    		<?php
-				    			$emlakofiskurumsal = mysql_query("SELECT * FROM subeler where yetkiliuye = '".$yliste["id"]."'");
-				    			$ofislistekurumsal = mysql_fetch_array($emlakofiskurumsal);
+				    			$emlakofiskurumsal = $vt->query("SELECT * FROM subeler where yetkiliuye = '".$yliste["id"]."'");
+				    			$ofislistekurumsal = $emlakofiskurumsal->fetch();
 				    		?>
 				    		<a href="index.php?do=islem&ofis=subeekle&islem=duzenle&id=<?=$ofislistekurumsal["id"];?>"><?=$ofislistekurumsal["adi"];?></a>
 				    		</th>

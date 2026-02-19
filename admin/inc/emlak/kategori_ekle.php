@@ -24,7 +24,7 @@
 			$anasayfa_baslik = $_POST["anasayfa_baslik"];
 			$anasayfa_link = $_POST["anasayfa_link"];
 				
-			$query = mysql_query("INSERT INTO emlak_kategori
+			$query = $vt->query("INSERT INTO emlak_kategori
 				(
 					kat_adi,
 					seo,
@@ -44,14 +44,14 @@
 				)
 			");
 
-			$kategori = mysql_query("SELECT * FROM emlak_kategori order by kat_id desc limit 1");
-			$katver = mysql_fetch_array($kategori);
+			$kategori = $vt->query("SELECT * FROM emlak_kategori order by kat_id desc limit 1");
+			$katver = $kategori->fetch();
 
 			$katkatid = $katver["kat_id"];
 
 			for ($i=0; $i < count($kat_kattipid); $i++) { 	
 
-				$kattipekle = mysql_query("INSERT INTO emlak_ilantipi_katliste 
+				$kattipekle = $vt->query("INSERT INTO emlak_ilantipi_katliste 
 
 					(katid, ilantipid, ilantipdurum) values ('".$katkatid."', '".$kat_kattipid[$i]."', '".$kat_kattip[$i]."')"); 
 			}
@@ -62,7 +62,7 @@
 				go("index.php?do=islem&emlak=kategori&islem=ok", 0);
 			} else {
 				hata();
-				echo mysql_error();
+				
 			}
 			
 			} else {
@@ -70,9 +70,9 @@
 			// ust ve ana kategorileri listeler
 
 			function kategori($id = 0, $string = 0, $ustid) {
-			  $query = mysql_query("SELECT * FROM emlak_kategori WHERE kat_ustid = '$id'");
-			  if (mysql_affected_rows()) {
-				while ($row = mysql_fetch_array($query)) {
+			  $query = $vt->query("SELECT * FROM emlak_kategori WHERE kat_ustid = '$id'");
+			  if ($query->rowCount()) {
+				while ($row = $query->fetch()) {
 				  echo '<option';
 				  if ($row["kat_id"] == $ustid) {
 					echo ' selected ';
@@ -121,10 +121,10 @@
 					  <div class="col-sm-10">
 
 					  	<?php 
-					  		$ilansekli=mysql_query("SELECT * FROM emlak_ilansekli where id");
+					  		$ilansekli=$vt->query("SELECT * FROM emlak_ilansekli where id");
 					  	?> 
 
-						<?php while ($isekli=mysql_fetch_array($ilansekli)) { ?>
+						<?php while ($isekli=$ilansekli->fetch()) { ?>
 							<label for="ilansekli">
 							  <input type="radio" name="ilansekli" value="<?=$isekli["id"];?>" class="minimal">
 							   <?=$isekli[baslik];?> 
@@ -196,8 +196,8 @@
 						<div class="col-md-10">
 							<?php
 								// Emlak Tipi
-								$emlaktip = mysql_query("select * from emlak_ilantipi where id");							
-								while ($tipver = mysql_fetch_array($emlaktip)) {
+								$emlaktip = $vt->query("select * from emlak_ilantipi where id");							
+								while ($tipver = $emlaktip->fetch()) {
 							 ?>
 							<?php if ($tipver["durum"]=="0") { ?>
 							<label for="kat_kattip">

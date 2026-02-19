@@ -114,8 +114,8 @@
 								<select class="form-control select2" name="ofis">
 									<option value="">Seçiniz</option>
 									<?php
-                                        $subeler = mysql_query("SELECT * FROM subeler where id");
-                                        while ($sube=mysql_fetch_array($subeler)) {
+                                        $subeler = $vt->query("SELECT * FROM subeler where id");
+                                        while ($sube=$subeler->fetch()) {
                                             ?>
 									<?php
                                             if ($sube["durum"] == 0) {
@@ -132,8 +132,8 @@
                                             <select class="form-control selec t2" name="unvan">
                                                 <option value="">Seçiniz</option>
                                                 <?php
-                                                $unvanlar = mysql_query("SELECT * FROM yonetici_unvan where id");
-                                                while ($unvan=mysql_fetch_array($unvanlar)) {
+                                                $unvanlar = $vt->query("SELECT * FROM yonetici_unvan where id");
+                                                while ($unvan=$unvanlar->fetch()) {
                                                     ?>
                                                     <?php
                                                     if ($unvan["durum"] == 0) {
@@ -212,8 +212,8 @@
                                     <div class="form-horizontal">
                                         <div class="form-group">
                                             <?php
-                                            $sosyalmedya = mysql_query("SELECT * FROM ayar_sosyal order by sira asc");
-                                            while ($sosyal=mysql_fetch_array($sosyalmedya)) {
+                                            $sosyalmedya = $vt->query("SELECT * FROM ayar_sosyal order by sira asc");
+                                            while ($sosyal=$sosyalmedya->fetch()) {
                                                 ?>
                                                 <div class="col-sm-12">
                                                     <label class="control-label"><?=$sosyal["baslik"];?>:</label>
@@ -324,8 +324,8 @@
 								<select class="form-control select2" name="ofis">
 									<option value="">Seçiniz</option>
 									<?php
-                                        $subeler = mysql_query("SELECT * FROM subeler where id");
-                                        while ($sube=mysql_fetch_array($subeler)) {
+                                        $subeler = $vt->query("SELECT * FROM subeler where id");
+                                        while ($sube=$subeler->fetch()) {
                                             ?>
 									<?php
                                             if ($sube["durum"] == 0) {
@@ -342,8 +342,8 @@
                                             <select class="form-control selec t2" name="unvan">
                                                 <option value="">Seçiniz</option>
                                                 <?php
-                                                $unvanlar = mysql_query("SELECT * FROM yonetici_unvan where id");
-                                                while ($unvan=mysql_fetch_array($unvanlar)) {
+                                                $unvanlar = $vt->query("SELECT * FROM yonetici_unvan where id");
+                                                while ($unvan=$unvanlar->fetch()) {
                                                     ?>
                                                     <?php
                                                     if ($unvan["durum"] == 0) {
@@ -422,8 +422,8 @@
                                     <div class="form-horizontal">
                                         <div class="form-group">
                                             <?php
-                                            $sosyalmedya = mysql_query("SELECT * FROM ayar_sosyal order by sira asc");
-                                            while ($sosyal=mysql_fetch_array($sosyalmedya)) {
+                                            $sosyalmedya = $vt->query("SELECT * FROM ayar_sosyal order by sira asc");
+                                            while ($sosyal=$sosyalmedya->fetch()) {
                                                 ?>
                                                 <div class="col-sm-12">
                                                     <label class="control-label"><?=$sosyal["baslik"];?>:</label>
@@ -525,8 +525,8 @@
 								<select class="form-control select2" name="ofis">
 									<option value="">Seçiniz</option>
 									<?php
-                            $subeler = mysql_query("SELECT * FROM subeler where id");
-                            while ($sube=mysql_fetch_array($subeler)) {
+                            $subeler = $vt->query("SELECT * FROM subeler where id");
+                            while ($sube=$subeler->fetch()) {
                                 ?>
 									<?php
                                 if ($sube["durum"] == 0) {
@@ -543,8 +543,8 @@
                                 <select class="form-control selec t2" name="unvan">
                                     <option value="">Seçiniz</option>
                                     <?php
-                                    $unvanlar = mysql_query("SELECT * FROM yonetici_unvan where id");
-                                    while ($unvan=mysql_fetch_array($unvanlar)) {
+                                    $unvanlar = $vt->query("SELECT * FROM yonetici_unvan where id");
+                                    while ($unvan=$unvanlar->fetch()) {
                                         ?>
                                         <?php
                                         if ($unvan["durum"] == 0) {
@@ -623,8 +623,8 @@
                         <div class="form-horizontal">
                             <div class="form-group">
                                 <?php
-                                $sosyalmedya = mysql_query("SELECT * FROM ayar_sosyal order by sira asc");
-                                while ($sosyal=mysql_fetch_array($sosyalmedya)) {
+                                $sosyalmedya = $vt->query("SELECT * FROM ayar_sosyal order by sira asc");
+                                while ($sosyal=$sosyalmedya->fetch()) {
                                     ?>
                                     <div class="col-sm-12">
                                         <label class="control-label"><?=$sosyal["baslik"];?>:</label>

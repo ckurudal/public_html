@@ -7,15 +7,15 @@
 	$emlak = $_GET["emlak"]; 
 	$hareket = $_GET["hareket"];
 	$id = $_GET["id"];  
-	$dbilceler = mysql_query("select * from ilce where ilce_id = '$id'");
-	$ilce = mysql_fetch_array($dbilceler); 
-	$dbilsec = mysql_query("select * from sehir where sehir_key = '$ilce[ilce_sehirkey]'");
-	$ilsec = mysql_fetch_array($dbilsec);
+	$dbilceler = $vt->query("select * from ilce where ilce_id = '$id'");
+	$ilce = $dbilceler->fetch(); 
+	$dbilsec = $vt->query("select * from sehir where sehir_key = '$ilce[ilce_sehirkey]'");
+	$ilsec = $dbilsec->fetch();
 ?>
 <?php if (isset($_POST["ilceduzenle"])) {
 	$ilce_title = trim($_POST["ilce_title"]); 
 	$ilce_sehirkey = trim($_POST["ilce_sehirkey"]);  
-	$ilduzenle = mysql_query("update ilce set 
+	$ilduzenle = $vt->query("update ilce set 
 	ilce_title			=  	'$ilce_title',
 	ilce_sehirkey		=  	'$ilce_sehirkey',
 	ilce_key		    =  	'$rand_key'
@@ -42,7 +42,7 @@
 	if (empty($ilce_title)) { 
 		hata("İlçe adı boş olamaz."); 
 	} else { 
-		$ilceekle = mysql_query("insert into ilce  
+		$ilceekle = $vt->query("insert into ilce  
 		(ilce_title,ilce_sehirkey, ilce_key)	values  ('$ilce_title','$ilce_sehirkey','$rand_key');
 	"); 
 		go("index.php?do=islem&emlak=ilceler&hareket=onay",0); 
@@ -72,8 +72,8 @@
                             <?php if ($islem == "ekle") { ?>
                             <select class="form-control select2" name="ilce_sehirkey">
                             <?php 
-                                $illerekle = mysql_query("select * from sehir order by adi asc");
-                                while($il = mysql_fetch_array($illerekle)) {
+                                $illerekle = $vt->query("select * from sehir order by adi asc");
+                                while($il = $illerekle->fetch()) {
                             ?>	
                             <option value="<?=$il['sehir_key'];?>"><?=$il["adi"];?></option>
                             <?php } ?>
@@ -89,8 +89,8 @@
                                 <option selected> İL SEÇİNİZ </option>
                                 <?php } ?>
                                 <?php 
-                                    $iller = mysql_query("select * from sehir order by adi asc");
-                                    while($il = mysql_fetch_array($iller)) {
+                                    $iller = $vt->query("select * from sehir order by adi asc");
+                                    while($il = $iller->fetch()) {
                                 ?>	
                                 <option value="<?=$il['sehir_key'];?>"><?=$il["adi"];?></option>
                                 <?php } ?>

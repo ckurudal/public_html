@@ -62,8 +62,8 @@ $bilgi = $_GET["bilgi"];
                     if (!$email || !$sifre) {
                         hata_alert("E-posta ve şifre giriniz..");
                     } else {
-                        $query = mysql_query("SELECT * FROM yonetici WHERE email = '$email' && pass = '$sifre' && durum = 0");
-                        if (mysql_affected_rows()) {
+                        $query = $vt->query("SELECT * FROM yonetici WHERE email = '$email' AND pass = '$sifre' AND durum = 0");
+                        if ($query->rowCount()) {
                             $row = row($query);
                             $_SESSION = array (
                                 "uyelogin" => true,

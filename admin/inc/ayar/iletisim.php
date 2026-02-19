@@ -8,8 +8,8 @@
 	$islem =  @$_GET["islem"];
 	$hareket =  @$_GET["hareket"];  
 
-	$ayariletisim = mysql_query("SELECT * FROM ayar_site where id");
-	$a = mysql_fetch_array($ayariletisim);
+	$ayariletisim = $vt->query("SELECT * FROM ayar_site where id");
+	$a = $ayariletisim->fetch();
 
 ?>
 
@@ -31,7 +31,7 @@
 	if (isset($_POST["kaydet"])) {
 
 		$firmadi = $_POST["firmadi"];
-		$adres = mysql_real_escape_string($_POST["adres"]);
+		$adres = $_POST["adres"];
 		$email = $_POST["email"];
 		$email2 = $_POST["email2"];
 		$sabittel = $_POST["sabittel"];
@@ -46,14 +46,14 @@
 		$sosyalicon = $_POST["sosyalicon"];
 		$sosyallink2 = $_POST["sosyallink2"];
 
-		$kaydet = mysql_query("UPDATE ayar_site SET firmadi = '$firmadi', adres = '$adres', email = '$email', email2 = '$email2', sabittel = '$sabittel', sabittel2 = '$sabittel2', fax = '$fax', gsm = '$gsm', gsm2 = '$gsm2'  where id = '1'");
+		$kaydet = $vt->query("UPDATE ayar_site SET firmadi = '$firmadi', adres = '$adres', email = '$email', email2 = '$email2', sabittel = '$sabittel', sabittel2 = '$sabittel2', fax = '$fax', gsm = '$gsm', gsm2 = '$gsm2'  where id = '1'");
 
-		$silsosyal = mysql_query("DELETE FROM ayar_sitesosyal where siteid = '1'");
+		$silsosyal = $vt->query("DELETE FROM ayar_sitesosyal where siteid = '1'");
 
 
 		for ($i=0; $i < count($sosyalid) ; $i++) {
 		
-        	$sosyalekle = mysql_query("INSERT INTO ayar_sitesosyal (siteid, sosyalid, sosyallink, baslik, icon, link) VALUES ('1', '".$sosyalid[$i]."','".$sosyallink[$i]."','".$sosyalbaslik[$i]."','".$sosyalicon[$i]."','http://".$sosyallink2[$i]."')");
+        	$sosyalekle = $vt->query("INSERT INTO ayar_sitesosyal (siteid, sosyalid, sosyallink, baslik, icon, link) VALUES ('1', '".$sosyalid[$i]."','".$sosyallink[$i]."','".$sosyalbaslik[$i]."','".$sosyalicon[$i]."','http://".$sosyallink2[$i]."')");
 		}		
 
 		go("index.php?do=islem&ayarlar=iletisim&hareket=onay",0);  
@@ -146,10 +146,10 @@
 						<div class="form-horizontal">   
 
 							<?php
-								$sosyalmedya = mysql_query("SELECT * FROM ayar_sosyal order by sira asc");
-								while($sosyal=mysql_fetch_array($sosyalmedya)) {
-								$ysosyal = mysql_query("SELECT * FROM ayar_sitesosyal where sosyalid = '".$sosyal["id"]."' && siteid = '1' ");
-								$ys = mysql_fetch_array($ysosyal);
+								$sosyalmedya = $vt->query("SELECT * FROM ayar_sosyal order by sira asc");
+								while($sosyal=$sosyalmedya->fetch()) {
+								$ysosyal = $vt->query("SELECT * FROM ayar_sitesosyal where sosyalid = '".$sosyal["id"]."' AND siteid = '1' ");
+								$ys = $ysosyal->fetch();
 							?>
 							<div class="form-group">
 								<input type="text" class="form-control hidden" name="sosyallink2[]" value="<?=$sosyal["link"];?>">

@@ -22,10 +22,10 @@
 
 	if (isset($_POST["kaydet"])) { 
 
-		$kategori_sidebar = mysql_real_escape_string($_POST["kategori_sidebar"]);
-		$ilan_sidebar = mysql_real_escape_string($_POST["ilan_sidebar"]);
-		$kategori_ust = mysql_real_escape_string($_POST["kategori_ust"]);
-		$kategori_alt = mysql_real_escape_string($_POST["kategori_alt"]);
+		$kategori_sidebar = $_POST["kategori_sidebar"];
+		$ilan_sidebar = $_POST["ilan_sidebar"];
+		$kategori_ust = $_POST["kategori_ust"];
+		$kategori_alt = $_POST["kategori_alt"];
 
 		$duzenle = $vt->query("UPDATE reklam SET kategori_sidebar = '".$kategori_sidebar."', ilan_sidebar = '".$ilan_sidebar."', kategori_ust = '".$kategori_ust."', kategori_alt = '".$kategori_alt."' WHERE id = 1");
 

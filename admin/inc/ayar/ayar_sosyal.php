@@ -8,8 +8,8 @@
 	$hareket =  @$_GET["hareket"];
 	$durum =  @$_GET["durum"];
 
-	$sosyalsiteler = mysql_query("SELECT * FROM ayar_sosyal order by sira asc");
-	$sosyalsitelerid = mysql_query("SELECT * FROM ayar_sosyal where id = '$id'");
+	$sosyalsiteler = $vt->query("SELECT * FROM ayar_sosyal order by sira asc");
+	$sosyalsitelerid = $vt->query("SELECT * FROM ayar_sosyal where id = '$id'");
 
 ?>
 
@@ -30,7 +30,7 @@
 
 	if (isset($_POST["sosyalekle"]) || isset($_POST["sosyalkaydet"]) || isset($_POST["sirakaydet"])) {
 		
-		$baslik = trim(mysql_real_escape_string($_POST["baslik"])); 
+		$baslik = trim($_POST["baslik"]); 
 		$seo = seo($_POST["baslik"]); 
 		$link = $_POST["link"]; 
 		$icon = $_POST["icon"]; 
@@ -39,7 +39,7 @@
 
 		if (isset($_POST["sosyalekle"])) {
 
-			$sosyalekle = mysql_query("INSERT INTO ayar_sosyal (baslik, seo, link, icon) values ('$baslik', '$seo', '$link', '$icon')");	
+			$sosyalekle = $vt->query("INSERT INTO ayar_sosyal (baslik, seo, link, icon) values ('$baslik', '$seo', '$link', '$icon')");	
 
 			if ($sosyalekle == true) {
 				go("index.php?do=ayar/ayar_sosyal&hareket=onay",0);
@@ -48,7 +48,7 @@
 
 		if (isset($_POST["sosyalkaydet"])) {
 
-			$sosyalkaydet = mysql_query("UPDATE ayar_sosyal SET baslik = '$baslik', seo = '$seo', link = '$link', icon = '$icon' where id = '$id'");	
+			$sosyalkaydet = $vt->query("UPDATE ayar_sosyal SET baslik = '$baslik', seo = '$seo', link = '$link', icon = '$icon' where id = '$id'");	
 
 			if ($sosyalkaydet == true) {
 				go("index.php?do=ayar/ayar_sosyal&hareket=onay",0);
@@ -58,11 +58,11 @@
 
 	if ($islem == "sil") {
 
-		$sil = mysql_query("DELETE FROM ayar_sosyal where id = '$id'");
+		$sil = $vt->query("DELETE FROM ayar_sosyal where id = '$id'");
 
-		$silsosyal = mysql_query("DELETE FROM yonetici_sosyal where sosyalid = '$id'");	
+		$silsosyal = $vt->query("DELETE FROM yonetici_sosyal where sosyalid = '$id'");	
 
-		$sil_ayarsitesosyal = mysql_query("DELETE FROM ayar_sitesosyal where sosyalid = '$id'");		 
+		$sil_ayarsitesosyal = $vt->query("DELETE FROM ayar_sitesosyal where sosyalid = '$id'");		 
 
 		go("index.php?do=ayar/ayar_sosyal&hareket=onay",0);
 	} 
@@ -71,7 +71,7 @@
 
 		for ($i=0; $i < count($siraid) ; $i++) { 
 			
-			$sirakaydet = mysql_query("UPDATE ayar_sosyal SET sira = '$sira[$i]' where id = '$siraid[$i]'");
+			$sirakaydet = $vt->query("UPDATE ayar_sosyal SET sira = '$sira[$i]' where id = '$siraid[$i]'");
 				 
 			if ($sirakaydet == true) {
 				go("index.php?do=ayar/ayar_sosyal&hareket=onay",0);
@@ -90,7 +90,7 @@
 				if ($islem == "duzenle") {
 			?>
 			<?php 
-				$sosd = mysql_fetch_array($sosyalsitelerid);
+				$sosd = $sosyalsitelerid->fetch();
 			?>
 
 			<div class="box">
@@ -218,11 +218,11 @@
 				}
 
 				if ($durum == "0") {
-					$d = mysql_query("UPDATE ayar_sosyal SET durum = '0' where id = '$id'"); 
+					$d = $vt->query("UPDATE ayar_sosyal SET durum = '0' where id = '$id'"); 
 					go("index.php?do=ayar/ayar_sosyal&hareket=onay",0);
 				}
 				if ($durum == "1") {
-					$d = mysql_query("UPDATE ayar_sosyal SET durum = '1' where id = '$id'"); 
+					$d = $vt->query("UPDATE ayar_sosyal SET durum = '1' where id = '$id'"); 
 					go("index.php?do=ayar/ayar_sosyal&hareket=onay",0);
 				}
 
@@ -253,7 +253,7 @@
 					   		</thead>
 					    	<tbody>
 					    		<?php 
-					    			while($sos = mysql_fetch_array($sosyalsiteler)) {
+					    			while($sos = $sosyalsiteler->fetch()) {
 					    		?>
 					    		<tr>
 					    			<th><?=$sos["id"];?></th>

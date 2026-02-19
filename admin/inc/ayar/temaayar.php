@@ -9,8 +9,8 @@
 	$id =  @$_GET["id"];  
 	$tema =  @$_GET["tema"];  
 
-	$temalar = mysql_query("SELECT * FROM ayar_tema where aktif = 0 order by id DESC");
-	$temalarid = mysql_query("SELECT * FROM ayar_tema where id = '$id'");
+	$temalar = $vt->query("SELECT * FROM ayar_tema where aktif = 0 order by id DESC");
+	$temalarid = $vt->query("SELECT * FROM ayar_tema where id = '$id'");
 
 ?>
 <!-- Content Header (Page header) -->
@@ -26,11 +26,11 @@
 <?php
 	if ($tema == "aktif") {
 
-		$taktif = mysql_fetch_array($temalarid);		
-		$aktiftema = mysql_query("UPDATE ayarlar SET site_tema = '".$taktif["temaadi"]."', tema_url = '".$taktif["temaurl"]."' where id = '1'");
+		$taktif = $temalarid->fetch();		
+		$aktiftema = $vt->query("UPDATE ayarlar SET site_tema = '".$taktif["temaadi"]."', tema_url = '".$taktif["temaurl"]."' where id = '1'");
 
-		$aktif_ayartema = mysql_query("UPDATE ayar_tema SET aktif = '0' where id");
-		$aktif_ayartemaid = mysql_query("UPDATE ayar_tema SET aktif = '1' where id = '$id'");
+		$aktif_ayartema = $vt->query("UPDATE ayar_tema SET aktif = '0' where id");
+		$aktif_ayartemaid = $vt->query("UPDATE ayar_tema SET aktif = '1' where id = '$id'");
 
 		if ($aktiftema == true) {
 
@@ -47,8 +47,8 @@
 		$temaadi	 = trim($_POST["temaadi"]);
 		$temaurl	 = trim($_POST["temaurl"]);
 
-		$varmiad=mysql_num_rows(mysql_query("SELECT * FROM ayar_tema where temaadi='$temaadi'"));
-		$varmiurl=mysql_num_rows(mysql_query("SELECT * FROM ayar_tema where temaurl='$temaurl'"));
+		$varmiad=$vt->query("SELECT * FROM ayar_tema where temaadi='$temaadi'")->rowCount();
+		$varmiurl=$vt->query("SELECT * FROM ayar_tema where temaurl='$temaurl'")->rowCount();
 
 		if($varmiad!=0 || $varmiurl!=0 || empty($temaadi) || empty($temaurl)) { 
 
@@ -72,7 +72,7 @@
 
 			if (isset($_POST["temaekle"])) {
 
-				$temaekle = mysql_query("INSERT INTO ayar_tema (temaadi, temaurl) values ('$temaadi','$temaurl')");
+				$temaekle = $vt->query("INSERT INTO ayar_tema (temaadi, temaurl) values ('$temaadi','$temaurl')");
 
 				// resim yukleme
 					
@@ -91,11 +91,11 @@
 				            $dosya = "../uploads/resim/".$saat.".jpg";
 				            if (move_uploaded_file($_FILES["resim"]["tmp_name"][$i], $dosya)) {
 								
-				                $ids = mysql_query("SELECT * FROM ayar_tema order by id desc limit 1");
-				                $id = mysql_fetch_array($ids); 
+				                $ids = $vt->query("SELECT * FROM ayar_tema order by id desc limit 1");
+				                $id = $ids->fetch(); 
 
 				                $link = "/uploads/resim/".$saat.".jpg";
-				                $ekle = mysql_query("UPDATE ayar_tema SET resim = '$link' where id = '".$id["id"]."'");
+				                $ekle = $vt->query("UPDATE ayar_tema SET resim = '$link' where id = '".$id["id"]."'");
 				                $yuklenenler++; 
 
 				            }
@@ -169,8 +169,8 @@
 				<div class="row">
 					<?php
 
-						$siteaktiftemaid = mysql_query("SELECT * FROM ayar_tema where aktif = '1'");
-						$siteaktiftema = mysql_fetch_array($siteaktiftemaid);
+						$siteaktiftemaid = $vt->query("SELECT * FROM ayar_tema where aktif = '1'");
+						$siteaktiftema = $siteaktiftemaid->fetch();
 					?>				
 					<?php
 						if ($siteaktiftema["aktif"] == 1) {
@@ -257,7 +257,7 @@
 				</div>  
 				<div class="row"> 
 					<?php
-						$temaaktif = mysql_fetch_array(mysql_query("SELECT * FROM ayar_tema where aktif = 1"));
+						$temaaktif = $vt->query("SELECT * FROM ayar_tema where aktif = 1")->fetch();
 					?>
 					<div class="col-md-3">
 						<div class="thumbnail sec">
@@ -273,7 +273,7 @@
 						</div>
 					</div>
 					<?php 
-						while($tema = mysql_fetch_array($temalar)) {
+						while($tema = $temalar->fetch()) {
 					?>
 					<?php
 						if ($tema["aktif"] != 1) {

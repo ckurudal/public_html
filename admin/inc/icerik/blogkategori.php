@@ -9,33 +9,33 @@
 	$hareket = $_GET["hareket"];
 	$durum = $_GET["durum"];
 
-	$bloglar = mysql_query("SELECT * FROM blog_kategori where id = '$id'");
-	$blogkatliste = mysql_query("SELECT * FROM blog_kategori order by id desc");
+	$bloglar = $vt->query("SELECT * FROM blog_kategori where id = '$id'");
+	$blogkatliste = $vt->query("SELECT * FROM blog_kategori order by id desc");
 ?>
 <section class="c ontent"> 
 <?php 
 	if (isset($_POST["blogkategoriekle"]) || isset($_POST["blogkategorikaydet"])) {
 
-		$baslik 		= trim(mysql_real_escape_string($_POST["baslik"]));
+		$baslik 		= trim($_POST["baslik"]);
 		$seo 			= seo($_POST["baslik"]);
-		$title 			= trim(mysql_real_escape_string($_POST["title"]));
-		$aciklama 		= trim(mysql_real_escape_string($_POST["aciklama"]));
-		$keyw			= trim(mysql_real_escape_string($_POST["keyw"]));
+		$title 			= trim($_POST["title"]);
+		$aciklama 		= trim($_POST["aciklama"]);
+		$keyw			= trim($_POST["keyw"]);
 
 		if (isset($_POST["blogkategoriekle"])) {
 
-			$blogkategoriekle = mysql_query("INSERT INTO blog_kategori (baslik, seo, title, aciklama, keyw) values ('$baslik','$seo','$title','$aciklama','$keyw')");	
+			$blogkategoriekle = $vt->query("INSERT INTO blog_kategori (baslik, seo, title, aciklama, keyw) values ('$baslik','$seo','$title','$aciklama','$keyw')");	
 
 			if ($blogkategoriekle == true) {
 				go("index.php?do=islem&icerik=blogkategori&islem=liste&hareket=onay",0);
 			} else {
-				echo mysql_error();
+				
 			}
 		}
 
 		if (isset($_POST["blogkategorikaydet"])) {
 
-			$unvankaydet = mysql_query("UPDATE blog_kategori SET baslik = '$baslik', seo = '$seo', title = '$title', aciklama = '$aciklama', keyw = '$keyw'  where id = '$id'");	
+			$unvankaydet = $vt->query("UPDATE blog_kategori SET baslik = '$baslik', seo = '$seo', title = '$title', aciklama = '$aciklama', keyw = '$keyw'  where id = '$id'");	
 
 			if ($unvankaydet == true) {
 				go("index.php?do=islem&icerik=blogkategori&islem=liste&hareket=onay",0);
@@ -103,7 +103,7 @@
 <?php if ($islem == "duzenle") { ?>
 <form action="" method="post" enctype="multipart/form-data">
 	<?php 
-		$bk = mysql_fetch_array($bloglar);
+		$bk = $bloglar->fetch();
 	?>
 	<section class="content"> 
 		<div class="box"> 
@@ -157,18 +157,18 @@
 
 		if ($hareket == "sil") {
 				
-			$sil = mysql_query("DELETE FROM blog_kategori where id = '$id'"); 
+			$sil = $vt->query("DELETE FROM blog_kategori where id = '$id'"); 
 
 			go("index.php?do=islem&icerik=blogkategori&islem=liste&hareket=onay&id=$id",0);
 
 		}
 
 		if ($durum == "0") {
-			$d = mysql_query("UPDATE blog_kategori SET durum = '0' where id = '$id'"); 
+			$d = $vt->query("UPDATE blog_kategori SET durum = '0' where id = '$id'"); 
 			go("index.php?do=islem&icerik=blogkategori&islem=liste&hareket=onay&id=$id",0);
 		}
 		if ($durum == "1") {
-			$d = mysql_query("UPDATE blog_kategori SET durum = '1' where id = '$id'"); 
+			$d = $vt->query("UPDATE blog_kategori SET durum = '1' where id = '$id'"); 
 			go("index.php?do=islem&icerik=blogkategori&islem=liste&hareket=onay&id=$id",0);
 		}
 	?>
@@ -188,7 +188,7 @@
 		   		</thead>
 		    	<tbody>
 			    	<?php 
-			    		while($bkliste = mysql_fetch_array($blogkatliste)) {
+			    		while($bkliste = $blogkatliste->fetch()) {
 			    	?>
 		    		<tr>
 		    			<th class="text-center"><?=$bkliste["id"];?></th>

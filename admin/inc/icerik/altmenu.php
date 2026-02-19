@@ -40,22 +40,22 @@
 
 		if (isset($_POST["ekle"])) {
 
-			$ekle = mysql_query("INSERT INTO altmenu (ustid, baslik, seo, url, harici, icon, tekaltmenu, bolge) values ('$ustid','$baslik','$seo','$url','$harici','$icon','$tekaltmenu','$bolge')");
+			$ekle = $vt->query("INSERT INTO altmenu (ustid, baslik, seo, url, harici, icon, tekaltmenu, bolge) values ('$ustid','$baslik','$seo','$url','$harici','$icon','$tekaltmenu','$bolge')");
 
 			if ($ekle == true) {
 				go("index.php?do=islem&icerik=altmenu&islem=liste&hareket=onay",0);
 			} else {
-				echo mysql_error();
+				
 			}
 		}
 
 		if (isset($_POST["kaydet"])) {
-			$kaydet = mysql_query("UPDATE altmenu SET ustid = '$ustid', baslik = '$baslik', seo = '$seo', harici = '$harici', url = '$url', icon = '$icon', tekaltmenu = '$tekaltmenu', bolge = '$bolge' where id = '$id'");
+			$kaydet = $vt->query("UPDATE altmenu SET ustid = '$ustid', baslik = '$baslik', seo = '$seo', harici = '$harici', url = '$url', icon = '$icon', tekaltmenu = '$tekaltmenu', bolge = '$bolge' where id = '$id'");
 
 			if ($kaydet == true) {
 				go("index.php?do=islem&icerik=altmenu&islem=liste&hareket=onay",0);
 			} else {
-				echo mysql_error();
+				
 			}
 		}
 
@@ -63,7 +63,7 @@
 
 			for ($i=0; $i < count($siraid) ; $i++) {
 
-				$sirakaydet = mysql_query("UPDATE altmenu SET sira = '$sira[$i]' where id = '$siraid[$i]'");
+				$sirakaydet = $vt->query("UPDATE altmenu SET sira = '$sira[$i]' where id = '$siraid[$i]'");
 
 				if ($sirakaydet == true) {
 					go("index.php?do=islem&icerik=altmenu&islem=liste&hareket=onay",0);
@@ -98,9 +98,9 @@
 							// ust ve ana kategorileri listeler
 
 							function altmenu($id = 0, $string = 0, $ustid) {
-							  $query = mysql_query("SELECT * FROM altmenu WHERE ustid = '$id'");
-							  if (mysql_affected_rows()) {
-								while ($row = mysql_fetch_array($query)) {
+							  $query = $vt->query("SELECT * FROM altmenu WHERE ustid = '$id'");
+							  if ($query->rowCount()) {
+								while ($row = $query->fetch()) {
 								  if ($row["durum"] == 0) {
 								  	echo '<option';
 									  if ($row["id"] == $ustid) {
@@ -129,8 +129,8 @@
 							<option value="">Seçiniz</option>
 							<optgroup label="İçerikler">
 								<?php
-									$sayfalar = mysql_query("SELECT * FROM sayfa where id");
-									while($sayfa = mysql_fetch_array($sayfalar)) {
+									$sayfalar = $vt->query("SELECT * FROM sayfa where id");
+									while($sayfa = $sayfalar->fetch()) {
 								?>
 									<?php
 										if ($sayfa["durum"] == 0) {
@@ -168,16 +168,16 @@
 								<?php } ?>
 							</optgroup>
 							<?php
-								$tipliste = mysql_query("SELECT * FROM emlak_ilantipi where id");
-								while($tip = mysql_fetch_array($tipliste)) {
+								$tipliste = $vt->query("SELECT * FROM emlak_ilantipi where id");
+								while($tip = $tipliste->fetch()) {
 							?>
 								<?php
 									if ($tip["durum"] == 0) {
 								?>
 								<optgroup label="<?=$tip["ad"];?>">
 									<?php
-										$kategoriustadi = mysql_query("SELECT * FROM emlak_kategori where kat_ustid = '0'");
-										while($katustadi = mysql_fetch_array($kategoriustadi)) {
+										$kategoriustadi = $vt->query("SELECT * FROM emlak_kategori where kat_ustid = '0'");
+										while($katustadi = $kategoriustadi->fetch()) {
 											$ilansekli = $vt->query("SELECT * FROM emlak_ilansekli where id = '".$katustadi["ilansekli"]."'");
 											while($isekli = $ilansekli->fetch()) {
 									?>
@@ -185,12 +185,12 @@
 										<?php } ?>
 									<?php } ?>
 									<?php
-										$kattipliste = mysql_query("SELECT * FROM emlak_ilantipi_katliste where ilantipid = '".$tip["id"]."'");
-										while($kattip = mysql_fetch_array($kattipliste)) {
+										$kattipliste = $vt->query("SELECT * FROM emlak_ilantipi_katliste where ilantipid = '".$tip["id"]."'");
+										while($kattip = $kattipliste->fetch()) {
 									?>
 										<?php
-											$kategori = mysql_query("SELECT * FROM emlak_kategori where kat_id = '".$kattip["katid"]."'");
-											while($katad = mysql_fetch_array($kategori)) {
+											$kategori = $vt->query("SELECT * FROM emlak_kategori where kat_id = '".$kattip["katid"]."'");
+											while($katad = $kategori->fetch()) {
 
 										?>
 											<?php
@@ -290,8 +290,8 @@
 <?php if ($islem == "duzenle") { ?>
 <form action="" method="post" enctype="multipart/form-data">
 	<?php
-		$altmenuler = mysql_query("SELECT * FROM altmenu where id = '$id'");
-		$u = mysql_fetch_array($altmenuler);
+		$altmenuler = $vt->query("SELECT * FROM altmenu where id = '$id'");
+		$u = $altmenuler->fetch();
 	?>
 	<section class="content">
 		<div class="box">
@@ -313,9 +313,9 @@
 						<?php
 							// ust ve ana kategorileri listeler
 							function altmenu($id = 0, $string = 0, $ustid) {
-							  $query = mysql_query("SELECT * FROM altmenu WHERE ustid = '$id'");
-							  if (mysql_affected_rows()) {
-								while ($row = mysql_fetch_array($query)) {
+							  $query = $vt->query("SELECT * FROM altmenu WHERE ustid = '$id'");
+							  if ($query->rowCount()) {
+								while ($row = $query->fetch()) {
 								  if ($row["durum"] == 0) {
 								  	echo '<option';
 									  if ($row["id"] == $ustid) {
@@ -338,8 +338,8 @@
 							<?php } else { ?>
 								<?php
 
-									$ustidver = mysql_query("SELECT * FROM altmenu where id = '".$u["ustid"]."'");
-									$uv = mysql_fetch_array($ustidver);
+									$ustidver = $vt->query("SELECT * FROM altmenu where id = '".$u["ustid"]."'");
+									$uv = $ustidver->fetch();
 
 								?>
 								<option value="<?=$uv["id"];?>"><?=$uv["baslik"];?></option>
@@ -365,8 +365,8 @@
 
 							<optgroup label="Sayfalar">
 								<?php
-									$sayfalar = mysql_query("SELECT * FROM sayfa where id");
-									while($sayfa = mysql_fetch_array($sayfalar)) {
+									$sayfalar = $vt->query("SELECT * FROM sayfa where id");
+									while($sayfa = $sayfalar->fetch()) {
 								?>
 									<?php
 										if ($sayfa["durum"] == 0) {
@@ -408,14 +408,14 @@
 							</optgroup>
 
 							<?php
-								$tipliste = mysql_query("SELECT * FROM emlak_ilantipi where id and durum = 0");
-								while($tip = mysql_fetch_array($tipliste)) {
+								$tipliste = $vt->query("SELECT * FROM emlak_ilantipi where id and durum = 0");
+								while($tip = $tipliste->fetch()) {
 							?>
 
 							<optgroup label="<?=$tip["ad"];?>">
 								<?php
-									$kategoriustadi = mysql_query("SELECT * FROM emlak_kategori where kat_ustid = '0'");
-									while($katustadi = mysql_fetch_array($kategoriustadi)) {
+									$kategoriustadi = $vt->query("SELECT * FROM emlak_kategori where kat_ustid = '0'");
+									while($katustadi = $kategoriustadi->fetch()) {
 										$ilansekli = $vt->query("SELECT * FROM emlak_ilansekli where id = '".$katustadi["ilansekli"]."'");
 										while($isekli = $ilansekli->fetch()) {
 								?>
@@ -423,12 +423,12 @@
 									<?php } ?>
 								<?php } ?>
 								<?php
-									$kattipliste = mysql_query("SELECT * FROM emlak_ilantipi_katliste where ilantipid = '".$tip["id"]."'");
-									while($kattip = mysql_fetch_array($kattipliste)) {
+									$kattipliste = $vt->query("SELECT * FROM emlak_ilantipi_katliste where ilantipid = '".$tip["id"]."'");
+									while($kattip = $kattipliste->fetch()) {
 								?>
 									<?php
-										$kategori = mysql_query("SELECT * FROM emlak_kategori where kat_id = '".$kattip["katid"]."'");
-										while($katad = mysql_fetch_array($kategori)) {
+										$kategori = $vt->query("SELECT * FROM emlak_kategori where kat_id = '".$kattip["katid"]."'");
+										while($katad = $kategori->fetch()) {
 
 									?>
 										<?php
@@ -562,18 +562,18 @@
 		}
 
 		if ($durum == "0") {
-			$d = mysql_query("UPDATE altmenu SET durum = '0' where id = '$id'");
+			$d = $vt->query("UPDATE altmenu SET durum = '0' where id = '$id'");
 			go("index.php?do=islem&icerik=altmenu&islem=liste&hareket=onay&id=$id",0);
 		}
 		if ($durum == "1") {
-			$d = mysql_query("UPDATE altmenu SET durum = '1' where id = '$id'");
+			$d = $vt->query("UPDATE altmenu SET durum = '1' where id = '$id'");
 			go("index.php?do=islem&icerik=altmenu&islem=liste&hareket=onay&id=$id",0);
 		}
 
 		if ($hareket == "sil") {
 
-			$sil = mysql_query("DELETE FROM altmenu where id = '$id'");
-			$silustid = mysql_query("DELETE FROM altmenu where ustid = '$id'");
+			$sil = $vt->query("DELETE FROM altmenu where id = '$id'");
+			$silustid = $vt->query("DELETE FROM altmenu where ustid = '$id'");
 
 			go("index.php?do=islem&icerik=altmenu&islem=liste&hareket=onay",0);
 
@@ -607,8 +607,8 @@
 	                        // ilan kategori
 
 	                        function altmenu($id = 0, $i = 0, $string = true) {
-	                        	$anakat = mysql_query("SELECT * FROM altmenu where ustid = '$id' order by sira ASC");
-								while($akat = mysql_fetch_array($anakat)) {
+	                        	$anakat = $vt->query("SELECT * FROM altmenu where ustid = '$id' order by sira ASC");
+								while($akat = $anakat->fetch()) {
 
 							?>
 							<tr>
@@ -622,8 +622,8 @@
 								<?php if ($akat["ustid"] != 0) { ?>
 									<th>
 										<?php
-											$ustkat = mysql_query("SELECT * FROM altmenu where id = '".$akat["ustid"]."'");
-											$ustver = mysql_fetch_array($ustkat);
+											$ustkat = $vt->query("SELECT * FROM altmenu where id = '".$akat["ustid"]."'");
+											$ustver = $ustkat->fetch();
 										?>
 										<?=$ustver["baslik"];?>
 									</th>

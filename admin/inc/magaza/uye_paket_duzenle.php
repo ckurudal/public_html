@@ -260,8 +260,8 @@
 													<option selected=""> <?php echo $magaza_paket_uye->fiyat_kur; ?> </option>
 													<?php 
 														// Para Birimi
-														$parabirim = mysql_query("select * from para_birimi where id");
-														while ($paraver = mysql_fetch_array($parabirim)) {
+														$parabirim = $vt->query("select * from para_birimi where id");
+														while ($paraver = $parabirim->fetch()) {
 													?>
 													<option value="<?=$paraver["ad"];?>"> <?=$paraver["ad"];?> </option>
 													<?php } ?>

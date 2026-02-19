@@ -71,8 +71,8 @@
 								<option selected value="<?=$y["unvan"];?>"><?=$y["unvan"];?></option>
 							<?php } ?>
 								<?php
-								$unvanlar = mysql_query("SELECT * FROM yonetici_unvan where id");
-								while ($unvan=mysql_fetch_array($unvanlar)) {
+								$unvanlar = $vt->query("SELECT * FROM yonetici_unvan where id");
+								while ($unvan=$unvanlar->fetch()) {
 							?>
 							<?php
 								if ($unvan["durum"] == 0) {
@@ -99,8 +99,8 @@
 						  </label>
 						<?php if ($y["yetki"] == 2) { ?>
 						<?php
-							$ofisid2 = mysql_query("SELECT * FROM subeler where yetkiliuye = '".$y["id"]."'");
-							$ofis2=mysql_fetch_array($ofisid2);
+							$ofisid2 = $vt->query("SELECT * FROM subeler where yetkiliuye = '".$y["id"]."'");
+							$ofis2=$ofisid2->fetch();
 						?>
 						<input type="text" disabled="disabled" class="form-control" value="<?=$ofis2["adi"]?>">
 						<?php } ?>
@@ -108,15 +108,15 @@
 						<select class="form-control select2" name="ofis">
 							<option <?php if ($y["ofis"] == 0) {echo "selected";} ?> value="">Seçiniz</option>
 							<?php
-								$ofisid = mysql_query("SELECT * FROM subeler where id = '".$y["ofis"]."'");
-								$ofis=mysql_fetch_array($ofisid);
+								$ofisid = $vt->query("SELECT * FROM subeler where id = '".$y["ofis"]."'");
+								$ofis=$ofisid->fetch();
 							?>
 							<?php if ($y["ofis"] != 0) { ?>
 							<option selected value="<?=$ofis["id"];?>"><?=$ofis["adi"]?></option>
 							<?php } ?>
 							<?php
-								$subeler = mysql_query("SELECT * FROM subeler where id");
-								while ($sube=mysql_fetch_array($subeler)) {
+								$subeler = $vt->query("SELECT * FROM subeler where id");
+								while ($sube=$subeler->fetch()) {
 							?>
 							<?php
 								if ($sube["durum"] == 0) {
@@ -243,10 +243,10 @@
 					</div>  
 					
 					<?php
-						$sosyalmedya = mysql_query("SELECT * FROM ayar_sosyal order by sira asc");
-						while($sosyal=mysql_fetch_array($sosyalmedya)) {
-						$ysosyal = mysql_query("SELECT * FROM yonetici_sosyal where sosyalid = '".$sosyal["id"]."' && yoneticiid = '$id' ");
-						$ys = mysql_fetch_array($ysosyal);
+						$sosyalmedya = $vt->query("SELECT * FROM ayar_sosyal order by sira asc");
+						while($sosyal=$sosyalmedya->fetch()) {
+						$ysosyal = $vt->query("SELECT * FROM yonetici_sosyal where sosyalid = '".$sosyal["id"]."' AND yoneticiid = '$id' ");
+						$ys = $ysosyal->fetch();
 					?>
 					
 					<div class="col-md-4">

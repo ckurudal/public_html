@@ -26,7 +26,7 @@
 		$eposta = $_POST["eposta"];
 		$mailsifre = $_POST["mailsifre"];
 
-		$mailayarkaydet = mysql_query("UPDATE ayarlar SET gonderici = '$gonderici', smtpserver = '$smtpserver', smtpport = '$smtpport', smtpsunucu = '$smtpsunucu', eposta = '$eposta', mailsifre = '$mailsifre' where id = '1'");
+		$mailayarkaydet = $vt->query("UPDATE ayarlar SET gonderici = '$gonderici', smtpserver = '$smtpserver', smtpport = '$smtpport', smtpsunucu = '$smtpsunucu', eposta = '$eposta', mailsifre = '$mailsifre' where id = '1'");
 
 		go("index.php?do=islem&ayarlar=mailayar&hareket=onay",0);		
 
@@ -140,7 +140,7 @@
 
 								$mail_durum = trim($_POST["mail_durum"]); 
 
-								$mailayarkaydet = mysql_query("UPDATE ayarlar SET mail_durum = '$mail_durum' where id = '1'");
+								$mailayarkaydet = $vt->query("UPDATE ayarlar SET mail_durum = '$mail_durum' where id = '1'");
 								
 								go("index.php?do=ayar/mailayar",0);
 
