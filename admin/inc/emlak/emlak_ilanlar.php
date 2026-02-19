@@ -7,7 +7,10 @@
 	$uyeonay 	= @$_GET["uyeonay"];
 	$ilanonay 	= @$_GET["ilanonay"];
 
-	$magaza = $vt->query("SELECT * FROM subeler WHERE id = '".@$_GET["magaza"]."'")->fetch(PDO::FETCH_OBJ);
+	$magaza_id = (int)(@$_GET["magaza"]);
+	$stmt_magaza = $vt->prepare("SELECT * FROM subeler WHERE id = ?");
+	$stmt_magaza->execute([$magaza_id]);
+	$magaza = $stmt_magaza->fetch(PDO::FETCH_OBJ);
 
  ?>
 <!-- Content Header (Page header) -->
@@ -246,7 +249,9 @@
 
 							} else if (@$_GET["magaza"]) {
 
-								$uye_yasak = $vt->query("SELECT * FROM yonetici WHERE id = '".$_SESSION["id"]."'")->fetch();
+								$stmt_uye_yasak = $vt->prepare("SELECT * FROM yonetici WHERE id = ?");
+								$stmt_uye_yasak->execute([$_SESSION["id"]]);
+								$uye_yasak = $stmt_uye_yasak->fetch();
 	
 							$sube_kontrol = $vt->query("SELECT * FROM subeler WHERE yetkiliuye = '".$uye_yasak["id"]."'")->fetch(PDO::FETCH_ASSOC);  
 
@@ -278,7 +283,9 @@
 
 						} else if (@$_GET["magaza"]) {
 							
-							$uye_yasak = $vt->query("SELECT * FROM yonetici WHERE id = '".$_SESSION["id"]."'")->fetch();
+							$stmt_uye_yasak2 = $vt->prepare("SELECT * FROM yonetici WHERE id = ?");
+							$stmt_uye_yasak2->execute([$_SESSION["id"]]);
+							$uye_yasak = $stmt_uye_yasak2->fetch();
 	
 							$sube_kontrol = $vt->query("SELECT * FROM subeler WHERE yetkiliuye = '".$uye_yasak["id"]."'")->fetch(PDO::FETCH_ASSOC);  
 

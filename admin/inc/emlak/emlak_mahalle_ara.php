@@ -160,9 +160,11 @@
                         <?php } ?>
 
                         <?php 
-                            if ($islem == "ekle") {  
-                            $ilcever = $vt->query("select * from ilce where ilce_sehirkey = '".$ilkey = $_GET['ilkey']."'");
-                            while($ilc = $ilcever->fetch()) { 
+                            if ($islem == "ekle") {
+                            $ilkey = $_GET['ilkey'] ?? '';
+                            $stmt_ilcever = $vt->prepare("SELECT * FROM ilce WHERE ilce_sehirkey = ?");
+                            $stmt_ilcever->execute([$ilkey]);
+                            while($ilc = $stmt_ilcever->fetch()) { 
                         ?>
                         <?php 
                             if ($ilc["ilce_key"] == $ilcesehirkey) {

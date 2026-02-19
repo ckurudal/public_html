@@ -261,7 +261,9 @@ $toplam = $emlakmesaj[0] + $gelenmesaj[0] + $emlaktalep[0] + $emlakonay[0] + gel
                 <li class="dropdown user user-menu">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                         <?php 
-                            $yoneticibilgi = $vt->query("SELECT * FROM yonetici where id = '".$_SESSION['id']."'");
+                            $stmt_yoneticibilgi = $vt->prepare("SELECT * FROM yonetici WHERE id = ?");
+                            $stmt_yoneticibilgi->execute([$_SESSION['id']]);
+                            $yoneticibilgi = $stmt_yoneticibilgi;
                             $yoneticiver = $yoneticibilgi->fetch();
                         ?>
                         <?php if ($yoneticiver["resim"] == "") { ?>

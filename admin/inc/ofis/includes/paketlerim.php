@@ -20,7 +20,9 @@
 	<div class="box-body">
 
 		<?php
-			$magaza_uye_paket = $vt->query("SELECT * FROM magaza_uye_paket WHERE uye_id = '".$_SESSION["id"]."'")->fetchAll();
+			$stmt_magaza_paket = $vt->prepare("SELECT * FROM magaza_uye_paket WHERE uye_id = ?");
+			$stmt_magaza_paket->execute([$_SESSION["id"]]);
+			$magaza_uye_paket = $stmt_magaza_paket->fetchAll();
 			foreach ($magaza_uye_paket as $paket) {
 		?>
 
@@ -277,7 +279,9 @@
 
 				<?php
 
-					$toplam_fiyat = $vt->query("SELECT * FROM magaza_uye_paket WHERE uye_id = '".$_SESSION["id"]."'")->fetchAll();
+					$stmt_toplam_fiyat = $vt->prepare("SELECT * FROM magaza_uye_paket WHERE uye_id = ?");
+					$stmt_toplam_fiyat->execute([$_SESSION["id"]]);
+					$toplam_fiyat = $stmt_toplam_fiyat->fetchAll();
 
 					$tutar = 0;
 

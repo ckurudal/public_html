@@ -270,7 +270,9 @@ $bilgi = $_GET["bilgi"];
                         $pass = md5($yeni_sifre);
                         uye_sms_gonder($_SESSION["tel"], $mesaj);
                         onay("Yeni Şifreniz {$_SESSION["tel"]} numarasına gönderilmiştir.");
-                        $duzenle = $vt->query("UPDATE yonetici SET pass = '$pass' WHERE tel = '".$_SESSION["tel"]."'");
+                        $stmt_duzenle = $vt->prepare("UPDATE yonetici SET pass = ? WHERE tel = ?");
+                        $stmt_duzenle->execute([$pass, $_SESSION["tel"]]);
+                        $duzenle = $stmt_duzenle;
                         session_destroy();
                         go($ayar["site_yonetim_url"]."giris.php",2);
                     } else {
@@ -354,7 +356,9 @@ $bilgi = $_GET["bilgi"];
                         $pass = md5($yeni_sifre);
                         mail_gonder($_SESSION["email"], $mesaj, $mesaj);
                         onay("Yeni Şifreniz {$_SESSION["email"]} numarasına gönderilmiştir.");
-                        $duzenle = $vt->query("UPDATE yonetici SET pass = '$pass' WHERE email = '".$_SESSION["email"]."'");
+                        $stmt_duzenle = $vt->prepare("UPDATE yonetici SET pass = ? WHERE email = ?");
+                        $stmt_duzenle->execute([$pass, $_SESSION["email"]]);
+                        $duzenle = $stmt_duzenle;
                         session_destroy();
                         go($ayar["site_yonetim_url"]."giris.php",2);
                     } else {

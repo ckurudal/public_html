@@ -23,7 +23,9 @@
 		$yoneticiid = $_POST["yoneticiid"];
 		$toplu = $_POST["toplu"];
 		if (yetki() == 2) {
-			$sube 		= $vt->query("SELECT * FROM subeler WHERE yetkiliuye = '".$_SESSION["id"]."'")->fetch();
+			$stmt_sube = $vt->prepare("SELECT * FROM subeler WHERE yetkiliuye = ?");
+			$stmt_sube->execute([$_SESSION["id"]]);
+			$sube = $stmt_sube->fetch();
 			if ($toplu == 1) {
 				$toplukaydet = $vt->query("UPDATE emlak_ilan SET yonetici_id = '$yoneticiid', ofisid = '".$sube["id"]."' where yonetici_id = '".$i["yonetici_id"]."'");
 				if ($toplukaydet == true) {
@@ -84,7 +86,9 @@
 								$yoneticiliste = $vt->query("SELECT * FROM yonetici order by id asc");
 								while ($yoneticil = $yoneticiliste->fetch()) {
 									if ($i["yonetici_id"] !== $yoneticil["id"]) {
-									$sube = $vt->query("SELECT * FROM subeler WHERE yetkiliuye = '".$_SESSION["id"]."'")->fetch();										
+									$stmt_sube2 = $vt->prepare("SELECT * FROM subeler WHERE yetkiliuye = ?");
+									$stmt_sube2->execute([$_SESSION["id"]]);
+									$sube = $stmt_sube2->fetch();
 							?>							
 							<?php if (!yetki() == 0): ?>
 								<?php if ($yoneticil["ofis"] == $sube["id"]): ?>
@@ -255,9 +259,15 @@
                     endif;
                 }
 				// emlak ilan tablo ayarlari			 
-                $il_adi = $vt->query("SELECT * FROM sehir WHERE sehir_key = '".$_POST["il"]."'")->fetch();
-                $ilce_adi = $vt->query("SELECT * FROM ilce WHERE ilce_key = '".$_POST["ilce"]."'")->fetch();
-                $ilantipi_adi = $vt->query("SELECT * FROM emlak_ilantipi WHERE id = '".$_POST["emlak_tipi"]."'")->fetch();	
+                $stmt_il = $vt->prepare("SELECT * FROM sehir WHERE sehir_key = ?");
+                $stmt_il->execute([$_POST["il"]]);
+                $il_adi = $stmt_il->fetch();
+                $stmt_ilce = $vt->prepare("SELECT * FROM ilce WHERE ilce_key = ?");
+                $stmt_ilce->execute([$_POST["ilce"]]);
+                $ilce_adi = $stmt_ilce->fetch();
+                $stmt_ilantipi = $vt->prepare("SELECT * FROM emlak_ilantipi WHERE id = ?");
+                $stmt_ilantipi->execute([$_POST["emlak_tipi"]]);
+                $ilantipi_adi = $stmt_ilantipi->fetch();
 		        $baslik 		= tirnak($_POST["baslik"]);
 		        $sifreli	= $_POST["sifreli"];
 		        if($sifreli==0) {
@@ -399,18 +409,26 @@
                 <?php endif; ?>
                 <?php
                     if ($_GET["kat_plani_sil"]):
-                        $proje_resim_sil = $vt->query("SELECT * FROM projeler WHERE id = {$_GET["kat_plani_sil"]}")->fetch();
-                        @unlink('../uploads/proje_resim/'.$proje_resim_sil[plan_resim]);
-                        $plan_sil = $vt->query("DELETE FROM projeler WHERE id = {$_GET["kat_plani_sil"]}");
-                        if ($plan_sil):
+                        $kat_plani_sil_id = (int)$_GET["kat_plani_sil"];
+                        $stmt_proje = $vt->prepare("SELECT * FROM projeler WHERE id = ?");
+                        $stmt_proje->execute([$kat_plani_sil_id]);
+                        $proje_resim_sil = $stmt_proje->fetch();
+                        @unlink('../uploads/proje_resim/'.$proje_resim_sil['plan_resim']);
+                        $stmt_plan_sil = $vt->prepare("DELETE FROM projeler WHERE id = ?");
+                        $stmt_plan_sil->execute([$kat_plani_sil_id]);
+                        if ($stmt_plan_sil->rowCount() > 0):
                             go("index.php?do=islem&emlak=emlak_duzenle&id={$id}&hareket=onay");
                         endif;
                     endif;
                     if ($_GET["proje_kapak_sil"]):
-                        $proje_kapak_resim_sil = $vt->query("SELECT * FROM proje_kapak WHERE id = {$_GET["proje_kapak_sil"]}")->fetch();
-                        @unlink('../uploads/proje_resim/'.$proje_kapak_resim_sil[proje_kapak]);
-                        $plan_sil = $vt->query("DELETE FROM proje_kapak WHERE id = {$_GET["proje_kapak_sil"]}");
-                        if ($plan_sil):
+                        $proje_kapak_sil_id = (int)$_GET["proje_kapak_sil"];
+                        $stmt_kapak = $vt->prepare("SELECT * FROM proje_kapak WHERE id = ?");
+                        $stmt_kapak->execute([$proje_kapak_sil_id]);
+                        $proje_kapak_resim_sil = $stmt_kapak->fetch();
+                        @unlink('../uploads/proje_resim/'.$proje_kapak_resim_sil['proje_kapak']);
+                        $stmt_kapak_sil = $vt->prepare("DELETE FROM proje_kapak WHERE id = ?");
+                        $stmt_kapak_sil->execute([$proje_kapak_sil_id]);
+                        if ($stmt_kapak_sil->rowCount() > 0):
                             go("index.php?do=islem&emlak=emlak_duzenle&id={$id}&hareket=onay");
                         endif;
                     endif;

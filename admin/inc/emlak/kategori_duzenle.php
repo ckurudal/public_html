@@ -37,15 +37,16 @@
 				$kat_kattip = $_POST["kat_kattip"];
 				$kat_kattipid = $_POST["kat_kattipid"];
 
-				$guncelle = $vt->query("UPDATE emlak_kategori SET kat_adi = '$kat_adi', seo = '$seo', kat_seo_title = '$kat_seo_title', kat_desc = '$kat_desc', kat_keyw = '$kat_keyw', kat_durum = '$kat_durum', sira_no = '$sira_no', kat_ustid = '$kat_ustid', ilansekli = '$ilansekli', anasayfa_goster = '$anasayfa_goster', anasayfa_baslik = '$anasayfa_baslik', anasayfa_link = '$anasayfa_link' WHERE kat_id = '$id' ");
+				$stmt_guncelle = $vt->prepare("UPDATE emlak_kategori SET kat_adi = ?, seo = ?, kat_seo_title = ?, kat_desc = ?, kat_keyw = ?, kat_durum = ?, sira_no = ?, kat_ustid = ?, ilansekli = ?, anasayfa_goster = ?, anasayfa_baslik = ?, anasayfa_link = ? WHERE kat_id = ?");
+				$guncelle = $stmt_guncelle->execute([$kat_adi, $seo, $kat_seo_title, $kat_desc, $kat_keyw, $kat_durum, $sira_no, $kat_ustid, $ilansekli, $anasayfa_goster, $anasayfa_baslik, $anasayfa_link, $id]);
 
-				$ilantipsil = $vt->query("DELETE FROM emlak_ilantipi_katliste where katid = '$id'");
+				$stmt_ilantipsil = $vt->prepare("DELETE FROM emlak_ilantipi_katliste where katid = ?");
+				$stmt_ilantipsil->execute([$id]);
 
 				for ($i=0; $i < count($kat_kattipid); $i++) { 	
 
-					$kattipekle = $vt->query("INSERT INTO emlak_ilantipi_katliste 
-
-						(katid, ilantipid, ilantipdurum) values ('".$id."', '".$kat_kattipid[$i]."', '".$kat_kattip[$i]."')"); 
+					$stmt_kattipekle = $vt->prepare("INSERT INTO emlak_ilantipi_katliste (katid, ilantipid, ilantipdurum) values (?,?,?)");
+					$stmt_kattipekle->execute([$id, $kat_kattipid[$i], $kat_kattip[$i]]); 
 				}
 
 
@@ -57,14 +58,19 @@
 
 			} else {
 
-			$query = $vt->query("SELECT * FROM emlak_kategori WHERE kat_id = '$id'");
+			$stmt_query = $vt->prepare("SELECT * FROM emlak_kategori WHERE kat_id = ?");
+			$stmt_query->execute([$id]);
+			$query = $stmt_query;
 			if ($query->rowCount()) {
 			$row = $query->fetch();
 
 				// ust ve ana kategorileri listeler
 
 				function kategori($id = 0, $string = 0, $ustid) {
-				  $query = $vt->query("SELECT * FROM emlak_kategori WHERE kat_ustid = '$id'");
+				  global $vt;
+				  $stmt_kat_fn = $vt->prepare("SELECT * FROM emlak_kategori WHERE kat_ustid = ?");
+				  $stmt_kat_fn->execute([$id]);
+				  $query = $stmt_kat_fn;
 				  if ($query->rowCount()) {
 					while ($row = $query->fetch()) {
 					  echo '<option';
@@ -218,7 +224,9 @@
 							<label for="kat_kattip">
 
 							<?php
-								$kattipver = $vt->query("SELECT * FROM emlak_ilantipi_katliste where ilantipid = '".$tipver["id"]."' AND katid = '$id'");
+								$stmt_kattipver = $vt->prepare("SELECT * FROM emlak_ilantipi_katliste where ilantipid = ? AND katid = ?");
+								$stmt_kattipver->execute([$tipver["id"], $id]);
+								$kattipver = $stmt_kattipver;
 								$kver = $kattipver->fetch();
 							?>
 						  		<input type="checkbox" name="kat_kattipid[]" <?php if ($kver) {echo "checked";} ?> value="<?=$tipver["id"];?>" class="minimal">

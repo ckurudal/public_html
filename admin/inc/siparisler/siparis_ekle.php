@@ -6,7 +6,9 @@
 	$siparis = $_GET["siparis"];
 
 	$magaza_paketleri = $vt->query("SELECT * FROM magaza_paket WHERE id ORDER BY sira ASC")->fetchAll(PDO::FETCH_ASSOC);
-	$kullanici = $vt->query("SELECT * FROM yonetici WHERE id = '".$_SESSION["id"]."'")->fetch(PDO::FETCH_ASSOC);
+	$stmt_kullanici = $vt->prepare("SELECT * FROM yonetici WHERE id = ?");
+	$stmt_kullanici->execute([$_SESSION["id"]]);
+	$kullanici = $stmt_kullanici->fetch(PDO::FETCH_ASSOC);
 	$paket_bilgi = $vt->query("SELECT * FROM magaza_paket WHERE id = '$paket_id'")->fetch(PDO::FETCH_ASSOC);
 	$siparis_kod = $vt->query("SELECT * FROM siparis_magaza ORDER BY id DESC LIMIT 1")->fetch(PDO::FETCH_ASSOC);
 
@@ -569,7 +571,9 @@
 			    </div>
 
 				<?php
-					$uye=$vt->query("SELECT * FROM yonetici WHERE id = '".$_SESSION["id"]."'")->fetch();
+					$stmt_uye_odeme = $vt->prepare("SELECT * FROM yonetici WHERE id = ?");
+					$stmt_uye_odeme->execute([$_SESSION["id"]]);
+					$uye=$stmt_uye_odeme->fetch();
 				?>
 
 				<div style="width: 100%;margin: 0 auto;display: table;">

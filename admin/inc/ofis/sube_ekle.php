@@ -6,7 +6,9 @@
 	
 	$islem = $_GET["islem"];
 
-	$uye_yasak = $vt->query("SELECT * FROM yonetici WHERE id = '".$_SESSION["id"]."'")->fetch();
+	$stmt_uye_yasak = $vt->prepare("SELECT * FROM yonetici WHERE id = ?");
+	$stmt_uye_yasak->execute([$_SESSION["id"]]);
+	$uye_yasak = $stmt_uye_yasak->fetch();
 	
 	$sube_kontrol = $vt->query("SELECT * FROM subeler WHERE id = '$id'")->fetch(PDO::FETCH_ASSOC);
 	

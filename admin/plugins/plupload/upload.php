@@ -142,9 +142,11 @@ if (!$chunks || $chunk == $chunks - 1) {
 	$resimyolu = "/uploads/resim/".$resimad;
 	$minilink = "/uploads/resim/mini-".$resimad;
 
-	$ekle = $vt->query("insert into emlak_resim (resimad,emlakno,kapak, sira) values ('$resimad','$islemno','$sira','$sira2')");
+	$stmt_ekle = $vt->prepare("insert into emlak_resim (resimad,emlakno,kapak, sira) values (?,?,?,?)");
+	$stmt_ekle->execute([$resimad,$islemno,$sira,$sira2]);
 	
-	$kapak = $vt->query("update emlak_resim set kapak = '1', sira = '0'  where emlakno = '$islemno' order by id asc limit 1");
+	$stmt_kapak = $vt->prepare("update emlak_resim set kapak = '1', sira = '0'  where emlakno = ? order by id asc limit 1");
+	$stmt_kapak->execute([$islemno]);
 
 	resim_damga($dosya,"../../../uploads/resim/watermark.png",$dosya);
 

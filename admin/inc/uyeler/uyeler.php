@@ -8,7 +8,9 @@
 	$durum = $_GET["durum"];
 	$sifre = $_GET["sifre"];
 
-	$yonetici = $vt->query("SELECT * FROM yonetici where id = '$id'");
+	$stmt_yonetici = $vt->prepare("SELECT * FROM yonetici where id = ?");
+	$stmt_yonetici->execute([$id]);
+	$yonetici = $stmt_yonetici;
 	$yoneticiliste = $vt->query("SELECT * FROM yonetici where yetki = 1 order by id desc");
 ?>
 <section class="content-header">
@@ -42,7 +44,9 @@
 
 		if (isset($_POST["yoneticiekle"])) {
 
-			$varmi=$vt->query("SELECT * FROM yonetici where email='$email'")->rowCount();
+			$stmt_varmi = $vt->prepare("SELECT * FROM yonetici where email=?");
+			$stmt_varmi->execute([$email]);
+			$varmi = $stmt_varmi->rowCount();
 
 			if($varmi!=0) { 
 
@@ -50,16 +54,19 @@
 
 			} else {
 
-				$yoneticiekle = $vt->query("INSERT INTO yonetici (adsoyad, seo, kadi, pass, email, tel, fax, gsm, unvan, sira, sube, aciklama) VALUES ('$adsoyad', '$seo', '$kadi', '$pass', '$email', '$tel', '$fax', '$gsm', '$unvan', '$sira', '$sube', '$aciklama')");
+				$stmt_yoneticiekle = $vt->prepare("INSERT INTO yonetici (adsoyad, seo, kadi, pass, email, tel, fax, gsm, unvan, sira, sube, aciklama) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)");
+				$yoneticiekle = $stmt_yoneticiekle->execute([$adsoyad, $seo, $kadi, $pass, $email, $tel, $fax, $gsm, $unvan, $sira, $sube, $aciklama]);
 
-                $ids = $vt->query("SELECT * FROM yonetici where kadi = '$kadi'");
-                $id = $ids->fetch();
+                $stmt_ids = $vt->prepare("SELECT * FROM yonetici where kadi = ?");
+                $stmt_ids->execute([$kadi]);
+                $id = $stmt_ids->fetch();
 
                 // sosyal medya bilgileri
 
 				for ($i=0; $i < count($sosyalid) ; $i++) {
 					
-                	$sosyalekle = $vt->query("INSERT INTO yonetici_sosyal (yoneticiid, sosyalid, sosyallink, baslik) VALUES ('".$id["id"]."', '".$sosyalid[$i]."','".$sosyallink[$i]."','".$sosyalbaslik[$i]."')");
+				$stmt_sosyal = $vt->prepare("INSERT INTO yonetici_sosyal (yoneticiid, sosyalid, sosyallink, baslik) VALUES (?,?,?,?)");
+                	$stmt_sosyal->execute([$id["id"], $sosyalid[$i], $sosyallink[$i], $sosyalbaslik[$i]]);
 				}
 				
 				if ($yoneticiekle) {
@@ -81,11 +88,13 @@
 					            $dosya = "../uploads/resim/".$saat.".jpg";
 					            if (move_uploaded_file($_FILES["resim"]["tmp_name"][$i], $dosya)) {
 									
-					                $ids = $vt->query("SELECT * FROM yonetici where kadi = '$kadi'");
-					                $id = $ids->fetch(); 
+					                $stmt_ids2 = $vt->prepare("SELECT * FROM yonetici where kadi = ?");
+					                $stmt_ids2->execute([$kadi]);
+					                $id = $stmt_ids2->fetch(); 
 
 					                $link = "/uploads/resim/".$saat.".jpg";
-					                $ekle = $vt->query("UPDATE yonetici SET resim = '$link' where id = '".$id["id"]."'");
+					                $stmt_ekle = $vt->prepare("UPDATE yonetici SET resim = ? where id = ?");
+					                $stmt_ekle->execute([$link, $id["id"]]);
 					                $yuklenenler++; 
   
 					            }
@@ -98,9 +107,9 @@
 					    }
 					}
 
-					$ids = $vt->query("SELECT * FROM yonetici where kadi = '$kadi'");
-					$id = $ids->fetch(); 
-
+					$stmt_ids3 = $vt->prepare("SELECT * FROM yonetici where kadi = ?");
+					$stmt_ids3->execute([$kadi]);
+					$id = $stmt_ids3->fetch(); 
 					go("index.php?do=islem&uyeler=uyeler&islem=liste&hareket=onay&id=$id[id]",0); 
 
 				}
@@ -111,7 +120,8 @@
 
 		if (isset($_POST["yoneticikaydet"])) {
 
-			$yoneticikaydet = $vt->query("UPDATE yonetici SET adsoyad = '$adsoyad', seo = '$seo', tel = '$tel', fax = '$fax', gsm = '$gsm', unvan = '$unvan', sira = '$sira', sube = '$sube', aciklama = '$aciklama' where id = '$id'");
+			$stmt_kaydet = $vt->prepare("UPDATE yonetici SET adsoyad = ?, seo = ?, tel = ?, fax = ?, gsm = ?, unvan = ?, sira = ?, sube = ?, aciklama = ? where id = ?");
+		$yoneticikaydet = $stmt_kaydet->execute([$adsoyad, $seo, $tel, $fax, $gsm, $unvan, $sira, $sube, $aciklama, $id]);
 
 			if ($yoneticikaydet) { 
 
@@ -133,13 +143,15 @@
 				            if (move_uploaded_file($_FILES["resim"]["tmp_name"][$i], $dosya)) {
 								
 								
-				            	$resimal = $vt->query("SELECT * FROM yonetici where id = $id");
-				            	$ral = $resimal->fetch();
+					$stmt_resimal = $vt->prepare("SELECT * FROM yonetici where id = ?");
+					$stmt_resimal->execute([$id]);
+					$ral = $stmt_resimal->fetch();
 
 								$sil = @unlink("..".$ral['resim']);
 				                
 				                $link = "/uploads/resim/".$saat.".jpg";
-				                $ekle = $vt->query("UPDATE yonetici SET resim = '$link' where id = '$id'");
+					$stmt_ekle2 = $vt->prepare("UPDATE yonetici SET resim = ? where id = ?");
+					$stmt_ekle2->execute([$link, $id]);
 				                $yuklenenler++; 
 
 				            }
@@ -152,12 +164,14 @@
 				    }
 				}
 
-				$silsosyal = $vt->query("DELETE FROM yonetici_sosyal where yoneticiid = '$id'");
+				$stmt_silsosyal = $vt->prepare("DELETE FROM yonetici_sosyal where yoneticiid = ?");
+				$stmt_silsosyal->execute([$id]);
 
 
 				for ($i=0; $i < count($sosyalid) ; $i++) {
 				
-                	$sosyalekle = $vt->query("INSERT INTO yonetici_sosyal (yoneticiid, sosyalid, sosyallink, baslik) VALUES ('$id', '".$sosyalid[$i]."','".$sosyallink[$i]."','".$sosyalbaslik[$i]."')");
+					$stmt_sosyal2 = $vt->prepare("INSERT INTO yonetici_sosyal (yoneticiid, sosyalid, sosyallink, baslik) VALUES (?,?,?,?)");
+					$stmt_sosyal2->execute([$id, $sosyalid[$i], $sosyallink[$i], $sosyalbaslik[$i]]);
 				}
 
 				go("index.php?do=islem&uyeler=uyeler&islem=liste&hareket=onay&id=$id",0); 
@@ -289,7 +303,9 @@
 <?php if ($islem == "duzenle") { ?>
 	<form action="" method="post" enctype="multipart/form-data">
 		<?php
-			$yoneticiler = $vt->query("SELECT * FROM yonetici where id = '$id'");
+			$stmt_yoneticiler = $vt->prepare("SELECT * FROM yonetici where id = ?");
+			$stmt_yoneticiler->execute([$id]);
+			$yoneticiler = $stmt_yoneticiler;
 			while($y = $yoneticiler->fetch()) {
 		?>
 		<section class="content">
@@ -390,7 +406,9 @@
 						<?php
 							$sosyalmedya = $vt->query("SELECT * FROM ayar_sosyal order by sira asc");
 							while($sosyal=$sosyalmedya->fetch()) {
-							$ysosyal = $vt->query("SELECT * FROM yonetici_sosyal where sosyalid = '".$sosyal["id"]."' AND yoneticiid = '$id' ");
+							$stmt_ysosyal = $vt->prepare("SELECT * FROM yonetici_sosyal where sosyalid = ? AND yoneticiid = ?");
+						$stmt_ysosyal->execute([$sosyal["id"], $id]);
+						$ysosyal = $stmt_ysosyal;
 							$ys = $ysosyal->fetch();
 						?>
 						<div class="form-group">
@@ -425,7 +443,8 @@
 
 			$yenisifre=trim(md5($_POST["yenisifre"]));
 
-			$sifreduzenle=$vt->query("UPDATE yonetici SET pass = '$yenisifre' where id = '$id'"); 
+			$stmt_sifre = $vt->prepare("UPDATE yonetici SET pass = ? where id = ?");
+		$sifreduzenle = $stmt_sifre->execute([$yenisifre, $id]);
 
 			go("index.php?do=islem&uyeler=uyeler&islem=liste&hareket=onay",0); 
 		}
@@ -478,23 +497,27 @@
 
 				if ($hareket == "sil") {
 					
-					$sil = $vt->query("DELETE FROM yonetici where id = '$id'"); 
+					$stmt_sil = $vt->prepare("DELETE FROM yonetici where id = ?");
+					$stmt_sil->execute([$id]);
 	            	
 	            	$ral = $yonetici->fetch(); 
 					$resimsil = @unlink("..".$ral['resim']);
 
-					$sosyalsil = $vt->query("DELETE FROM yonetici_sosyal where yoneticiid = '$id'");
+					$stmt_sosyalsil = $vt->prepare("DELETE FROM yonetici_sosyal where yoneticiid = ?");
+					$stmt_sosyalsil->execute([$id]);
 
 					go("index.php?do=islem&uyeler=uyeler&islem=liste&hareket=onay&id=$id",0);
 
 				}
 
 				if ($durum == "0") {
-					$d = $vt->query("UPDATE yonetici SET durum = '0' where id = '$id'"); 
+					$stmt_d0 = $vt->prepare("UPDATE yonetici SET durum = '0' where id = ?");
+					$stmt_d0->execute([$id]);
 					go("index.php?do=islem&uyeler=uyeler&islem=liste&hareket=onay&id=$id",0);
 				}
 				if ($durum == "1") {
-					$d = $vt->query("UPDATE yonetici SET durum = '1' where id = '$id'"); 
+					$stmt_d1 = $vt->prepare("UPDATE yonetici SET durum = '1' where id = ?");
+					$stmt_d1->execute([$id]);
 					go("index.php?do=islem&uyeler=uyeler&islem=liste&hareket=onay&id=$id",0);
 				}
 			?>
