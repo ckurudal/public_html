@@ -931,13 +931,14 @@ function seo($url) {
     return $url;
 }
 function query($query) {
-    return mysql_query($query);
+    global $vt;
+    return $vt->query($query);
 }
 function row($query) {
-    return mysql_fetch_array($query);
+    return $query->fetch(PDO::FETCH_BOTH);
 }
 function rows($query) {
-    return mysql_num_rows($query);
+    return $query->rowCount();
 }
 // onay fonksiyonu
 function onay($mesaj = false) {

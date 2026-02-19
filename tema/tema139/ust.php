@@ -49,8 +49,8 @@ function popupClose() {
                         <?php } ?>
                         <ul class="list-unstyled list-inline mt-3 mb-5">
                             <?php
-                            $ayarsitesosyal = mysql_query("SELECT ayar_sitesosyal.sosyallink, ayar_sosyal.icon FROM ayar_sitesosyal INNER JOIN ayar_sosyal ON ayar_sitesosyal.sosyalid=ayar_sosyal.id AND ayar_sitesosyal.siteid = '1' AND ayar_sosyal.durum = 0 AND ayar_sitesosyal.sosyallink != '' ORDER BY ayar_sosyal.sira ASC");
-                            while ($ayars=mysql_fetch_array($ayarsitesosyal)) {
+                            $ayarsitesosyal_stmt = $vt->query("SELECT ayar_sitesosyal.sosyallink, ayar_sosyal.icon FROM ayar_sitesosyal INNER JOIN ayar_sosyal ON ayar_sitesosyal.sosyalid=ayar_sosyal.id AND ayar_sitesosyal.siteid = '1' AND ayar_sosyal.durum = 0 AND ayar_sitesosyal.sosyallink != '' ORDER BY ayar_sosyal.sira ASC");
+                            while ($ayars=$ayarsitesosyal_stmt->fetch()) {
                                 ?>
                                 <?php
                                 if ($ayars["sosyallink"] != "") {
@@ -140,9 +140,10 @@ $('.gflag').click(function(){
                                 if (!$email || !$sifre) {
                                     echo '<h6 class="alert alert-danger"><i class="fa fa-warning fa-lg"></i> Email ve şifre giriniz.</h6>';
                                 } else {
-                                    $query = mysql_query("SELECT * FROM yonetici WHERE email = '$email' && pass = '".md5($sifre)."' && durum = 0");
-                                    if (mysql_affected_rows()) {
-                                        $row = row($query);
+                                    $login_stmt = $vt->prepare("SELECT * FROM yonetici WHERE email = ? AND pass = ? AND durum = 0");
+                                    $login_stmt->execute([$email, md5($sifre)]);
+                                    if ($login_stmt->rowCount() > 0) {
+                                        $row = $login_stmt->fetch();
                                         $_SESSION = array (
                                             "uyelogin" => true,
                                             "id" => $row["id"],
@@ -199,8 +200,8 @@ $('.gflag').click(function(){
                         <div class="clearfix">
                             <ul class="socials">
                                 <?php
-                                $ayarsitesosyal = mysql_query("SELECT ayar_sitesosyal.sosyallink, ayar_sosyal.icon FROM ayar_sitesosyal INNER JOIN ayar_sosyal ON ayar_sitesosyal.sosyalid=ayar_sosyal.id AND ayar_sitesosyal.siteid = '1' AND ayar_sosyal.durum = 0 AND ayar_sitesosyal.sosyallink != '' ORDER BY ayar_sosyal.sira ASC");
-                                while ($ayars=mysql_fetch_array($ayarsitesosyal)) {
+                                $ayarsitesosyal_stmt2 = $vt->query("SELECT ayar_sitesosyal.sosyallink, ayar_sosyal.icon FROM ayar_sitesosyal INNER JOIN ayar_sosyal ON ayar_sitesosyal.sosyalid=ayar_sosyal.id AND ayar_sitesosyal.siteid = '1' AND ayar_sosyal.durum = 0 AND ayar_sitesosyal.sosyallink != '' ORDER BY ayar_sosyal.sira ASC");
+                                while ($ayars=$ayarsitesosyal_stmt2->fetch()) {
                                     ?>
                                     <?php
                                     if ($ayars["sosyallink"] != "") {
@@ -450,10 +451,11 @@ $('.gflag').click(function(){
                     <ul class="ana-menu horizontalMenu-list">
                         <!-- <li aria-haspopup="true"><span class="horizontalMenu-click"><i class="horizontalMenu-arrow fa fa-home"></i></span><a href="/index.php"> <span class="fa fa-home m-0"></span></a></li> -->
                         <?php
-                        $ustmenuler = mysql_query("SELECT * FROM ustmenu where ustid = 0 && durum = 0 order by sira");
-                        while($ustmenu = mysql_fetch_array($ustmenuler)) {
-                            $katsay = mysql_query("SELECT COUNT(*) FROM ustmenu where ustid = '".$ustmenu["id"]."' && durum = 0");
-                            $say = mysql_fetch_array($katsay);
+                        $ustmenuler_stmt = $vt->query("SELECT * FROM ustmenu where ustid = 0 AND durum = 0 order by sira");
+                        while($ustmenu = $ustmenuler_stmt->fetch()) {
+                            $katsay_stmt = $vt->prepare("SELECT COUNT(*) FROM ustmenu where ustid = ? AND durum = 0");
+                            $katsay_stmt->execute([$ustmenu["id"]]);
+                            $say = $katsay_stmt->fetch(PDO::FETCH_NUM);
                             ?>
                             <li aria-haspopup="true">
                                 <?php if ($ustmenu["url"] == "" AND $ustmenu["seo"] != "") { ?>
@@ -483,10 +485,12 @@ $('.gflag').click(function(){
                                 <?php } ?>
                                 <ul <?php if ($say[0] > 0) {?> class="sub-menu" <?php } ?>>
                                     <?php
-                                        $ustmenuler2 = mysql_query("SELECT * FROM ustmenu where ustid = '".$ustmenu["id"]."' && durum = 0 order by sira asc");
-                                        while($ustmenu2 = mysql_fetch_array($ustmenuler2)) {
-                                            $menusaygoster = mysql_query("SELECT COUNT(*) FROM ustmenu where ustid = '".$ustmenu2["id"]."' && durum = 0");
-                                            $menusay = mysql_fetch_array($menusaygoster);
+                                        $ustmenuler2_stmt = $vt->prepare("SELECT * FROM ustmenu where ustid = ? AND durum = 0 order by sira asc");
+                                        $ustmenuler2_stmt->execute([$ustmenu["id"]]);
+                                        while($ustmenu2 = $ustmenuler2_stmt->fetch()) {
+                                            $menusaygoster_stmt = $vt->prepare("SELECT COUNT(*) FROM ustmenu where ustid = ? AND durum = 0");
+                                            $menusaygoster_stmt->execute([$ustmenu2["id"]]);
+                                            $menusay = $menusaygoster_stmt->fetch(PDO::FETCH_NUM);
                                         ?>
                                         <li <?php if ($menusay[0]!=0) { ?> class="menuparent" <?php } ?>>
 											<?php if ($ustmenu2["url"] == "" AND $ustmenu2["seo"] != "") { ?>
@@ -498,10 +502,12 @@ $('.gflag').click(function(){
 											<?php } ?>
                                             <ul <?php if ($menusay[0] > 0) { ?> class="sub-menu" <?php } ?>>
                                                 <?php
-                                                $ustmenuler3 = mysql_query("SELECT * FROM ustmenu where ustid = '".$ustmenu2["id"]."' && durum = 0 order by sira asc");
-                                                while($ustmenu3 = mysql_fetch_array($ustmenuler3)) {
-                                                    $menusaygoster = mysql_query("SELECT COUNT(*) FROM ustmenu where ustid = '".$ustmenuler3["id"]."' && durum = 0");
-                                                    $menusay = mysql_fetch_array($menusaygoster);
+                                                $ustmenuler3_stmt = $vt->prepare("SELECT * FROM ustmenu where ustid = ? AND durum = 0 order by sira asc");
+                                                $ustmenuler3_stmt->execute([$ustmenu2["id"]]);
+                                                while($ustmenu3 = $ustmenuler3_stmt->fetch()) {
+                                                    $menusaygoster3_stmt = $vt->prepare("SELECT COUNT(*) FROM ustmenu where ustid = ? AND durum = 0");
+                                                    $menusaygoster3_stmt->execute([$ustmenu3["id"]]);
+                                                    $menusay = $menusaygoster3_stmt->fetch(PDO::FETCH_NUM);
                                                     ?>
                                                     <li <?php if ($menusay[0]!=0) { ?> class="menuparent" <?php } ?>>
 													<?php if ($ustmenu3["url"] == "") { ?>
@@ -524,3 +530,36 @@ $('.gflag').click(function(){
         </div>
     </div>
 </div>
+<!-- AI CHATBOT WIDGET -->
+<div id="chatbot-widget">
+    <button id="chatbot-toggle" title="AI Asistan">
+        <i class="fa fa-comments"></i>
+        <span id="chatbot-badge">1</span>
+    </button>
+    <div id="chatbot-pencere">
+        <div class="chatbot-header">
+            <i class="fa fa-robot"></i>
+            <span>AI Emlak Asistanı</span>
+            <span class="chatbot-ai-badge">YAPAY ZEKA</span>
+        </div>
+        <div id="chatbot-mesajlar"></div>
+        <div class="chatbot-footer">
+            <input type="text" id="chatbot-input" placeholder="Bir şeyler sorun...">
+            <button id="chatbot-gonder"><i class="fa fa-paper-plane"></i></button>
+        </div>
+    </div>
+</div>
+
+<!-- PROPERTY COMPARISON BAR -->
+<div id="karsilastir-bar">
+    <div class="kb-title">
+        <i class="fa fa-exchange"></i>
+        Karşılaştırma Listesi
+        <span id="karsilastir-sayac" class="kb-sayac">0</span>
+    </div>
+    <button id="karsilastir-listele-btn" onclick="EmlakAI.Karsilastir.goster()">Karşılaştır</button>
+    <button id="karsilastir-temizle-btn" onclick="EmlakAI.Karsilastir.liste=[]; EmlakAI.Karsilastir.kaydet(); EmlakAI.Karsilastir.guncelle();">Temizle</button>
+</div>
+
+<!-- BACK TO TOP -->
+<button id="back-to-top" title="Yukarı çık"><i class="fa fa-chevron-up"></i></button>

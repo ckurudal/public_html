@@ -10,12 +10,15 @@
 		if ($temagetir) {
 			@define("TEMA_URL", rtrim($ayar["site_url"], '/')."/tema/".$temagetir); 
 			@define("TEMA", PATH."/tema/".$temagetir);
-			$ayartemaVt=$vt->query("SELECT * FROM ayar_tema where temaurl = '".$temagetir."'");
+			$ayartemaVt = $vt->prepare("SELECT * FROM ayar_tema WHERE temaurl = ?");
+			$ayartemaVt->execute([$temagetir]);
 			if ($ayartemaVt->rowCount() > 0)
 			{
-				$ayarlartema	= $vt->query("UPDATE ayarlar SET tema_url = '".$temagetir."', site_tema = '".$temagetir."' where id = 1");
+				$ayarlartema = $vt->prepare("UPDATE ayarlar SET tema_url = ?, site_tema = ? WHERE id = 1");
+				$ayarlartema->execute([$temagetir, $temagetir]);
 				$temaduzen 		= $vt->query("UPDATE ayar_tema SET aktif = 0 where aktif = 1");
-				$temaduzengetir = $vt->query("UPDATE ayar_tema SET aktif = 1 where temaurl = '".$temagetir."'");?>
+				$temaduzengetir = $vt->prepare("UPDATE ayar_tema SET aktif = 1 WHERE temaurl = ?");
+				$temaduzengetir->execute([$temagetir]);?>
 				<style>
 						body {
 							margin:0 !important;  
@@ -80,9 +83,9 @@
 					  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
 					  <!-- Global site tag (gtag.js) - Google Analytics -->
 					<script async src="https://www.googletagmanager.com/gtag/js?id=UA-100549436-1"></script>
-					<!-- Global site tag (gtag.js) - Google Analytics -->
-					<script async src="https://www.googletagmanager.com/gtag/js?id=UA-100549436-1"></script>
-					<?php $adtema=$vt->query("SELECT * FROM ayar_tema where temaurl = '".$temagetir."'")->fetch(); ?>
+					<?php $adtema_stmt = $vt->prepare("SELECT * FROM ayar_tema WHERE temaurl = ?");
+					$adtema_stmt->execute([$temagetir]);
+					$adtema = $adtema_stmt->fetch(); ?>
 					<div style="background: #333; color: #fff; line-height: 65px; height: 65px; padding: 13px 0;" class="hidden-xs">  
 						<div class="container-fluid">
 							<div class="row">

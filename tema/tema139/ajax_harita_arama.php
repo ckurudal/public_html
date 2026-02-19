@@ -1,37 +1,32 @@
 <?php 
-	require "sistem/baglan.php";  	
+    require "sistem/baglan.php";  
 
-	$ilid = $_POST["il"]; 
+    $ilid = $_POST["il"] ?? '';
+    $ilid = trim(strip_tags($ilid));
 
-	echo '<option value="">Seçiniz</option>';
+    echo '<option value="">Seçiniz</option>';
  
-	$ilceler = mysql_query("SELECT * FROM ilce where ilce_sehirkey = '$ilid'"); 
-	
-	while($ilce=mysql_fetch_array($ilceler)) { 	 
+    $stmt = $vt->prepare("SELECT * FROM ilce WHERE ilce_sehirkey = ?");
+    $stmt->execute([$ilid]);
+    while($ilce = $stmt->fetch()) {  
+        echo '<option value="'.htmlspecialchars($ilce["ilce_key"]).'">'.htmlspecialchars($ilce["ilce_title"]).'</option>';
+    }
 
-		echo '<option value="'.$ilce["ilce_key"].'">'.$ilce["ilce_title"].'</option>';
+    $ilceid = $_POST["ilce"] ?? '';
+    $ilceid = trim(strip_tags($ilceid));
 
-	}
+    $stmt2 = $vt->prepare("SELECT * FROM mahalle WHERE mahalle_ilcekey = ?");
+    $stmt2->execute([$ilceid]);
+    while($mahalle = $stmt2->fetch()) {
+        echo '<option value="'.htmlspecialchars($mahalle["mahalle_id"]).'">'.htmlspecialchars($mahalle["mahalle_title"]).'</option>';
+    }
 
-	$ilceid = $_POST["ilce"];
+    $ilsec = $_POST["ilsec"] ?? '';
+    $ilsec = trim(strip_tags($ilsec));
 
-	$mahalleler = mysql_query("SELECT * FROM mahalle where mahalle_ilcekey = '$ilceid'"); 
-	
-	while($mahalle=mysql_fetch_array($mahalleler)) {
-
-		echo '<option value="'.$mahalle["mahalle_id"].'">'.$mahalle["mahalle_title"].'</option>';
-
-	}
-
-	// mahalle arama 
-
-	$ilsec = $_POST["ilsec"];  
-
-	$ilceler2 = mysql_query("SELECT * FROM ilce where ilce_sehirkey = '$ilsec'"); 
-	
-	while($ilce=mysql_fetch_array($ilceler2)) { 	
-
-		echo '<option value="'.$ilce["ilce_key"].'">'.$ilce["ilce_title"].'</option>';
-
-	}
+    $stmt3 = $vt->prepare("SELECT * FROM ilce WHERE ilce_sehirkey = ?");
+    $stmt3->execute([$ilsec]);
+    while($ilce = $stmt3->fetch()) { 
+        echo '<option value="'.htmlspecialchars($ilce["ilce_key"]).'">'.htmlspecialchars($ilce["ilce_title"]).'</option>';
+    }
 ?>

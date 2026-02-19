@@ -172,11 +172,20 @@
                         }); 
                         </script>
                         
-                        <a class="emlak-grid-resim" href="/<?=$ilan["seo"];?>-ilan-<?=$ilan["id"];?>">
+                        <button class="karsilastir-ekle-btn" 
+    data-id="<?=$ilan['id']?>" 
+    data-baslik="<?=htmlspecialchars($ilan['baslik'])?>"
+    data-fiyat="<?=htmlspecialchars(rakam($ilan['fiyat']).' '.$ilan['fiyatkur'])?>"
+    data-resim="<?=$ilanresim['resimad']?>"
+    title="Karşılaştır"
+    style="position:absolute;top:38px;right:10px;background:rgba(0,0,0,0.55);color:#fff;border:none;border-radius:6px;padding:4px 8px;font-size:11px;cursor:pointer;z-index:2;">
+    <i class="fa fa-exchange"></i>
+</button>
+<a class="emlak-grid-resim" href="/<?=$ilan["seo"];?>-ilan-<?=$ilan["id"];?>">
                             <?php if($ilanresim["resimad"] != ""): ?>
-                            <img src="<?=RESIM;?>/<?php echo $ilanresim["resimad"]; ?>" height="200" width="100%" alt="img">
+                            <img data-src="<?=RESIM;?>/<?php echo $ilanresim["resimad"]; ?>" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 200'%3E%3C/svg%3E" loading="lazy" class="lazy" height="200" width="100%" alt="<?=htmlspecialchars($ilan["baslik"]);?>">
                             <?php else: ?>
-                            <img src="/uploads/resim/resim.png" height="200" width="100%" alt="img">
+                            <img src="/uploads/resim/resim.png" loading="lazy" height="200" width="100%" alt="İlan Resmi">
                             <?php endif; ?>
                             <span class="badge bg-info text-white one-cikan"><strong>EN YENİ</strong></span>
                         </a>
@@ -311,11 +320,20 @@
                     }); 
                     </script>
                     
-                    <a class="emlak-grid-resim" href="/<?=$ilan["seo"];?>-ilan-<?=$ilan["id"];?>">
+                    <button class="karsilastir-ekle-btn" 
+    data-id="<?=$ilan['id']?>" 
+    data-baslik="<?=htmlspecialchars($ilan['baslik'])?>"
+    data-fiyat="<?=htmlspecialchars(rakam($ilan['fiyat']).' '.$ilan['fiyatkur'])?>"
+    data-resim="<?=$ilanresim['resimad']?>"
+    title="Karşılaştır"
+    style="position:absolute;top:38px;right:10px;background:rgba(0,0,0,0.55);color:#fff;border:none;border-radius:6px;padding:4px 8px;font-size:11px;cursor:pointer;z-index:2;">
+    <i class="fa fa-exchange"></i>
+</button>
+<a class="emlak-grid-resim" href="/<?=$ilan["seo"];?>-ilan-<?=$ilan["id"];?>">
                         <?php if($ilanresim["resimad"] != ""): ?>
-                        <img src="<?=RESIM;?>/<?php echo $ilanresim["resimad"]; ?>" height="200" width="100%" alt="img">
+                        <img data-src="<?=RESIM;?>/<?php echo $ilanresim["resimad"]; ?>" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 200'%3E%3C/svg%3E" loading="lazy" class="lazy" height="200" width="100%" alt="<?=htmlspecialchars($ilan["baslik"]);?>">
                         <?php else: ?>
-                        <img src="/uploads/resim/resim.png" height="200" width="100%" alt="img">
+                        <img src="/uploads/resim/resim.png" loading="lazy" height="200" width="100%" alt="İlan Resmi">
                         <?php endif; ?>
                         <span class="badge bg-primary text-white one-cikan"><strong>ÖNE ÇIKAN</strong></span>
                     </a>
@@ -479,11 +497,20 @@
                     }); 
                     </script>
                     
-                    <a class="emlak-grid-resim" href="/<?=$ilan["seo"];?>-ilan-<?=$ilan["id"];?>">
+                    <button class="karsilastir-ekle-btn" 
+    data-id="<?=$ilan['id']?>" 
+    data-baslik="<?=htmlspecialchars($ilan['baslik'])?>"
+    data-fiyat="<?=htmlspecialchars(rakam($ilan['fiyat']).' '.$ilan['fiyatkur'])?>"
+    data-resim="<?=$ilanresim['resimad']?>"
+    title="Karşılaştır"
+    style="position:absolute;top:38px;right:10px;background:rgba(0,0,0,0.55);color:#fff;border:none;border-radius:6px;padding:4px 8px;font-size:11px;cursor:pointer;z-index:2;">
+    <i class="fa fa-exchange"></i>
+</button>
+<a class="emlak-grid-resim" href="/<?=$ilan["seo"];?>-ilan-<?=$ilan["id"];?>">
                         <?php if($ilanresim["resimad"] != ""): ?>
-                        <img src="<?=RESIM;?>/<?php echo $ilanresim["resimad"]; ?>" height="200" width="100%" alt="img">
+                        <img data-src="<?=RESIM;?>/<?php echo $ilanresim["resimad"]; ?>" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 200'%3E%3C/svg%3E" loading="lazy" class="lazy" height="200" width="100%" alt="<?=htmlspecialchars($ilan["baslik"]);?>">
                         <?php else: ?>
-                        <img src="/uploads/resim/resim.png" height="200" width="100%" alt="img">
+                        <img src="/uploads/resim/resim.png" loading="lazy" height="200" width="100%" alt="İlan Resmi">
                         <?php endif; ?>
                         <span class="badge bg-success text-white one-cikan"><strong>VİTRİN</strong></span>
                     </a>
@@ -670,11 +697,20 @@
                     }); 
                     </script>
                     
-                    <a class="emlak-grid-resim" href="/<?=$ilan["seo"];?>-ilan-<?=$ilan["id"];?>">
+                    <button class="karsilastir-ekle-btn" 
+    data-id="<?=$ilan['id']?>" 
+    data-baslik="<?=htmlspecialchars($ilan['baslik'])?>"
+    data-fiyat="<?=htmlspecialchars(rakam($ilan['fiyat']).' '.$ilan['fiyatkur'])?>"
+    data-resim="<?=$ilanresim['resimad']?>"
+    title="Karşılaştır"
+    style="position:absolute;top:38px;right:10px;background:rgba(0,0,0,0.55);color:#fff;border:none;border-radius:6px;padding:4px 8px;font-size:11px;cursor:pointer;z-index:2;">
+    <i class="fa fa-exchange"></i>
+</button>
+<a class="emlak-grid-resim" href="/<?=$ilan["seo"];?>-ilan-<?=$ilan["id"];?>">
                         <?php if($ilanresim["resimad"] != ""): ?>
-                        <img src="<?=RESIM;?>/<?php echo $ilanresim["resimad"]; ?>" height="200" width="100%" alt="img">
+                        <img data-src="<?=RESIM;?>/<?php echo $ilanresim["resimad"]; ?>" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 200'%3E%3C/svg%3E" loading="lazy" class="lazy" height="200" width="100%" alt="<?=htmlspecialchars($ilan["baslik"]);?>">
                         <?php else: ?>
-                        <img src="/uploads/resim/resim.png" height="200" width="100%" alt="img">
+                        <img src="/uploads/resim/resim.png" loading="lazy" height="200" width="100%" alt="İlan Resmi">
                         <?php endif; ?>
                         <span class="badge bg-danger text-white one-cikan"><strong>ACİL</strong></span>
                     </a>
@@ -795,11 +831,20 @@
                             
                         }); 
                         </script>
-                        <a class="emlak-grid-resim" href="/<?=$ilan["seo"];?>-ilan-<?=$ilan["id"];?>">
+                        <button class="karsilastir-ekle-btn" 
+    data-id="<?=$ilan['id']?>" 
+    data-baslik="<?=htmlspecialchars($ilan['baslik'])?>"
+    data-fiyat="<?=htmlspecialchars(rakam($ilan['fiyat']).' '.$ilan['fiyatkur'])?>"
+    data-resim="<?=$ilanresim['resimad']?>"
+    title="Karşılaştır"
+    style="position:absolute;top:38px;right:10px;background:rgba(0,0,0,0.55);color:#fff;border:none;border-radius:6px;padding:4px 8px;font-size:11px;cursor:pointer;z-index:2;">
+    <i class="fa fa-exchange"></i>
+</button>
+<a class="emlak-grid-resim" href="/<?=$ilan["seo"];?>-ilan-<?=$ilan["id"];?>">
                             <?php if($ilanresim["resimad"] != ""): ?>
-                            <img src="<?=RESIM;?>/<?php echo $ilanresim["resimad"]; ?>" height="200" width="100%" alt="img">
+                            <img data-src="<?=RESIM;?>/<?php echo $ilanresim["resimad"]; ?>" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 200'%3E%3C/svg%3E" loading="lazy" class="lazy" height="200" width="100%" alt="<?=htmlspecialchars($ilan["baslik"]);?>">
                             <?php else: ?>
-                            <img src="/uploads/resim/resim.png" height="200" width="100%" alt="img">
+                            <img src="/uploads/resim/resim.png" loading="lazy" height="200" width="100%" alt="İlan Resmi">
                             <?php endif; ?>
                             <span class="badge bg-warning text-white one-cikan"><strong>FIRSAT</strong></span>
                         </a>
@@ -1059,11 +1104,20 @@
                         
                     }); 
                     </script>
-                    <a class="emlak-grid-resim" href="/<?=$ilan["seo"];?>-ilan-<?=$ilan["id"];?>">
+                    <button class="karsilastir-ekle-btn" 
+    data-id="<?=$ilan['id']?>" 
+    data-baslik="<?=htmlspecialchars($ilan['baslik'])?>"
+    data-fiyat="<?=htmlspecialchars(rakam($ilan['fiyat']).' '.$ilan['fiyatkur'])?>"
+    data-resim="<?=$ilanresim['resimad']?>"
+    title="Karşılaştır"
+    style="position:absolute;top:38px;right:10px;background:rgba(0,0,0,0.55);color:#fff;border:none;border-radius:6px;padding:4px 8px;font-size:11px;cursor:pointer;z-index:2;">
+    <i class="fa fa-exchange"></i>
+</button>
+<a class="emlak-grid-resim" href="/<?=$ilan["seo"];?>-ilan-<?=$ilan["id"];?>">
                         <?php if($ilanresim["resimad"] != ""): ?>
-                        <img src="<?=RESIM;?>/<?php echo $ilanresim["resimad"]; ?>" height="200" width="100%" alt="img">
+                        <img data-src="<?=RESIM;?>/<?php echo $ilanresim["resimad"]; ?>" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 200'%3E%3C/svg%3E" loading="lazy" class="lazy" height="200" width="100%" alt="<?=htmlspecialchars($ilan["baslik"]);?>">
                         <?php else: ?>
-                        <img src="/uploads/resim/resim.png" height="200" width="100%" alt="img">
+                        <img src="/uploads/resim/resim.png" loading="lazy" height="200" width="100%" alt="İlan Resmi">
                         <?php endif; ?>
                         <span class="badge bg-danger text-white one-cikan"><strong>PROJE</strong></span>
                     </a>

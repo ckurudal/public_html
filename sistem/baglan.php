@@ -5,12 +5,15 @@
 	$dbuser		= "emlakbudur_jokergyo"; 
 	$dbname		= "emlakbudur_joker";
 	$dbpass		= "serrasu112233***A"; 
-	$baglan = @mysql_connect("$dbhost","$dbuser","$dbpass") or die ("MYSQL Bağlantısı yapılamadı...");	
-	$db = mysql_select_db("$dbname", $baglan) or die ("Veritabanına bağlanamadı..."); 
-	mysql_query("SET CHARACTER SET 'utf8'");
-	mysql_query("SET NAMES 'utf8'");  
-	try {$vt = new PDO("mysql:host=$dbhost;dbname=$dbname;charset=utf8", "$dbuser", "$dbpass");
-    $vt->exec("set names utf8");} catch ( PDOException $e ){ print $e->getMessage();}
+	try {
+        $vt = new PDO("mysql:host=$dbhost;dbname=$dbname;charset=utf8", $dbuser, $dbpass, [
+            PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
+            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+            PDO::ATTR_EMULATE_PREPARES   => false,
+        ]);
+    } catch (PDOException $e) {
+        die("Veritabanına bağlanamadı: " . $e->getMessage());
+    }
 	$pdoAyar = $vt->query("SELECT * FROM ayarlar where id = 1")->fetch();   
 	date_default_timezone_set('Europe/Istanbul'); 
 	$ayar = $vt->query("SELECT * FROM ayarlar")->fetch();  
