@@ -18,7 +18,13 @@
 	date_default_timezone_set('Europe/Istanbul'); 
 	$ayar = $vt->query("SELECT * FROM ayarlar")->fetch();  
 	$paytr_api = $vt->query("SELECT * FROM odeme_paytr")->fetch();	   
-	if (!empty($_SESSION["id"])) { $stmt_yk = $vt->prepare("SELECT * FROM yonetici WHERE id = ?"); $stmt_yk->execute([(int)$_SESSION["id"]]); $uyelik_yetki = $stmt_yk->fetch(); } else { $uyelik_yetki = null; }
+	if (!empty($_SESSION["id"])) {
+		$stmt_yk = $vt->prepare("SELECT * FROM yonetici WHERE id = ?");
+		$stmt_yk->execute([(int)$_SESSION["id"]]);
+		$uyelik_yetki = $stmt_yk->fetch();
+	} else {
+		$uyelik_yetki = null;
+	}
 	@$uye_yetki = $uyelik_yetki["yetki"];  
 	$tema = $vt->query("SELECT * FROM ayar_tema where aktif = 1")->fetch();   
 	$site = $vt->query("SELECT * FROM ayar_site")->fetch();   

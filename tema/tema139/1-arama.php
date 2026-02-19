@@ -1952,7 +1952,7 @@
 
 
 										$stmt_aramabul = $vt->prepare("SELECT * FROM emlak_ilan where emlakno LIKE ? OR baslik LIKE ?");
-										$stmt_aramabul->execute([\'%\'.$aramaformu.\'%\', \'%\'.$aramaformu.\'%\']);
+										$stmt_aramabul->execute(['%'.$aramaformu.'%', '%'.$aramaformu.'%']);
 										while($emlak = $stmt_aramabul->fetch()) {
 
 											$emlak_kategori = $vt->query("SELECT * FROM emlak_kategori WHERE kat_id like '%".$_GET["kategori"]."%' AND kat_id = '".$emlak["katid"]."'")->fetch();

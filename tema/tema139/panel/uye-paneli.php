@@ -422,7 +422,7 @@ $islem = $_GET["islem"];
                                                 $stmt_menu3->execute([$ustmenu2["id"]]);
                                                 while($ustmenu3 = $stmt_menu3->fetch()) {
                                                     $stmt_menusay3 = $vt->prepare("SELECT COUNT(*) FROM ustmenu where ustid = ? AND durum = 0");
-                                                    $stmt_menusay3->execute([$ustmenu2["id"]]);
+                                                    $stmt_menusay3->execute([$ustmenu3["id"]]);
                                                     $menusay = $stmt_menusay3->fetch(PDO::FETCH_NUM);
                                                     ?>
                                                     <li <?php if ($menusay[0]!=0) { ?> class="menuparent" <?php } ?>>
