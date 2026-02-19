@@ -23,9 +23,9 @@
 
 	if (isset($_POST["kaydet"])) { 
 
-		$jscript = mysql_real_escape_string(addslashes($_POST["jscript"])); 
+		$jscript = addslashes($_POST["jscript"]); 
 
-		$kaydet = mysql_query("UPDATE ayar_site SET jscript = '$jscript' where id = '1'");
+		$kaydet = $vt->query("UPDATE ayar_site SET jscript = '$jscript' where id = '1'");
 
 		go("index.php?do=islem&webmaster=jscript&hareket=onay",0);		
 

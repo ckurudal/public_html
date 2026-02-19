@@ -6,7 +6,9 @@
 	
 	$islem = $_GET["islem"];
 
-	$uye_yasak = $vt->query("SELECT * FROM yonetici WHERE id = '".$_SESSION["id"]."'")->fetch();
+	$stmt_uye_yasak = $vt->prepare("SELECT * FROM yonetici WHERE id = ?");
+	$stmt_uye_yasak->execute([$_SESSION["id"]]);
+	$uye_yasak = $stmt_uye_yasak->fetch();
 	
 	$sube_kontrol = $vt->query("SELECT * FROM subeler WHERE id = '$id'")->fetch(PDO::FETCH_ASSOC);
 	
@@ -23,21 +25,21 @@
 <?php
 	if (isset($_POST["subeekle"]) || isset($_POST["subekaydet"])) {
 
-		$adi 			= mysql_real_escape_string($_POST["adi"]);
+		$adi 			= $_POST["adi"];
 		$seo 			= seo($_POST["adi"]);
-		$icerik 		= mysql_real_escape_string($_POST["icerik"]);
-		$title 			= mysql_real_escape_string($_POST["title"]);
-		$aciklama 		= mysql_real_escape_string($_POST["aciklama"]);
-		$keyw 			= mysql_real_escape_string($_POST["keyw"]);
-		$email 			= mysql_real_escape_string($_POST["email"]);
-		$sabittel 		= mysql_real_escape_string($_POST["sabittel"]);
-		$sabitteldiger	= mysql_real_escape_string($_POST["sabitteldiger"]);
-		$gsm 			= mysql_real_escape_string($_POST["gsm"]);
-		$fax 			= mysql_real_escape_string($_POST["fax"]);
+		$icerik 		= $_POST["icerik"];
+		$title 			= $_POST["title"];
+		$aciklama 		= $_POST["aciklama"];
+		$keyw 			= $_POST["keyw"];
+		$email 			= $_POST["email"];
+		$sabittel 		= $_POST["sabittel"];
+		$sabitteldiger	= $_POST["sabitteldiger"];
+		$gsm 			= $_POST["gsm"];
+		$fax 			= $_POST["fax"];
 		$il 			= $_POST["il"];
 		$ilce 			= $_POST["ilce"];
 		$mahalle 		= $_POST["mahalle"];
-		$adres 			= mysql_real_escape_string($_POST["adres"]);
+		$adres 			= $_POST["adres"];
 
 		$firmaunvan		= $_POST["firmaunvan"];
 		$vergino		= $_POST["vergino"];
@@ -47,7 +49,7 @@
 
 		if (isset($_POST["subeekle"])) {
 
-			$subeekle = mysql_query("INSERT INTO subeler ( adi, yetkiliuye, seo, icerik, title, aciklama, keyw, email, sabittel, sabitteldiger, gsm, fax, il, ilce, mahalle, adres ) VALUES ( '$adi', '$yetkili', '$seo', '$icerik', '$title', '$aciklama', '$keyw', '$email', '$sabittel', '$sabitteldiger', '$gsm', '$fax', '$il', '$ilce', '$mahalle', '$adres' )");
+			$subeekle = $vt->query("INSERT INTO subeler ( adi, yetkiliuye, seo, icerik, title, aciklama, keyw, email, sabittel, sabitteldiger, gsm, fax, il, ilce, mahalle, adres ) VALUES ( '$adi', '$yetkili', '$seo', '$icerik', '$title', '$aciklama', '$keyw', '$email', '$sabittel', '$sabitteldiger', '$gsm', '$fax', '$il', '$ilce', '$mahalle', '$adres' )");
 
 			if ($subeekle) {
 				go("index.php?do=islem&ofis=subeler&islem=ekle",0);
@@ -57,9 +59,9 @@
 
 		if (isset($_POST["subekaydet"])) {
 
-			$subekaydet = mysql_query("UPDATE subeler SET adi = '$adi', firmaunvan = '$firmaunvan', vergino = '$vergino', vergidairesi = '$vergidairesi', seo = '$seo', icerik = '$icerik', title = '$title', aciklama = '$aciklama', keyw = '$keyw', email = '$email', sabittel = '$sabittel', sabitteldiger = '$sabitteldiger', gsm = '$gsm', fax = '$fax', il = '$il', ilce = '$ilce', mahalle = '$mahalle', adres = '$adres' where id = '$id' ");
+			$subekaydet = $vt->query("UPDATE subeler SET adi = '$adi', firmaunvan = '$firmaunvan', vergino = '$vergino', vergidairesi = '$vergidairesi', seo = '$seo', icerik = '$icerik', title = '$title', aciklama = '$aciklama', keyw = '$keyw', email = '$email', sabittel = '$sabittel', sabitteldiger = '$sabitteldiger', gsm = '$gsm', fax = '$fax', il = '$il', ilce = '$ilce', mahalle = '$mahalle', adres = '$adres' where id = '$id' ");
 
-			$uyekaydet = mysql_query("UPDATE yonetici SET ofis = '".$id."' where id = '$yetkili'");
+			$uyekaydet = $vt->query("UPDATE yonetici SET ofis = '".$id."' where id = '$yetkili'");
 
 			if ($subekaydet) {
 
@@ -80,12 +82,12 @@
 				            $dosya = "../uploads/resim/".$saat.".jpg";
 				            if (move_uploaded_file($_FILES["resim"]["tmp_name"][$i], $dosya)) {
 
-				                $eskiresim = mysql_fetch_array(mysql_query("SELECT * FROM subeler where id = '$id'"));
+				                $eskiresim = $vt->query("SELECT * FROM subeler where id = '$id'")->fetch();
 
 				            	unlink("../".$eskiresim["resim"]);
 
 				                $link = "uploads/resim/".$saat.".jpg";
-				                $ekle = mysql_query("UPDATE subeler SET resim = '$link' where id = '$id'");
+				                $ekle = $vt->query("UPDATE subeler SET resim = '$link' where id = '$id'");
 				                $yuklenenler++;
 
 				            }
@@ -135,8 +137,8 @@
 							<option>Seçiniz</option>
 							<option value="0">Yekilik Yok</option>
 							<?php
-								$yoneticiler = mysql_query("SELECT * FROM yonetici where yetki = 2 && durum = 0");
-								while($yonetici = mysql_fetch_array($yoneticiler)) {
+								$yoneticiler = $vt->query("SELECT * FROM yonetici where yetki = 2 AND durum = 0");
+								while($yonetici = $yoneticiler->fetch()) {
 							?>
 							<option value="<?=$yonetici["id"];?>"><?=$yonetici["adsoyad"];?></option>
 							<?php } ?>
@@ -225,8 +227,8 @@
 									<select name="il" id="il" class="form-control select2">
 										<option selected="selected"> İl Seçiniz </option>
 										<?php
-											$iller = mysql_query("select * from sehir order by sehir_key asc");
-											while($il=mysql_fetch_array($iller)) {
+											$iller = $vt->query("select * from sehir order by sehir_key asc");
+											while($il=$iller->fetch()) {
 										?>
 										<option value="<?=$il['sehir_key'];?>"> <?=$il['adi'];?> </option>
 										<?php } ?>
@@ -343,23 +345,23 @@
 					  <div class="col-sm-3">
 					  		<label class="control-label">Mağaza Yetkilisi:</label>
 					  		<?php
-								$yoneticilerid = mysql_query("SELECT * FROM yonetici where id = '".$s["yetkiliuye"]."' && durum = 0 && yetki = 2");
-								$yoneticiid = mysql_fetch_array($yoneticilerid);
+								$yoneticilerid = $vt->query("SELECT * FROM yonetici where id = '".$s["yetkiliuye"]."' AND durum = 0 AND yetki = 2");
+								$yoneticiid = $yoneticilerid->fetch();
 							?>
 							<a href="index.php?do=islem&ofis=yonetici&islem=duzenle&id=<?php echo $yoneticiid["id"]; ?>&yetki=<?php echo $yoneticiid["yetki"]; ?>" target="_blank" class="form-control"> <?=$yoneticiid["adsoyad"];?> </a>
 						<!--
 						<select class="form-control select2" name="yetkili">
 							<option value="0">Yetkili Yok</option>
 							<?php
-								$yoneticilerid = mysql_query("SELECT * FROM yonetici where id = '".$s["yetkiliuye"]."' && durum = 0 && yetki = 2");
-								$yoneticiid = mysql_fetch_array($yoneticilerid);
+								$yoneticilerid = $vt->query("SELECT * FROM yonetici where id = '".$s["yetkiliuye"]."' AND durum = 0 AND yetki = 2");
+								$yoneticiid = $yoneticilerid->fetch();
 							?>
 							<?php if ($s["yetkiliuye"] != 0) { ?>
 							<option selected="selected"><?=$yoneticiid["adsoyad"];?></option>
 							<?php } ?>
 							<?php
-								$yoneticiler = mysql_query("SELECT * FROM yonetici where yetki = 2 && durum = 0");
-								while($yonetici = mysql_fetch_array($yoneticiler)) {
+								$yoneticiler = $vt->query("SELECT * FROM yonetici where yetki = 2 AND durum = 0");
+								while($yonetici = $yoneticiler->fetch()) {
 							?>
 							<option value="<?=$yonetici["id"];?>"><?=$yonetici["adsoyad"];?></option>
 							<?php } ?>
@@ -457,8 +459,8 @@
 							<div class="col-sm-4">
 								<select name="il" id="il" class="form-control select2">
 									<?php
-										$illersec = mysql_query("select * from sehir where sehir_key = '$s[il]'");
-										$ilsec=mysql_fetch_array($illersec);
+										$illersec = $vt->query("select * from sehir where sehir_key = '$s[il]'");
+										$ilsec=$illersec->fetch();
 
 										if ($ilsec["sehir_key"]==$s["il"]) {
 											echo '<option value="'.$ilsec["sehir_key"].'" selected="selected">'.$ilsec["adi"].'</option>';
@@ -467,8 +469,8 @@
 									<option selected=""> İL SEÇİNİZ </option>
 									<?php } ?>
 									<?php
-										$iller = mysql_query("select * from sehir order by sehir_key asc");
-										while($il=mysql_fetch_array($iller)) {
+										$iller = $vt->query("select * from sehir order by sehir_key asc");
+										while($il=$iller->fetch()) {
 									?>
 										<option value="<?=$il['sehir_key'];?>"> <?=$il['adi'];?> </option>
 									<?php } ?>
@@ -478,8 +480,8 @@
 								<select name="ilce" id="ilce" class="form-control select2">
 
 									<?php
-										$ilcelersec = mysql_query("select * from ilce where ilce_key = '$s[ilce]'");
-										$ilcesec=mysql_fetch_array($ilcelersec);
+										$ilcelersec = $vt->query("select * from ilce where ilce_key = '$s[ilce]'");
+										$ilcesec=$ilcelersec->fetch();
 
 										if ($ilcesec["ilce_key"]==$s["ilce"]) {
 											echo '<option value="'.$ilcesec["ilce_key"].'" selected="selected">'.$ilcesec["ilce_title"].'</option>';
@@ -489,8 +491,8 @@
 									<?php } ?>
 									<?php
 
-										$ilceler = mysql_query("SELECT * FROM ilce where ilce_sehirkey = '$s[il]'");
-										while($ilce=mysql_fetch_array($ilceler)) {
+										$ilceler = $vt->query("SELECT * FROM ilce where ilce_sehirkey = '$s[il]'");
+										while($ilce=$ilceler->fetch()) {
 
 											echo '<option value="'.$ilce["ilce_key"].'">'.$ilce["ilce_title"].'</option>';
 
@@ -502,8 +504,8 @@
 								<select name="mahalle" id="mahalle" class="form-control select2">
 
 									<?php
-										$mahallelersec = mysql_query("select * from mahalle where mahalle_id = '$s[mahalle]'");
-										$mahallesec=mysql_fetch_array($mahallelersec);
+										$mahallelersec = $vt->query("select * from mahalle where mahalle_id = '$s[mahalle]'");
+										$mahallesec=$mahallelersec->fetch();
 
 										if ($mahallesec["mahalle_id"]==$s["mahalle"]) {
 											echo '<option value="'.$mahallesec["mahalle_id"].'" selected="selected">'.$mahallesec["mahalle_title"].'</option>';
@@ -512,8 +514,8 @@
 									<option selected="selected"> MAHALLE SEÇİNİZ </option>
 									<?php } ?>
 									<?php
-										$mahalleler = mysql_query("SELECT * FROM mahalle where mahalle_ilcekey = '$ilcesec[ilce_key]'");
-										while($mahalle=mysql_fetch_array($mahalleler)) {
+										$mahalleler = $vt->query("SELECT * FROM mahalle where mahalle_ilcekey = '$ilcesec[ilce_key]'");
+										while($mahalle=$mahalleler->fetch()) {
 
 											echo '<option value="'.$mahalle["mahalle_id"].'">'.$mahalle["mahalle_title"].'</option>';
 

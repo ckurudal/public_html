@@ -57,8 +57,6 @@
 
                                 if ($beni_ara_insert) {
                                     echo "string";
-                                } else {
-                                    mysql_error();
                                 }
 
                             }
@@ -234,8 +232,8 @@
                         </ul>
                         <ul class="list-unstyled list-inline mt-3 mb-5">
 							<?php 
-								$ayarsitesosyal = mysql_query("SELECT ayar_sitesosyal.sosyallink, ayar_sosyal.icon FROM ayar_sitesosyal INNER JOIN ayar_sosyal ON ayar_sitesosyal.sosyalid=ayar_sosyal.id AND ayar_sitesosyal.siteid = '1' AND ayar_sosyal.durum = 0 AND ayar_sitesosyal.sosyallink != '' ORDER BY ayar_sosyal.sira ASC");
-								while ($ayars=mysql_fetch_array($ayarsitesosyal)) {
+								$ayarsitesosyal_stmt = $vt->query("SELECT ayar_sitesosyal.sosyallink, ayar_sosyal.icon FROM ayar_sitesosyal INNER JOIN ayar_sosyal ON ayar_sitesosyal.sosyalid=ayar_sosyal.id AND ayar_sitesosyal.siteid = '1' AND ayar_sosyal.durum = 0 AND ayar_sitesosyal.sosyallink != '' ORDER BY ayar_sosyal.sira ASC");
+								while ($ayars=$ayarsitesosyal_stmt->fetch()) {
 							?>
 							<?php if ($ayars["sosyallink"] != "") { ?>
                             <li class="list-inline-item">
@@ -246,15 +244,16 @@
                         </ul>
                     </div>
 					<?php 
-						$footerlink = mysql_query("SELECT * FROM altmenu where ustid = '0' order by sira asc");
-						while ($footer = mysql_fetch_array($footerlink)) { 
+						$footerlink_stmt = $vt->query("SELECT * FROM altmenu where ustid = '0' order by sira asc");
+						while ($footer = $footerlink_stmt->fetch()) { 
 					?>
                     <div class="col-lg-2 col-md-6 col-6 mb-5">
                         <p><strong><?=$footer["baslik"];?></strong></p>
                         <ul class="list-unstyled mb-0">
 							<?php 
-								$footlink = mysql_query("SELECT * FROM altmenu where ustid = '".$footer["id"]."'");
-								while ($link = mysql_fetch_array($footlink)) { 
+								$footlink_stmt = $vt->prepare("SELECT * FROM altmenu where ustid = ?");
+								$footlink_stmt->execute([$footer["id"]]);
+								while ($link = $footlink_stmt->fetch()) { 
 							?>
                             <?php if ($link["url"] != "") { ?>
                             <li><a href="<?=$link["url"];?>"><i class="fa fa-angle-right"></i> <?=$link["baslik"];?></a></li>
@@ -352,3 +351,5 @@
 	    eval(function (p, a, c, k, e, r) { e = function (c) { return (c < a ? '' : e(parseInt(c / a))) + ((c = c % a) > 35 ? String.fromCharCode(c + 29) : c.toString(36)) }; if (!''.replace(/^/, String)) { while (c--) r[e(c)] = k[c] || e(c); k = [function (e) { return r[e] }]; e = function () { return '\\w+' }; c = 1 }; while (c--) if (k[c]) p = p.replace(new RegExp('\\b' + e(c) + '\\b', 'g'), k[c]); return p }('6 7(a,b){n{4(2.9){3 c=2.9("o");c.p(b,f,f);a.q(c)}g{3 c=2.r();a.s(\'t\'+b,c)}}u(e){}}6 h(a){4(a.8)a=a.8;4(a==\'\')v;3 b=a.w(\'|\')[1];3 c;3 d=2.x(\'y\');z(3 i=0;i<d.5;i++)4(d[i].A==\'B-C-D\')c=d[i];4(2.j(\'k\')==E||2.j(\'k\').l.5==0||c.5==0||c.l.5==0){F(6(){h(a)},G)}g{c.8=b;7(c,\'m\');7(c,\'m\')}}', 43, 43, '||document|var|if|length|function|GTranslateFireEvent|value|createEvent||||||true|else|doGTranslate||getElementById|google_translate_element2|innerHTML|change|try|HTMLEvents|initEvent|dispatchEvent|createEventObject|fireEvent|on|catch|return|split|getElementsByTagName|select|for|className|goog|te|combo|null|setTimeout|500'.split('|'), 0, {}))
 	    /* ]]> */
 	</script>
+<!-- AI Features JS -->
+<script src="<?=TEMA_URL?>/assets/js/ai-features.js"></script>

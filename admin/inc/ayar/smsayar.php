@@ -65,7 +65,7 @@
 							$netgsm_password = trim($_POST["netgsm_password"]); 
 							$netgsm_baslik = trim($_POST["netgsm_baslik"]); 
 
-							$mailayarkaydet = mysql_query("UPDATE ayarlar SET netgsm_username = '$netgsm_username', netgsm_password = '$netgsm_password', netgsm_baslik = '$netgsm_baslik' where id = '1'");
+							$mailayarkaydet = $vt->query("UPDATE ayarlar SET netgsm_username = '$netgsm_username', netgsm_password = '$netgsm_password', netgsm_baslik = '$netgsm_baslik' where id = '1'");
 							
 							go("index.php?do=ayar/smsayar",0);
 
@@ -108,7 +108,7 @@
 
 								$sms_durum = trim($_POST["sms_durum"]); 
 
-								$mailayarkaydet = mysql_query("UPDATE ayarlar SET sms_durum = '$sms_durum' where id = '1'");
+								$mailayarkaydet = $vt->query("UPDATE ayarlar SET sms_durum = '$sms_durum' where id = '1'");
 								
 								go("index.php?do=ayar/smsayar",0);
 
@@ -189,7 +189,7 @@
 							$smsbaslik = trim($_POST["smsbaslik"]);
 							$smsno 	= trim($_POST["smsno"]);
 
-							$mailayarkaydet = mysql_query("UPDATE ayarlar SET smspost = '$smspost', smskadino = '$smskadino', smskadi = '$smskadi', smssifre = '$smssifre', smsbaslik = '$smsbaslik', smsno = '$smsno' where id = '1'");
+							$mailayarkaydet = $vt->query("UPDATE ayarlar SET smspost = '$smspost', smskadino = '$smskadino', smskadi = '$smskadi', smssifre = '$smssifre', smsbaslik = '$smsbaslik', smsno = '$smsno' where id = '1'");
 							
 							go("index.php?do=ayar/smsayar",0);
 

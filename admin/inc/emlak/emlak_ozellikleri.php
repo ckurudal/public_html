@@ -27,13 +27,13 @@
 		 // durum guncelle 
 
 	    if ($durum) {
-	        $ver = mysql_fetch_array(mysql_query("SELECT * FROM emlak_ozellik WHERE id = '$durum'"));
+	        $ver = $vt->query("SELECT * FROM emlak_ozellik WHERE id = '$durum'")->fetch();
 	        $kdurum = $ver["durum"];
 	        if ($ver["durum"] == 1) {
-	                mysql_query("UPDATE emlak_ozellik SET durum = '0' WHERE id = '$durum'");
+	                $vt->query("UPDATE emlak_ozellik SET durum = '0' WHERE id = '$durum'");
 	                onay();
 	            } else {
-	                mysql_query("UPDATE emlak_ozellik SET durum  = '1' WHERE id = '$durum'");
+	                $vt->query("UPDATE emlak_ozellik SET durum  = '1' WHERE id = '$durum'");
 	                onay();
 	        }
 	    }
@@ -63,8 +63,8 @@
                     <tbody>
                     	<?php
 
-                    		$ozellikcek=mysql_query("select * from emlak_ozellik order by id desc");
-                    		while ($oz=mysql_fetch_array($ozellikcek)) {
+                    		$ozellikcek=$vt->query("select * from emlak_ozellik order by id desc");
+                    		while ($oz=$ozellikcek->fetch()) {
 
                     	?>
                     	<tr> 
@@ -76,15 +76,15 @@
 	                    	</th>
 	                    	<th class=""> 
 	                    	<?php 
-	                    		$oztipcek = mysql_query("SELECT * FROM emlak_ozelliktip where id = $oz[ozelliktipi]");
-	                    		$oztip = mysql_fetch_array($oztipcek);
+	                    		$oztipcek = $vt->query("SELECT * FROM emlak_ozelliktip where id = $oz[ozelliktipi]");
+	                    		$oztip = $oztipcek->fetch();
 	                    		echo $oztip[ad];
 	                    	?>
 	                    	</th> 
 	                    	<th class="">
 	                    		<?php 
-	                    			$ilans=mysql_query("SELECT * FROM emlak_ilansekli where id = '$oz[ilansekli]'");
-	                    			$s=mysql_fetch_array($ilans);
+	                    			$ilans=$vt->query("SELECT * FROM emlak_ilansekli where id = '$oz[ilansekli]'");
+	                    			$s=$ilans->fetch();
 	                    		?>
 	                    		<span class="btn btn-default btn-xs"><?=$s["baslik"];?></span>
 	                    	</th>
@@ -152,7 +152,7 @@
 		
 			$id = $_GET[id];
 
-			$sil = mysql_query("DELETE FROM emlak_ozellik where id = '$id'");			
+			$sil = $vt->query("DELETE FROM emlak_ozellik where id = '$id'");			
 
 			if ($sil) {				
 				onay("Başarılı bir şekilde silindi");
@@ -177,7 +177,7 @@
 				hata("Başlık alanı boş olamaz! Lütfen bir başlık ekleyiniz!");
 			} else {
 
-				$ekle=mysql_query("INSERT INTO emlak_ozellik (ad,seo,ilansekli,ozelliktipi) VALUES ('$ad','$seo','$ilansekli','$ozelliktipi')");
+				$ekle=$vt->query("INSERT INTO emlak_ozellik (ad,seo,ilansekli,ozelliktipi) VALUES ('$ad','$seo','$ilansekli','$ozelliktipi')");
 
 				if ($ekle) {
 					onay();
@@ -217,15 +217,15 @@
 			                    	<option>Seçiniz</option>
 			                    	<?php 
 			                    	/*
-			                    		$sekliver=mysql_query("SELECT * FROM emlak_ilansekli where id");
-			                    		while ($sekli=mysql_fetch_array($sekliver)) {
+			                    		$sekliver=$vt->query("SELECT * FROM emlak_ilansekli where id");
+			                    		while ($sekli=$sekliver->fetch()) {
 			                    	?>
 									<!-- <option value="<?=$sekli[id];?>"> <?=$sekli[baslik];?> </option> -->
 
 			                    	<?php } */ ?>
 									<?php 
-			                    		$query=mysql_query("SELECT * FROM emlak_ozelliktip order by ad");
-			                    		while ($row=mysql_fetch_array($query)) {
+			                    		$query=$vt->query("SELECT * FROM emlak_ozelliktip order by ad");
+			                    		while ($row=$query->fetch()) {
 			                    	?>						 									
 									<option value="<?=$row[id];?>">-- <?=$row[ad];?></option>									 									
 									<?php } ?>
@@ -241,8 +241,8 @@
 			                    <optgroup label=" ">		
 			                    	<option>Seçiniz</option>
 			                    	<?php 
-			                    		$query=mysql_query("SELECT * FROM emlak_ilansekli where id");
-			                    		while ($row=mysql_fetch_array($query)) {
+			                    		$query=$vt->query("SELECT * FROM emlak_ilansekli where id");
+			                    		while ($row=$query->fetch()) {
 			                    	?>
 									<option value="<?=$row[id];?>"><?=$row[baslik];?></option>									 									
 									<?php } ?>
@@ -271,7 +271,7 @@
 			$ozelliktipi = $_POST["ozelliktipi"];
 			$ilansekli = $_POST["ilansekli"];
 
-			$duzenle=mysql_query("UPDATE emlak_ozellik SET ad = '$ad', seo = '$seo', ozelliktipi = '$ozelliktipi', ilansekli = '$ilansekli' where id = '$id'");
+			$duzenle=$vt->query("UPDATE emlak_ozellik SET ad = '$ad', seo = '$seo', ozelliktipi = '$ozelliktipi', ilansekli = '$ilansekli' where id = '$id'");
 
 			if ($duzenle) {
 				go("index.php?do=islem&emlak=emlak_ozellikleri&hareket=onay", 0);
@@ -298,8 +298,8 @@
 					  <label class="col-sm-2 control-label">Başlık:</label>
 					  <div class="col-sm-10"> 
 					  <?php 
-						  $query=mysql_query("SELECT * FROM emlak_ozellik where id = '$id'");
-						  $row=mysql_fetch_array($query)
+						  $query=$vt->query("SELECT * FROM emlak_ozellik where id = '$id'");
+						  $row=$query->fetch()
 					  ?>
 						<input type="text" class="form-control" name="ad" value="<?=$row[ad];?>">
 					  </div>
@@ -311,16 +311,16 @@
 			                   	<optgroup label="">
 			                   		<option>Seçiniz</option>
 			                    	<?php /*
-			                    		$sekliver=mysql_query("SELECT * FROM emlak_ilansekli where id");
-			                    		while ($sekli=mysql_fetch_array($sekliver)) {
+			                    		$sekliver=$vt->query("SELECT * FROM emlak_ilansekli where id");
+			                    		while ($sekli=$sekliver->fetch()) {
 			                    	?>
 									<?php } */ ?>
 									<!-- <option value="<?=$sekli[id];?>"> <?=$sekli[baslik];?> </option> -->
 									<?php 
-			                    		$ozellik=mysql_query("SELECT * FROM emlak_ozellik where id = '$id'");
-			                    		$o=mysql_fetch_array($ozellik);
-			                    		$query=mysql_query("SELECT * FROM emlak_ozelliktip order by ad asc");
-			                    		while ($row=mysql_fetch_array($query)) {
+			                    		$ozellik=$vt->query("SELECT * FROM emlak_ozellik where id = '$id'");
+			                    		$o=$ozellik->fetch();
+			                    		$query=$vt->query("SELECT * FROM emlak_ozelliktip order by ad asc");
+			                    		while ($row=$query->fetch()) {
 			                    	?>								 									
 									<option <?php if ($o["ozelliktipi"] == $row["id"]) {echo "selected";} ?> value="<?=$row[id];?>">-- <?=$row[ad];?></option>									 									
 			                    	<?php } ?>
@@ -336,10 +336,10 @@
 			                    <optgroup label=" ">
 			                    	<option>Seçiniz</option>
 			                    	<?php 
-			                    		$ozellik=mysql_query("SELECT * FROM emlak_ozellik where id = '$id'");
-			                    		$o=mysql_fetch_array($ozellik);
-			                    		$query=mysql_query("SELECT * FROM emlak_ilansekli where id");
-			                    		while ($row=mysql_fetch_array($query)) {
+			                    		$ozellik=$vt->query("SELECT * FROM emlak_ozellik where id = '$id'");
+			                    		$o=$ozellik->fetch();
+			                    		$query=$vt->query("SELECT * FROM emlak_ilansekli where id");
+			                    		while ($row=$query->fetch()) {
 			                    	?>
 									<option <?php if ($o["ilansekli"] == $row["id"]) {echo "selected";} ?> value="<?=$row[id];?>"><?=$row[baslik];?></option>									 									
 									<?php } ?>

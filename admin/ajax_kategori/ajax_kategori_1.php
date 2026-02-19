@@ -18,9 +18,9 @@
 		$ust_kat = $_SESSION["ust_kat"] = true;
 		$ust_kat = $_SESSION["ust_kat"] = $katid[0];
 
-		$altkatler = mysql_query("SELECT * FROM emlak_kategori where kat_ustid = '$katid[0]'"); 
+		$altkatler = $vt->query("SELECT * FROM emlak_kategori where kat_ustid = '$katid[0]'"); 
 		
-		while($altkat=mysql_fetch_array($altkatler)) { 	
+		while($altkat=$altkatler->fetch()) { 	
 		
 			echo '<option value="'.$altkat["kat_id"].'">'.$altkat["kat_adi"].'</option>';
 

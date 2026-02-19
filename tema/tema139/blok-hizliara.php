@@ -70,8 +70,8 @@
 
 						<option value=""> İl Seçiniz </option> 
 						<?php 
-							$iller = mysql_query("select * from sehir order by adi asc");
-							while($il=mysql_fetch_array($iller)) {
+							$stmt_iller = $vt->query("select * from sehir order by adi asc");
+							while($il=$stmt_iller->fetch()) {
 						?>
 
 						<option value="<?=$il['sehir_key'];?>"> <?=$il['adi'];?> </option>
@@ -119,8 +119,8 @@
 				 <div class="input-group ml-2 mr-2 mb-0">
 					<div class="row">
 						<?php
-							$ilansekliver = mysql_query("SELECT * FROM emlak_ilansekli where id && durum = 0");
-							while($sekilver = mysql_fetch_array($ilansekliver)) {
+							$stmt_sekil = $vt->query("SELECT * FROM emlak_ilansekli where durum = 0");
+							while($sekilver = $stmt_sekil->fetch()) {
 						?>	
 						<div class="col-md-6 col-6">
 							<div class="">
@@ -152,15 +152,16 @@
 
 						<option value="">Emlak Kategorisi</option>
 						<?php
-							$kategoriver = mysql_query("SELECT * FROM emlak_kategori where kat_ustid = 0 && kat_durum = 1 order by sira_no asc");
-							while($katver = mysql_fetch_array($kategoriver)) {
+							$stmt_katver = $vt->query("SELECT * FROM emlak_kategori where kat_ustid = 0 AND kat_durum = 1 order by sira_no asc");
+							while($katver = $stmt_katver->fetch()) {
 						?>
 						<optgroup label="<?=$katver["kat_adi"];?>">
 
 							<option <?php if($_POST["kategori"] == $katver["kat_id"]): ?> selected <?php endif; ?> value="<?=$katver["kat_id"];?>"><?=$katver["kat_adi"];?></option>
 							<?php
-								$altkategoriver = mysql_query("SELECT * FROM emlak_kategori where kat_ustid = '".$katver["kat_id"]."' && kat_durum = 1 order by sira_no asc");
-								while($katver = mysql_fetch_array($altkategoriver)) {
+								$stmt_altkategori = $vt->prepare("SELECT * FROM emlak_kategori where kat_ustid = ? AND kat_durum = 1 order by sira_no asc");
+								$stmt_altkategori->execute([$katver["kat_id"]]);
+								while($katver = $stmt_altkategori->fetch()) {
 							?>
 								<option <?php if($_POST["kategori"] == $katver["kat_id"]): ?> selected <?php endif; ?> value="<?=$katver["kat_id"];?>">- <?=$katver["kat_adi"];?></option>									
 							<?php } ?>
@@ -184,8 +185,8 @@
 						<option value="">Emlak Tipi</option>
 
 						<?php
-							$ilantipver2 = mysql_query("SELECT * FROM emlak_ilantipi where durum = 0");
-							while($tipver = mysql_fetch_array($ilantipver2)) {
+							$stmt_tipver = $vt->query("SELECT * FROM emlak_ilantipi where durum = 0");
+							while($tipver = $stmt_tipver->fetch()) {
 						?>
 						<option <?php if($_POST["emlaktipi"] == $tipver["id"]): ?> selected <?php endif; ?> value="<?=$tipver["id"];?>"><?=$tipver["ad"];?></option>
 						<?php } ?>
@@ -215,7 +216,7 @@
 						<div class="row"> 
 						
 							<?php									
-								$fiyatkur = $vt->query("SELECT * FROM para_birimi where id ORDER BY id ASC  ")->fetchAll();
+								$fiyatkur = $vt->query("SELECT * FROM para_birimi ORDER BY id ASC")->fetchAll();
 								foreach ($fiyatkur AS $kur)
 								{
 							?>
@@ -243,8 +244,8 @@
 		<div class="d-none">
 		<?php
 
-			$ilanform = mysql_query("SELECT * FROM emlak_form where arama = '1' order by sira asc");
-			while($io = mysql_fetch_array($ilanform)) {
+			$stmt_ilanform = $vt->query("SELECT * FROM emlak_form where arama = '1' order by sira asc");
+			while($io = $stmt_ilanform->fetch()) {
 
 				$ex = explode(",", $io['deg']);
 

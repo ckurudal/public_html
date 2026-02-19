@@ -17,7 +17,9 @@
 	$altkatt2->exec;
 	$katt2 = $altkatt2->fetch();
 	
-	$altkatt = $vt->query("SELECT * FROM emlak_kategori where kat_id = '".$_SESSION["ust_kat"]."'"); 
+	$stmt_altkatt = $vt->prepare("SELECT * FROM emlak_kategori WHERE kat_id = ?");
+	$stmt_altkatt->execute([$_SESSION["ust_kat"]]);
+	$altkatt = $stmt_altkatt;
 	$altkatt->exec;
 	$katt = $altkatt->fetch();
 	

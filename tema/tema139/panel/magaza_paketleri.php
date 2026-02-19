@@ -1,7 +1,8 @@
 <?php	
 	if ($_SESSION["uyelogin"] == false) {go("index.php?do=hesabim&islem=girisyap",0);}
-	$uyelik = mysql_query("SELECT * FROM yonetici where id = '".$_SESSION["id"]."'");
-	$uye = mysql_fetch_array($uyelik);
+	$stmt_uye = $vt->prepare("SELECT * FROM yonetici where id = ?");
+	$stmt_uye->execute([(int)$_SESSION["id"]]);
+	$uye = $stmt_uye->fetch();
 
 ?>
 

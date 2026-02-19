@@ -9,8 +9,8 @@
 	$hareket = $_GET["hareket"];
 	$durum = $_GET["durum"];
 
-	$unvanlar = mysql_query("SELECT * FROM yonetici_unvan where id = '$id'");
-	$unvanliste = mysql_query("SELECT * FROM yonetici_unvan order by id desc");
+	$unvanlar = $vt->query("SELECT * FROM yonetici_unvan where id = '$id'");
+	$unvanliste = $vt->query("SELECT * FROM yonetici_unvan order by id desc");
 ?>
 <section class="content-header">
 
@@ -25,14 +25,14 @@
 <?php 
 	if (isset($_POST["unvanekle"]) || isset($_POST["unvankaydet"]) || isset($_POST["sirakaydet"])) { 
 		
-		$baslik = trim(mysql_real_escape_string($_POST["baslik"])); 
+		$baslik = trim($_POST["baslik"]); 
 		$seo = seo($_POST["baslik"]); 
 		$sira = $_POST["sira"]; 
 		$siraid = $_POST["siraid"];
 
 		if (isset($_POST["unvanekle"])) {
 
-			$unvanekle = mysql_query("INSERT INTO yonetici_unvan (baslik, seo) values ('$baslik', '$seo')");	
+			$unvanekle = $vt->query("INSERT INTO yonetici_unvan (baslik, seo) values ('$baslik', '$seo')");	
 
 			if ($unvanekle == true) {
 				go("index.php?do=islem&ofis=yoneticiunvan&islem=liste&hareket=onay",0);
@@ -41,7 +41,7 @@
 
 		if (isset($_POST["unvankaydet"])) {
 
-			$unvankaydet = mysql_query("UPDATE yonetici_unvan SET baslik = '$baslik', seo = '$seo' where id = '$id'");	
+			$unvankaydet = $vt->query("UPDATE yonetici_unvan SET baslik = '$baslik', seo = '$seo' where id = '$id'");	
 
 			if ($unvankaydet == true) {
 				go("index.php?do=islem&ofis=yoneticiunvan&islem=liste&hareket=onay",0);
@@ -52,7 +52,7 @@
 
 			for ($i=0; $i < count($siraid) ; $i++) { 
 				
-				$sirakaydet = mysql_query("UPDATE yonetici_unvan SET sira = '$sira[$i]' where id = '$siraid[$i]'");
+				$sirakaydet = $vt->query("UPDATE yonetici_unvan SET sira = '$sira[$i]' where id = '$siraid[$i]'");
  				 
 				if ($sirakaydet == true) {
 					go("index.php?do=islem&ofis=yoneticiunvan&islem=liste&hareket=onay",0);
@@ -95,7 +95,7 @@
 <?php if ($islem == "duzenle") { ?>
 <form action="" method="post" enctype="multipart/form-data">
 	<?php 
-		$u = mysql_fetch_array($unvanlar);
+		$u = $unvanlar->fetch();
 	?>
 	<section class="content">
 		<div class="box"> 
@@ -139,18 +139,18 @@
 
 		if ($hareket == "sil") {
 			
-			$sil = mysql_query("DELETE FROM yonetici_unvan where id = '$id'"); 
+			$sil = $vt->query("DELETE FROM yonetici_unvan where id = '$id'"); 
 
 			go("index.php?do=islem&ofis=yoneticiunvan&islem=liste&hareket=onay&id=$id",0);
 
 		}
 
 		if ($durum == "0") {
-			$d = mysql_query("UPDATE yonetici_unvan SET durum = '0' where id = '$id'"); 
+			$d = $vt->query("UPDATE yonetici_unvan SET durum = '0' where id = '$id'"); 
 			go("index.php?do=islem&ofis=yoneticiunvan&islem=liste&hareket=onay&id=$id",0);
 		}
 		if ($durum == "1") {
-			$d = mysql_query("UPDATE yonetici_unvan SET durum = '1' where id = '$id'"); 
+			$d = $vt->query("UPDATE yonetici_unvan SET durum = '1' where id = '$id'"); 
 			go("index.php?do=islem&ofis=yoneticiunvan&islem=liste&hareket=onay&id=$id",0);
 		}
 	?>
@@ -174,7 +174,7 @@
 			   		</thead>
 			    	<tbody>
 			    		<?php 
-				    		while($uliste = mysql_fetch_array($unvanliste)) {
+				    		while($uliste = $unvanliste->fetch()) {
 				    	?> 
 			    		<tr>
 			    			<th><?=$uliste["id"];?></th>

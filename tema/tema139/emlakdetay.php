@@ -2,20 +2,27 @@
     $id = $_GET["id"];
     $ilanseo = $_GET["ilanseo"];
     $ilan = $vt->query("SELECT * FROM emlak_ilan WHERE id = '".$id."'")->fetch();
-    $emlakresim = mysql_query("SELECT * FROM emlak_resim where emlakno = '".$ilan["emlakno"]."' && kapak = 1");
-    $resim = mysql_fetch_array($emlakresim);
-    $ilantipi = mysql_query("SELECT * FROM emlak_ilantipi where id = '".$ilan["ilantipi"]."' && durum = 0");
-    $itip = mysql_fetch_array($ilantipi);
-    $kategoriler = mysql_query("SELECT * FROM emlak_kategori where kat_id = '".$ilan["katid"]."' && kat_durum = 1");
-    $kat = mysql_fetch_array($kategoriler);
-    $ilan_sekli = mysql_query("SELECT * FROM emlak_ilansekli where id = '".$ilan["ilansekli"]."' && durum = 0");
-    $sekil = mysql_fetch_array($ilan_sekli);
-    $iller = mysql_query("SELECT * FROM sehir where sehir_key = '".$ilan["il"]."'");
-    $il = mysql_fetch_array($iller);
-    $ilceler = mysql_query("SELECT * FROM ilce where ilce_key = '".$ilan["ilce"]."'");
-    $ilce = mysql_fetch_array($ilceler);
-    $mahalleler = mysql_query("SELECT * FROM mahalle where mahalle_id = '".$ilan["mahalle"]."'");
-    $mahalle = mysql_fetch_array($mahalleler);
+    $stmt = $vt->prepare("SELECT * FROM emlak_resim WHERE emlakno = ? AND kapak = 1");
+    $stmt->execute([$ilan["emlakno"]]);
+    $resim = $stmt->fetch();
+    $stmt = $vt->prepare("SELECT * FROM emlak_ilantipi WHERE id = ? AND durum = 0");
+    $stmt->execute([$ilan["ilantipi"]]);
+    $itip = $stmt->fetch();
+    $stmt = $vt->prepare("SELECT * FROM emlak_kategori WHERE kat_id = ? AND kat_durum = 1");
+    $stmt->execute([$ilan["katid"]]);
+    $kat = $stmt->fetch();
+    $stmt = $vt->prepare("SELECT * FROM emlak_ilansekli WHERE id = ? AND durum = 0");
+    $stmt->execute([$ilan["ilansekli"]]);
+    $sekil = $stmt->fetch();
+    $stmt = $vt->prepare("SELECT * FROM sehir WHERE sehir_key = ?");
+    $stmt->execute([$ilan["il"]]);
+    $il = $stmt->fetch();
+    $stmt = $vt->prepare("SELECT * FROM ilce WHERE ilce_key = ?");
+    $stmt->execute([$ilan["ilce"]]);
+    $ilce = $stmt->fetch();
+    $stmt = $vt->prepare("SELECT * FROM mahalle WHERE mahalle_id = ?");
+    $stmt->execute([$ilan["mahalle"]]);
+    $mahalle = $stmt->fetch();
     $yonetici = $vt->query("SELECT * FROM yonetici WHERE id = '".$ilan["yonetici_id"]."'")->fetch();
     $yonetici_sube = $vt->query("SELECT * FROM subeler WHERE yetkiliuye = '".$yonetici["id"]."'")->fetch();
     $p = $_GET["p"];        
@@ -266,7 +273,8 @@
                                         $ilan_baslik = $_POST["ilan_baslik"];
                                         $mesaj = $_POST["mesaj"];
                                         $tarih = date('d/m/Y');
-                                        $mesaj_ekle = mysql_query("INSERT INTO emlak_dangelenmesaj (kimden, kime, mesaj, tarih) values ('".$_SESSION["id"]."','".$ilan["yonetici_id"]."','".$mesaj."','".$tarih."')");
+                                        $danmesaj_stmt = $vt->prepare("INSERT INTO emlak_dangelenmesaj (kimden, kime, mesaj, tarih) VALUES (?,?,?,?)");
+                                        $danmesaj_stmt->execute([$_SESSION["id"], $ilan["yonetici_id"], $mesaj, $tarih]);
                                         mail_gonder($yonetici['email'], "Sayın ".$yonetici["adsoyad"].", ".$ilan_baslik." ilanınız için yeni bir mesajınız bulunuyor.", "Sayın ".$yonetici["adsoyad"].", ".$ilan_baslik." ilanınız için yeni bir yeni mesajınız bulunuyor.");
                                         sms_gonder($yonetici['id'],"Sayın ".$uye["adsoyad"]."", " üyelik paketiniz onaylanmıştır.");
                                         onay_alert("Mesajınız başarılı bir şekilde gönderilmiştir.");
@@ -457,7 +465,8 @@
                                                     $ilan_baslik = $_POST["ilan_baslik"];
                                                     $mesaj = $_POST["mesaj"];
                                                     $tarih = date('d/m/Y');
-                                                    $mesaj_ekle = mysql_query("INSERT INTO emlak_dangelenmesaj (kimden, kime, mesaj, tarih, tel) values ('".$_SESSION["id"]."','".$ilan["yonetici_id"]."','".$mesaj." Numaram: ".$_POST["telefon"]."','".$tarih."','".$_POST["telefon"]."')");
+                                                    $projemesaj_stmt = $vt->prepare("INSERT INTO emlak_dangelenmesaj (kimden, kime, mesaj, tarih, tel) VALUES (?,?,?,?,?)");
+                                                    $projemesaj_stmt->execute([$_SESSION["id"], $ilan["yonetici_id"], $mesaj . " Numaram: " . $_POST["telefon"], $tarih, $_POST["telefon"]]);
                                                     mail_gonder($dan['email'], "Sayın ".$dan["adsoyad"].", ".$ilan_baslik." ilanınız için yeni bir mesajınız bulunuyor.", "Sayın ".$dan["adsoyad"].", ".$ilan_baslik." ilanınız için yeni bir yeni mesajınız bulunuyor.");
                                                     sms_gonder($dan['id'],"Sayın ".$uye["adsoyad"]."", " üyelik paketiniz onaylanmıştır.");
                                                     onay_alert("Mesajınız başarılı bir şekilde gönderilmiştir.");
@@ -697,12 +706,13 @@
                 <div class="card mb-5">
                     <div class="card-body p-7">
                         <?php
-                            $ozelliktip = mysql_query("SELECT * FROM emlak_ozelliktip where id");
-                            while($otip = mysql_fetch_array($ozelliktip)) {
-                                $ozellikilanid3 = mysql_query("SELECT * FROM emlak_ozellikdetay where ilanid = '".$ilan["id"]."' && ozelliktip = '".$otip["id"]."'");
-                                $ilanid2 = mysql_fetch_array($ozellikilanid3);
+                            $ozelliktip_stmt = $vt->query("SELECT * FROM emlak_ozelliktip WHERE id");
+                            while($otip = $ozelliktip_stmt->fetch()) {
+                                $ozellikilanid3_stmt = $vt->prepare("SELECT * FROM emlak_ozellikdetay WHERE ilanid = ? AND ozelliktip = ?");
+                                $ozellikilanid3_stmt->execute([$ilan["id"], $otip["id"]]);
+                                $ilanid2 = $ozellikilanid3_stmt->fetch();
                         ?>
-                        <?php if (mysql_num_rows($ozellikilanid3)) { ?>
+                        <?php if ($ozellikilanid3_stmt->rowCount()) { ?>
                         <h5 class="border-bottom pb-3 mb-3"><strong><?=$otip["ad"];?></strong></h5>
                         <div class="row mb-2">
                             <?php
@@ -939,7 +949,8 @@
         <hr>
         <?php
                 } else {
-                    $mesajgonder = mysql_query("INSERT INTO emlak_mesaj (adsoyad,email,kime,tel,gsm,konu,mesaj,emlakid,tarih) values ('$adsoyad','$email','".$ilan["yonetici_id"]."','$tel','$gsm','$konu','$mesaj','".$ilan["id"]."','$tarih')");
+                    $mesajgonder_stmt = $vt->prepare("INSERT INTO emlak_mesaj (adsoyad,email,kime,tel,gsm,konu,mesaj,emlakid,tarih) VALUES (?,?,?,?,?,?,?,?,?)");
+                    $mesajgonder_stmt->execute([$adsoyad, $email, $ilan["yonetici_id"], $tel, $gsm, $konu, $mesaj, $ilan["id"], $tarih]);
         ?>
         <div class="row">
             <div class="col-md-12">
@@ -1177,12 +1188,13 @@
                 <div class="card-body p-7">
                     <h3 class="h3 mb-7">İlan Özellikleri</h3>
                         <?php
-                            $ozelliktip = mysql_query("SELECT * FROM emlak_ozelliktip where id");
-                            while($otip = mysql_fetch_array($ozelliktip)) {
-                                $ozellikilanid3 = mysql_query("SELECT * FROM emlak_ozellikdetay where ilanid = '".$ilan["id"]."' && ozelliktip = '".$otip["id"]."'");
-                                $ilanid2 = mysql_fetch_array($ozellikilanid3);
+                            $ozelliktip_stmt2 = $vt->query("SELECT * FROM emlak_ozelliktip WHERE id");
+                            while($otip = $ozelliktip_stmt2->fetch()) {
+                                $ozellikilanid3_stmt2 = $vt->prepare("SELECT * FROM emlak_ozellikdetay WHERE ilanid = ? AND ozelliktip = ?");
+                                $ozellikilanid3_stmt2->execute([$ilan["id"], $otip["id"]]);
+                                $ilanid2 = $ozellikilanid3_stmt2->fetch();
                         ?>
-                        <?php if (mysql_num_rows($ozellikilanid3)) { ?>
+                        <?php if ($ozellikilanid3_stmt2->rowCount()) { ?>
                             <h5 class="border-bottom pb-3 mb-3"><strong><?=$otip["ad"];?></strong></h5>
                             <div class="row mb-5">
                                 <?php
@@ -1432,8 +1444,9 @@
                     </div>
                 <?php } ?>
                 <?php
-                    $danismanlar = mysql_query("SELECT * FROM yonetici where id = '".$ilan["yonetici_id"]."'");
-                    while($dan = mysql_fetch_array($danismanlar)) {
+                    $danismanlar_stmt = $vt->prepare("SELECT * FROM yonetici WHERE id = ?");
+                    $danismanlar_stmt->execute([$ilan["yonetici_id"]]);
+                    while($dan = $danismanlar_stmt->fetch()) {
                         $sube = $vt->query("SELECT * FROM subeler where id = '".$dan["ofis"]."'")->fetch();
                         $il = $vt->query("SELECT * FROM sehir where sehir_key = '".$sube["il"]."'")->fetch();
                         $ilce = $vt->query("SELECT * FROM ilce where ilce_key = '".$sube["ilce"]."'")->fetch();
@@ -1540,7 +1553,8 @@
                                     $ilan_baslik = $_POST["ilan_baslik"];
                                     $mesaj = $_POST["mesaj"];
                                     $tarih = date('d/m/Y');
-                                    $mesaj_ekle = mysql_query("INSERT INTO emlak_dangelenmesaj (kimden, kime, mesaj, tarih) values ('".$_SESSION["id"]."','".$ilan["yonetici_id"]."','".$mesaj."','".$tarih."')");
+                                    $danmesaj_stmt2 = $vt->prepare("INSERT INTO emlak_dangelenmesaj (kimden, kime, mesaj, tarih) VALUES (?,?,?,?)");
+                                    $danmesaj_stmt2->execute([$_SESSION["id"], $ilan["yonetici_id"], $mesaj, $tarih]);
                                     mail_gonder($dan['email'], "Sayın ".$dan["adsoyad"].", ".$ilan_baslik." ilanınız için yeni bir mesajınız bulunuyor.", "Sayın ".$dan["adsoyad"].", ".$ilan_baslik." ilanınız için yeni bir yeni mesajınız bulunuyor.");
                                     sms_gonder($dan['id'],"Sayın ".$uye["adsoyad"]."", " üyelik paketiniz onaylanmıştır.");
                                     onay_alert("Mesajınız başarılı bir şekilde gönderilmiştir.");

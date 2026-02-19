@@ -270,8 +270,8 @@
 										<select class="form-control" name="periyot_fiyat_kur[]">
 											<?php
 												// Para Birimi
-												$parabirim = mysql_query("select * from para_birimi where id");
-												while ($paraver = mysql_fetch_array($parabirim)) {
+												$parabirim = $vt->query("select * from para_birimi where id");
+												while ($paraver = $parabirim->fetch()) {
 											?>
 											<option> <?=$paraver["ad"];?> </option>
 											<?php } ?>
@@ -490,8 +490,8 @@
 											<?php } ?>
 											<?php
 												// Para Birimi
-												$parabirim = mysql_query("select * from para_birimi where id");
-												while ($paraver = mysql_fetch_array($parabirim)) {
+												$parabirim = $vt->query("select * from para_birimi where id");
+												while ($paraver = $parabirim->fetch()) {
 											?>
 											<option> <?=$paraver["ad"];?> </option>
 											<?php } ?>
@@ -530,7 +530,7 @@ $('document').ready(function(){
     var id=2,txt_box;
 	$('#button_pro').on('click','.add',function(){
 		  $(this).remove();
-		  txt_box='<div class="space" id="input_'+id+'" ><a class="remove btn pull-right btn-danger btn-sm"><i class="fa fa-close"></i> Periyodu Kaldır</a><div class="row" style="margin-bottom:20px;"> <div class="col-md-2"> <input type="text" placeholder="Süre" class="form-control" name="periyot_sure[]"> </div> <div class="col-md-2"> <select class="form-control" name="periyot_sure_zaman[]"> <option>Gün</option> <option>Ay</option> <option>Yıl</option> </select> </div> <div class="col-md-2"> <input type="text" class="form-control" name="periyot_fiyat[]" placeholder="Fiyat"> </div> <div class="col-md-2"> <select class="form-control" name="periyot_fiyat_kur[]"> <?php $parabirim = mysql_query("select * from para_birimi where id"); while ($paraver = mysql_fetch_array($parabirim)) { ?> <option> <?=$paraver["ad"];?> </option> <?php } ?> </select> </div> </div><div class="row"> <div class="col-md-4"> <a class="add right btn btn-block btn-info btn-sm"><i class="fa fa-plus"></i> Periyod Ekle</a> </div> </div></div>';
+		  txt_box='<div class="space" id="input_'+id+'" ><a class="remove btn pull-right btn-danger btn-sm"><i class="fa fa-close"></i> Periyodu Kaldır</a><div class="row" style="margin-bottom:20px;"> <div class="col-md-2"> <input type="text" placeholder="Süre" class="form-control" name="periyot_sure[]"> </div> <div class="col-md-2"> <select class="form-control" name="periyot_sure_zaman[]"> <option>Gün</option> <option>Ay</option> <option>Yıl</option> </select> </div> <div class="col-md-2"> <input type="text" class="form-control" name="periyot_fiyat[]" placeholder="Fiyat"> </div> <div class="col-md-2"> <select class="form-control" name="periyot_fiyat_kur[]"> <?php $parabirim = $vt->query("select * from para_birimi where id"); while ($paraver = $parabirim->fetch()) { ?> <option> <?=$paraver["ad"];?> </option> <?php } ?> </select> </div> </div><div class="row"> <div class="col-md-4"> <a class="add right btn btn-block btn-info btn-sm"><i class="fa fa-plus"></i> Periyod Ekle</a> </div> </div></div>';
 		  $("#button_pro").append(txt_box);
 		  id++;
 	});

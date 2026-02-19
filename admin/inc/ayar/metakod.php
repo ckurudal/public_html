@@ -22,9 +22,9 @@
 
 	if (isset($_POST["kaydet"])) { 
 
-		$meta = mysql_real_escape_string(addslashes($_POST["meta"])); 
+		$meta = addslashes($_POST["meta"]); 
 
-		$kaydet = mysql_query("UPDATE ayar_site SET meta = '$meta' where id = '1'");
+		$kaydet = $vt->query("UPDATE ayar_site SET meta = '$meta' where id = '1'");
 
 		go("index.php?do=islem&webmaster=metakod&hareket=onay",0);		
 

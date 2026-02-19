@@ -2,7 +2,9 @@
 	require_once "../sistem/baglan.php"; 
 	require_once "../sistem/fonksiyon.php"; 
 	define("ADMIN", true);
-  $kullanici = $vt->query("SELECT * FROM yonetici where id = '".$_SESSION["id"]."'")->fetch();
+  $stmt_kullanici = $vt->prepare("SELECT * FROM yonetici WHERE id = ?");
+  $stmt_kullanici->execute([$_SESSION["id"]]);
+  $kullanici = $stmt_kullanici->fetch();
 ?>
 <!DOCTYPE html>
 <html>

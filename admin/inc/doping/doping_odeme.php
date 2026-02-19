@@ -10,7 +10,9 @@
 	
 	$odeme_kodu 	= $vt->query("SELECT * FROM doping_ilanlari WHERE ilan_id = '$ilan_id' AND odeme_durumu = 'Ödeme Bekliyor'")->fetchAll();
 	
-	$uye=$vt->query("SELECT * FROM yonetici WHERE id = '".$_SESSION["id"]."'")->fetch();
+	$stmt_uye = $vt->prepare("SELECT * FROM yonetici WHERE id = ?");
+	$stmt_uye->execute([$_SESSION["id"]]);
+	$uye=$stmt_uye->fetch();
 	
 	$ode_tutar = doping_toplam_odeme($ilan_id);
 	

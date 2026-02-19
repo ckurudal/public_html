@@ -94,9 +94,10 @@ $islem = $_GET["islem"];
                                 if (!$email || !$sifre) {
                                     echo '<h6 class="alert alert-danger"><i class="fa fa-warning fa-lg"></i> Email ve şifre giriniz.</h6>';
                                 } else {
-                                    $query = mysql_query("SELECT * FROM yonetici WHERE email = '$email' && pass = '".md5($sifre)."' && durum = 0");
-                                    if (mysql_affected_rows()) {
-                                        $row = row($query);
+                                    $stmt_login = $vt->prepare("SELECT * FROM yonetici WHERE email = ? AND pass = ? AND durum = 0");
+                                    $stmt_login->execute([$email, md5($sifre)]);
+                                    if ($stmt_login->rowCount()) {
+                                        $row = $stmt_login->fetch();
                                         $_SESSION = array (
                                             "uyelogin" => true,
                                             "id" => $row["id"],
@@ -153,8 +154,8 @@ $islem = $_GET["islem"];
                         <div class="clearfix">
                             <ul class="socials">
                                 <?php
-                                $ayarsitesosyal = mysql_query("SELECT * FROM ayar_sitesosyal where siteid = '1'");
-                                while ($ayars=mysql_fetch_array($ayarsitesosyal)) {
+                                $stmt_sosyal = $vt->query("SELECT * FROM ayar_sitesosyal where siteid = '1'");
+                                while ($ayars=$stmt_sosyal->fetch()) {
                                     ?>
                                     <?php
                                     if ($ayars["sosyallink"] != "") {
@@ -379,10 +380,11 @@ $islem = $_GET["islem"];
                     <ul class="horizontalMenu-list">
                         <li aria-haspopup="true"><span class="horizontalMenu-click"><i class="horizontalMenu-arrow fa fa-home"></i></span><a href="/index.php"> <span class="fa fa-home m-0"></span></a></li>
                         <?php
-                        $ustmenuler = mysql_query("SELECT * FROM ustmenu where ustid = 0 && durum = 0 order by sira");
-                        while($ustmenu = mysql_fetch_array($ustmenuler)) {
-                            $katsay = mysql_query("SELECT COUNT(*) FROM ustmenu where ustid = '".$ustmenu["id"]."' && durum = 0");
-                            $say = mysql_fetch_array($katsay);
+                        $stmt_menu1 = $vt->query("SELECT * FROM ustmenu where ustid = 0 AND durum = 0 order by sira");
+                        while($ustmenu = $stmt_menu1->fetch()) {
+                            $stmt_katsay = $vt->prepare("SELECT COUNT(*) FROM ustmenu where ustid = ? AND durum = 0");
+                            $stmt_katsay->execute([$ustmenu["id"]]);
+                            $say = $stmt_katsay->fetch(PDO::FETCH_NUM);
                             ?>
                             <li aria-haspopup="true">
 
@@ -405,19 +407,23 @@ $islem = $_GET["islem"];
                                 <?php } ?>
                                 <ul <?php if ($say[0] > 0) {?> class="sub-menu" <?php } ?>>
                                     <?php
-                                    $ustmenuler2 = mysql_query("SELECT * FROM ustmenu where ustid = '".$ustmenu["id"]."' && durum = 0 order by sira asc");
-                                    while($ustmenu2 = mysql_fetch_array($ustmenuler2)) {
-                                        $menusaygoster = mysql_query("SELECT COUNT(*) FROM ustmenu where ustid = '".$ustmenu2["id"]."' && durum = 0");
-                                        $menusay = mysql_fetch_array($menusaygoster);
+                                    $stmt_menu2 = $vt->prepare("SELECT * FROM ustmenu where ustid = ? AND durum = 0 order by sira asc");
+                                    $stmt_menu2->execute([$ustmenu["id"]]);
+                                    while($ustmenu2 = $stmt_menu2->fetch()) {
+                                        $stmt_menusay = $vt->prepare("SELECT COUNT(*) FROM ustmenu where ustid = ? AND durum = 0");
+                                        $stmt_menusay->execute([$ustmenu2["id"]]);
+                                        $menusay = $stmt_menusay->fetch(PDO::FETCH_NUM);
                                         ?>
                                         <li <?php if ($menusay[0]!=0) { ?> class="menuparent" <?php } ?>>
                                             <a href="/<?=$ustmenu2["seo"];?>"><?=$ustmenu2["baslik"];?></a>
                                             <ul <?php if ($say[0] > 0) {?> class="sub-menu" <?php } ?>>
                                                 <?php
-                                                $ustmenuler3 = mysql_query("SELECT * FROM ustmenu where ustid = '".$ustmenu2["id"]."' && durum = 0 order by sira asc");
-                                                while($ustmenu3 = mysql_fetch_array($ustmenuler3)) {
-                                                    $menusaygoster = mysql_query("SELECT COUNT(*) FROM ustmenu where ustid = '".$ustmenuler3["id"]."' && durum = 0");
-                                                    $menusay = mysql_fetch_array($menusaygoster);
+                                                $stmt_menu3 = $vt->prepare("SELECT * FROM ustmenu where ustid = ? AND durum = 0 order by sira asc");
+                                                $stmt_menu3->execute([$ustmenu2["id"]]);
+                                                while($ustmenu3 = $stmt_menu3->fetch()) {
+                                                    $stmt_menusay3 = $vt->prepare("SELECT COUNT(*) FROM ustmenu where ustid = ? AND durum = 0");
+                                                    $stmt_menusay3->execute([$ustmenu3["id"]]);
+                                                    $menusay = $stmt_menusay3->fetch(PDO::FETCH_NUM);
                                                     ?>
                                                     <li <?php if ($menusay[0]!=0) { ?> class="menuparent" <?php } ?>>
                                                         <a href="/<?=$ustmenu3["seo"];?>"><?=$ustmenu3["baslik"];?></a>

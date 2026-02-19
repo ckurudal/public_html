@@ -2,11 +2,13 @@
 
     $id = $_GET["id"];
     
-    $sayfalar = mysql_query("SELECT * FROM sayfa where id = '$id'");
-    $sayfa = mysql_fetch_array($sayfalar); 
+    $stmt_sayfa = $vt->prepare("SELECT * FROM sayfa where id = ?");
+    $stmt_sayfa->execute([$id]);
+    $sayfa = $stmt_sayfa->fetch();
 
-    $sayfakatlar = mysql_query("SELECT * FROM sayfa_kategori where id = '".$sayfa["kategori"]."'");
-    $kat = mysql_fetch_array($sayfakatlar);
+    $stmt_sayfakat = $vt->prepare("SELECT * FROM sayfa_kategori where id = ?");
+    $stmt_sayfakat->execute([$sayfa["kategori"]]);
+    $kat = $stmt_sayfakat->fetch();
 
 ?>
 <!doctype html>

@@ -37,7 +37,7 @@
 					hata("Başlık boş olamaz. Lütfen bir başlık giriniz.");
 				} else {
 
-					$ekle=mysql_query("INSERT INTO $db (ad, seo, baslikrenk, yazirenk, durum, anasayfa, alimit) VALUES ('$ad','$seo','$baslikrenk','$yazirenk','$durum','$anasayfa','$alimit')");
+					$ekle=$vt->query("INSERT INTO $db (ad, seo, baslikrenk, yazirenk, durum, anasayfa, alimit) VALUES ('$ad','$seo','$baslikrenk','$yazirenk','$durum','$anasayfa','$alimit')");
 
 					if ($ekle) {
 						go("index.php?do=islem&emlak=emlak_ilantipi&hareket=onay",0);
@@ -54,7 +54,7 @@
 				$anasayfa=$_POST["anasayfa"];
 				$alimit=$_POST["alimit"];
 
-				$duzenle = mysql_query("UPDATE $db SET ad = '$ad', seo = '$seo', baslikrenk= '$baslikrenk', yazirenk = '$yazirenk', durum = '$durum', anasayfa = '$anasayfa', alimit = '$alimit' where id = '$id'");
+				$duzenle = $vt->query("UPDATE $db SET ad = '$ad', seo = '$seo', baslikrenk= '$baslikrenk', yazirenk = '$yazirenk', durum = '$durum', anasayfa = '$anasayfa', alimit = '$alimit' where id = '$id'");
 
 				if ($duzenle) {
 					go("index.php?do=islem&emlak=emlak_ilantipi&hareket=onay",0); 
@@ -66,8 +66,8 @@
 			$sil=$_GET["sil"];
 
 			if ($_GET["sil"]) {
-				$silid=mysql_query("DELETE FROM $db where id = '$sil'");
-				$silkatid=mysql_query("DELETE FROM emlak_ilantipi_katliste where ilantipid = '$sil'");
+				$silid=$vt->query("DELETE FROM $db where id = '$sil'");
+				$silkatid=$vt->query("DELETE FROM emlak_ilantipi_katliste where ilantipid = '$sil'");
 				if ($silid) {
 					go("index.php?do=islem&emlak=emlak_ilantipi&hareket=onay",0); 
 				}
@@ -77,13 +77,13 @@
 			$durum = $_GET["durum"];
 
 	        if ($durum) {
-	            $ver = mysql_fetch_array(mysql_query("SELECT * FROM $db WHERE id = '$durum'"));
+	            $ver = $vt->query("SELECT * FROM $db WHERE id = '$durum'")->fetch();
 	            $kdurum = $ver["durum"];
 	            if ($ver["durum"] == 1) {
-	                    mysql_query("UPDATE $db SET durum = '0' WHERE id = '$durum'");
+	                    $vt->query("UPDATE $db SET durum = '0' WHERE id = '$durum'");
 	                    onay();
 	                } else {
-	                    mysql_query("UPDATE $db SET durum = '1' WHERE id = '$durum'");
+	                    $vt->query("UPDATE $db SET durum = '1' WHERE id = '$durum'");
 	                    onay();
 	            }
 	        }
@@ -208,8 +208,8 @@
 							  <label class="col-sm-2 control-label">Başlık:</label>
 							  <div class="col-sm-10">
 							  <?php 
-							  	$duzenle=mysql_query("SELECT * FROM $db where id = '$id'");
-							  	$d=mysql_fetch_array($duzenle);
+							  	$duzenle=$vt->query("SELECT * FROM $db where id = '$id'");
+							  	$d=$duzenle->fetch();
 							  ?>
 								<input type="text" class="form-control" value="<?=$d["ad"];?>" name="ad">
 							  </div>
@@ -298,8 +298,8 @@
                     </thead>
                     <tbody> 
                     	<?php 
-                    		$tip=mysql_query("SELECT * FROM $db order by id desc");
-                    		while ($t=mysql_fetch_array($tip)) {
+                    		$tip=$vt->query("SELECT * FROM $db order by id desc");
+                    		while ($t=$tip->fetch()) {
                     	?>
                     	<tr>
                     		<th class="text-center"> 
@@ -394,15 +394,15 @@
 		 			$odasayisi=$_POST[odasayisi];
 		 			$durum=$_POST[durum];
 
-		 			$g=mysql_query("UPDATE $db SET baslik='$baslik', odasayisi='$odasayisi', durum='$durum' where id = '$id'");
+		 			$g=$vt->query("UPDATE $db SET baslik='$baslik', odasayisi='$odasayisi', durum='$durum' where id = '$id'");
 
 		 			if ($g) {
 		 				onay();
 		 			}
 		 		}
 
-		 		$duzenle=mysql_query("SELECT *  from emlak_ilansekli where id = '$id'");
-		 		$ver=mysql_fetch_array($duzenle);
+		 		$duzenle=$vt->query("SELECT *  from emlak_ilansekli where id = '$id'");
+		 		$ver=$duzenle->fetch();
 
 		 	?>
 		 	<form method="post" action="" enctype="multipart/form-data">	

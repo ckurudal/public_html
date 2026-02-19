@@ -54,3 +54,5 @@
 	<?=$site["canlidestek"];?>
 	<?=$site["jscript"];?>
 	<?=$site["dogrulama"];?>  
+<!-- AI Features CSS -->
+<link rel="stylesheet" href="<?=TEMA_URL?>/assets/css/ai-features.css">

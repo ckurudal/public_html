@@ -17,8 +17,8 @@
 				</label>
 			
 				<?php
-					$ilantipver2 = mysql_query("SELECT * FROM emlak_ilantipi where durum = 0 LIMIT 1,15");
-					while($tipver = mysql_fetch_array($ilantipver2)) {
+					$stmt_tipver = $vt->query("SELECT * FROM emlak_ilantipi where durum = 0 LIMIT 1,15");
+					while($tipver = $stmt_tipver->fetch()) {
 				?>
 
 				<label class="f-17 radio-container h5 font-weight-bold text-white"><?=$tipver["ad"];?>
@@ -38,8 +38,8 @@
 				<div class="rs-select2 js-select-simple se lect--no-search">
 					<select class="select2-hidden-accessible" name="emlaktipi">
 						<?php
-						$ilantipver2 = mysql_query("SELECT * FROM emlak_ilantipi where durum = 0");
-						while($tipver = mysql_fetch_array($ilantipver2)) {
+						$stmt_tipver2 = $vt->query("SELECT * FROM emlak_ilantipi where durum = 0");
+						while($tipver = $stmt_tipver2->fetch()) {
 							?>
 							<option value="<?=$tipver["id"];?>">
 								<?=$tipver["ad"];?>
@@ -59,8 +59,8 @@
 				<div class="rs-select2 js-select-simple se lect--no-search">
 					<select class="select2-hidden-accessible" name="emlaksekli">
 							<?php
-								$ilansekliver = mysql_query("SELECT * FROM emlak_ilansekli where id && durum = 0");
-								while($sekilver = mysql_fetch_array($ilansekliver)) {
+								$stmt_sekil = $vt->query("SELECT * FROM emlak_ilansekli where durum = 0");
+								while($sekilver = $stmt_sekil->fetch()) {
 							?>
 							<option value="<?=$sekilver["id"];?>">
 								<?=$sekilver["baslik"];?>

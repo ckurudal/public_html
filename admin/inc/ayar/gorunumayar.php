@@ -13,8 +13,8 @@
 	$hareket =  @$_GET["hareket"];  
 	$id =  @$_GET["id"];      
 
-	$temalar = mysql_query("SELECT * FROM ayar_tema order by id DESC");
-	$temalarid = mysql_query("SELECT * FROM ayar_tema where id = '$id'");
+	$temalar = $vt->query("SELECT * FROM ayar_tema order by id DESC");
+	$temalarid = $vt->query("SELECT * FROM ayar_tema where id = '$id'");
 
 ?>
 <!-- Content Header (Page header) -->
@@ -35,7 +35,7 @@
 			$katsidebar = $_POST["katsidebar"];
 			$sayfasidebar = $_POST["sayfasidebar"];
 
-			$kaydet = mysql_query("UPDATE ayar_tema SET katlimit = '$katlimit', anasidebar = '$anasidebar', katsidebar = '$katsidebar', sayfasidebar = '$sayfasidebar' where id = '$id'");
+			$kaydet = $vt->query("UPDATE ayar_tema SET katlimit = '$katlimit', anasidebar = '$anasidebar', katsidebar = '$katsidebar', sayfasidebar = '$sayfasidebar' where id = '$id'");
 
 			go("index.php?do=ayar/gorunumayar&id=$id&hareket=onay",0);
 

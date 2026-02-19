@@ -21,8 +21,8 @@
 <form method="post" action="" enctype="multipart/form-data">	
 	<?php 
 		
-		$emlakilan = mysql_query("select * from emlak_ilan where id");
-		$e = mysql_fetch_array($emlakilan);
+		$emlakilan = $vt->query("select * from emlak_ilan where id");
+		$e = $emlakilan->fetch();
 	
 		if (empty($e)) {
 	?>
@@ -74,7 +74,7 @@
 				<?php  
 					// vitrin guncelle  
 					if ($vitrin == "onay") { 
-						$anavitrin = mysql_query("update emlak_ilan set anavitrin = '0' where id = '$id'"); 
+						$anavitrin = $vt->query("update emlak_ilan set anavitrin = '0' where id = '$id'"); 
 						onay();
 					} 
 				?> 
@@ -91,12 +91,12 @@
                     </thead>
                     <tbody> 
                     <?php 
-                    	$ilanlar=mysql_query("SELECT * FROM emlak_ilan where anavitrin = '1' order by id DESC");
-                    	while ($ilan=mysql_fetch_array($ilanlar)) {
+                    	$ilanlar=$vt->query("SELECT * FROM emlak_ilan where anavitrin = '1' order by id DESC");
+                    	while ($ilan=$ilanlar->fetch()) {
                     ?>
 					<?php 
-						$katadi=mysql_query("SELECT * FROM emlak_kategori where kat_id = '$ilan[katid]'");
-						$k=mysql_fetch_array($katadi);
+						$katadi=$vt->query("SELECT * FROM emlak_kategori where kat_id = '$ilan[katid]'");
+						$k=$katadi->fetch();
 					?>
                     <tr>
                     	<th class="text-center">
@@ -105,8 +105,8 @@
                     	<th>
 							<?php 
 								$resver=$ilan['emlakno'];
-								$resim=mysql_query("SELECT * FROM emlak_resim where emlakno = '$resver' and kapak = '1'");
-								$r=mysql_fetch_array($resim); 
+								$resim=$vt->query("SELECT * FROM emlak_resim where emlakno = '$resver' and kapak = '1'");
+								$r=$resim->fetch(); 
 								if (empty($r['emlakno'])) { ?> 
 								<div class="resim_liste">
 									<a target="_blank" class="text-baslik" href="index.php?do=islem&emlak=emlak_duzenle&id=<?=$ilan['id']?>" title="<?=$ilan["baslik"];?>">
@@ -138,8 +138,8 @@
 						</th>
                     	<th>
                     		<?php 
-                    			$ilantipi=mysql_query("SELECT * FROM emlak_ilantipi where id = '$ilan[ilantipi]'");
-                    			$tip=mysql_fetch_array($ilantipi);
+                    			$ilantipi=$vt->query("SELECT * FROM emlak_ilantipi where id = '$ilan[ilantipi]'");
+                    			$tip=$ilantipi->fetch();
                     			if (!$tip["id"]==0) {
                     				echo '<span class="btn btn-block btn-xs btn-warning ">'.$tip["ad"].'</span>';                    				
                     			}

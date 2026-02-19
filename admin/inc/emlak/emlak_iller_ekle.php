@@ -7,8 +7,8 @@
 	$emlak = $_GET["emlak"]; 
 	$hareket = $_GET["hareket"];
 	$id = $_GET["id"]; 
-	$dbiller = mysql_query("select * from sehir where id = '$id'");
-	$iller = mysql_fetch_array($dbiller);
+	$dbiller = $vt->query("select * from sehir where id = '$id'");
+	$iller = $dbiller->fetch();
 
  ?>
 <?php if (isset($_POST["ilduzenle"])) {  
@@ -16,7 +16,7 @@
 	$plaka 		= trim($_POST["plaka"]);  
 	$ozet 		= trim($_POST["ozet"]);  
 	$resim_link = trim($_POST["resim_link"]);  
-	$ilduzenle 	= mysql_query("update sehir set 
+	$ilduzenle 	= $vt->query("update sehir set 
 	adi			=  	'$adi', 
 	sehir_key 	= 	'$plaka',
 	ozet 		= 	'$ozet',
@@ -48,7 +48,7 @@
 	if (empty($adi)) { 
 		hata("Şehir adı boş olamaz."); 
 	} else { 
-		$ilekle = mysql_query("insert into sehir  
+		$ilekle = $vt->query("insert into sehir  
 		(adi,sehir_key,ozet,resim_link)	values  ('$adi','$plaka','$ozet','$resim_link'); 
 		"); 
 		go("index.php?do=islem&emlak=iller&hareket=onay",0); 

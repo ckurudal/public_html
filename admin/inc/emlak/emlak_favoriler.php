@@ -60,8 +60,8 @@
         					<td>
         						<?php
     								$resver=$ilan->emlakno;
-    								$resim=mysql_query("SELECT * FROM emlak_resim where emlakno = '$resver' and kapak = '1'");
-    								$r=mysql_fetch_array($resim);
+    								$resim=$vt->query("SELECT * FROM emlak_resim where emlakno = '$resver' and kapak = '1'");
+    								$r=$resim->fetch();
     								if (empty($r['emlakno'])) { ?>
     								<div class="resim_liste">
     									<img src="../uploads/resim/resim.png"/>

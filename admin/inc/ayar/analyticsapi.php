@@ -20,9 +20,9 @@
 
 	if (isset($_POST["kaydet"])) { 
 
-		$analytics = mysql_real_escape_string($_POST["analytics"]);
+		$analytics = $_POST["analytics"];
 
-		$mailayarkaydet = mysql_query("UPDATE ayar_site SET analytics = '$analytics' where id = '1'");
+		$mailayarkaydet = $vt->query("UPDATE ayar_site SET analytics = '$analytics' where id = '1'");
 
 		go("index.php?do=islem&webmaster=analyticsapi&hareket=onay",0);		
 

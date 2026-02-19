@@ -23,9 +23,9 @@
 
 	if (isset($_POST["kaydet"])) { 
 
-		$canlidestek = mysql_real_escape_string($_POST["canlidestek"]); 
+		$canlidestek = $_POST["canlidestek"]; 
 
-		$mailayarkaydet = mysql_query("UPDATE ayar_site SET canlidestek = '$canlidestek' where id = '1'");
+		$mailayarkaydet = $vt->query("UPDATE ayar_site SET canlidestek = '$canlidestek' where id = '1'");
 
 		go("index.php?do=islem&webmaster=canlidestek&hareket=onay",0);		
 

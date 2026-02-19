@@ -126,8 +126,8 @@ if (!$chunks || $chunk == $chunks - 1) {
 	if(isset($_GET["id"]) && !empty($_GET["id"]) && is_numeric($_GET["id"])) {
 		$islemno = intval($_GET["id"]) + 1;
 	} else {
-		$sayiuret = mysql_query("select * from emlak_islem order by islemno desc limit 1");
-		$emlaknouret = mysql_fetch_array($sayiuret);
+		$sayiuret = $vt->query("select * from emlak_islem order by islemno desc limit 1");
+		$emlaknouret = $sayiuret->fetch();
 		$islemno = $emlaknouret['islemno'] + 1;	
 	}
 	
@@ -142,9 +142,11 @@ if (!$chunks || $chunk == $chunks - 1) {
 	$resimyolu = "/uploads/resim/".$resimad;
 	$minilink = "/uploads/resim/mini-".$resimad;
 
-	$ekle = mysql_query("insert into emlak_resim (resimad,emlakno,kapak, sira) values ('$resimad','$islemno','$sira','$sira2')");
+	$stmt_ekle = $vt->prepare("insert into emlak_resim (resimad,emlakno,kapak, sira) values (?,?,?,?)");
+	$stmt_ekle->execute([$resimad,$islemno,$sira,$sira2]);
 	
-	$kapak = mysql_query("update emlak_resim set kapak = '1', sira = '0'  where emlakno = '$islemno' order by id asc limit 1");
+	$stmt_kapak = $vt->prepare("update emlak_resim set kapak = '1', sira = '0'  where emlakno = ? order by id asc limit 1");
+	$stmt_kapak->execute([$islemno]);
 
 	resim_damga($dosya,"../../../uploads/resim/watermark.png",$dosya);
 

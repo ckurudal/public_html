@@ -7,7 +7,10 @@
 	$uyeonay 	= @$_GET["uyeonay"];
 	$ilanonay 	= @$_GET["ilanonay"];
 
-	$magaza = $vt->query("SELECT * FROM subeler WHERE id = '".@$_GET["magaza"]."'")->fetch(PDO::FETCH_OBJ);
+	$magaza_id = (int)(@$_GET["magaza"]);
+	$stmt_magaza = $vt->prepare("SELECT * FROM subeler WHERE id = ?");
+	$stmt_magaza->execute([$magaza_id]);
+	$magaza = $stmt_magaza->fetch(PDO::FETCH_OBJ);
 
  ?>
 <!-- Content Header (Page header) -->
@@ -30,8 +33,8 @@
 
 	<?php
 
-		$emlakilan = mysql_query("select * from emlak_ilan where id");
-		$e = mysql_fetch_array($emlakilan);
+		$emlakilan = $vt->query("select * from emlak_ilan where id");
+		$e = $emlakilan->fetch();
 	?>
 
 	<section class="content">
@@ -60,40 +63,40 @@
                     
 
 					// resim dosyalarini sil
-					$resimdosya = mysql_query("select * from emlak_resim where emlakno = '$resimemlakno'");
-					while (@$resver = mysql_fetch_array($resimdosya)) {
+					$resimdosya = $vt->query("select * from emlak_resim where emlakno = '$resimemlakno'");
+					while (@$resver = $resimdosya->fetch()) {
 						//echo $resver["resimad"]."<br>";
 						$targetDir = '../uploads/resim/mini-'.$resver[resimad];
 						@unlink("$targetDir");
 						$targetDir = '../uploads/resim/'.$resver[resimad];
 						@unlink("$targetDir");
 					}
-                    $resimsil=mysql_query("DELETE FROM emlak_resim where emlakno = '$resimemlakno'");
+                    $resimsil=$vt->query("DELETE FROM emlak_resim where emlakno = '$resimemlakno'");
                     
 
 					// proje resim dosyalarini sil
-                    $projeresimdosya = mysql_query("select * from projeler where emlakno = '$resimemlakno'");                    
+                    $projeresimdosya = $vt->query("select * from projeler where emlakno = '$resimemlakno'");                    
 
-					while (@$projeresver = mysql_fetch_array($projeresimdosya)) {
+					while (@$projeresver = $projeresimdosya->fetch()) {
 						//echo $resver["resimad"]."<br>";
 						$projetargetDir = '../uploads/proje_resim/'.$projeresver[plan_resim];
 						@unlink("$projetargetDir");
 					}
-					$projeresimsil=mysql_query("DELETE FROM projeler where emlakno = '$resimemlakno'");
+					$projeresimsil=$vt->query("DELETE FROM projeler where emlakno = '$resimemlakno'");
                     
 
 					// proje resim dosyalarini sil
-                    $projekapakresimdosya = mysql_query("select * from proje_kapak where emlakno = '$resimemlakno'");                    
+                    $projekapakresimdosya = $vt->query("select * from proje_kapak where emlakno = '$resimemlakno'");                    
 
-					while (@$projeresver = mysql_fetch_array($projekapakresimdosya)) {
+					while (@$projeresver = $projekapakresimdosya->fetch()) {
 						//echo $resver["resimad"]."<br>";
 						$projekapaktargetDir = '../uploads/proje_resim/'.$projeresver[proje_kapak];
 						@unlink("$projekapaktargetDir");
 					}
-					$projekapakresimsil=mysql_query("DELETE FROM proje_kapak where emlakno = '$resimemlakno'");
+					$projekapakresimsil=$vt->query("DELETE FROM proje_kapak where emlakno = '$resimemlakno'");
 				}
 
-				$ilansil=mysql_query("DELETE FROM emlak_ilan where id = '$sil'");
+				$ilansil=$vt->query("DELETE FROM emlak_ilan where id = '$sil'");
 
 				if ($sil) {
 					
@@ -102,19 +105,19 @@
 					
 				}
 
-				$ozellikdetaysil=mysql_query("DELETE FROM emlak_ozellikdetay where ilanid = '$sil'");
-				$ilandetaysil=mysql_query("DELETE FROM emlak_ilandetay where ilanid = '$sil'");
+				$ozellikdetaysil=$vt->query("DELETE FROM emlak_ozellikdetay where ilanid = '$sil'");
+				$ilandetaysil=$vt->query("DELETE FROM emlak_ilandetay where ilanid = '$sil'");
 			}
 			// durum guncelle
 			$durum = @$_GET["durum"];
 			if ($durum) {
-				$ver = mysql_fetch_array(mysql_query("SELECT * FROM emlak_ilan WHERE id = '$durum'"));
+				$ver = $vt->query("SELECT * FROM emlak_ilan WHERE id = '$durum'")->fetch();
 				$kdurum = $ver["durum"];
 				if ($ver["durum"] == 1) {
-					mysql_query("UPDATE emlak_ilan SET durum = '0', satildi = 0, kiralandi = 0 WHERE id = '$durum'");
+					$vt->query("UPDATE emlak_ilan SET durum = '0', satildi = 0, kiralandi = 0 WHERE id = '$durum'");
 					onay();
 				} else {
-					mysql_query("UPDATE emlak_ilan SET durum  = '1' WHERE id = '$durum'");
+					$vt->query("UPDATE emlak_ilan SET durum  = '1' WHERE id = '$durum'");
 					onay();
 				}
 			}
@@ -126,7 +129,7 @@
 		<?php
 			if ($ilanonay == "onayla") {
 
-				$ilanonayla = mysql_query("UPDATE emlak_ilan SET onay = 1 where id = '$onayid'");
+				$ilanonayla = $vt->query("UPDATE emlak_ilan SET onay = 1 where id = '$onayid'");
 
 				if ($ilanonayla) {
 
@@ -149,7 +152,7 @@
 
 			if ($ilanonay == "onaykaldir") {
 
-				$ilanonaykaldir = mysql_query("UPDATE emlak_ilan SET onay = 0 where id = '$onayid'");
+				$ilanonaykaldir = $vt->query("UPDATE emlak_ilan SET onay = 0 where id = '$onayid'");
 
 				if ($ilanonaykaldir) {
 
@@ -230,31 +233,33 @@
 
                     	if ($uyeonay == "onaybekleyen") {
 
-                    		$ilanlar=mysql_query("SELECT * FROM emlak_ilan where onay = 0 && yonetici_id = '".$kullanici["id"]."' order by id DESC");
+                    		$ilanlar=$vt->query("SELECT * FROM emlak_ilan where onay = 0 AND yonetici_id = '".$kullanici["id"]."' order by id DESC");
 
 							} else if ($uyeonay == "satildi") {
 
-	                    		$ilanlar=mysql_query("SELECT * FROM emlak_ilan where satildi = 1 && yonetici_id = '".$kullanici["id"]."' order by id DESC");
+	                    		$ilanlar=$vt->query("SELECT * FROM emlak_ilan where satildi = 1 AND yonetici_id = '".$kullanici["id"]."' order by id DESC");
 
 							} else if ($uyeonay == "kiralandi") {
 
-	                    		$ilanlar=mysql_query("SELECT * FROM emlak_ilan where kiralandi = 1 && yonetici_id = '".$kullanici["id"]."' order by id DESC");
+	                    		$ilanlar=$vt->query("SELECT * FROM emlak_ilan where kiralandi = 1 AND yonetici_id = '".$kullanici["id"]."' order by id DESC");
 
 							} else if ($uyeonay == "yayindaolmayan") {
 
-	                    		$ilanlar=mysql_query("SELECT * FROM emlak_ilan where durum = 1 && yonetici_id = '".$kullanici["id"]."' && onay = 1 && satildi = 0 && kiralandi = 0 && durum = 1 order by id DESC");
+	                    		$ilanlar=$vt->query("SELECT * FROM emlak_ilan where durum = 1 AND yonetici_id = '".$kullanici["id"]."' AND onay = 1 AND satildi = 0 AND kiralandi = 0 AND durum = 1 order by id DESC");
 
 							} else if (@$_GET["magaza"]) {
 
-								$uye_yasak = $vt->query("SELECT * FROM yonetici WHERE id = '".$_SESSION["id"]."'")->fetch();
+								$stmt_uye_yasak = $vt->prepare("SELECT * FROM yonetici WHERE id = ?");
+								$stmt_uye_yasak->execute([$_SESSION["id"]]);
+								$uye_yasak = $stmt_uye_yasak->fetch();
 	
 							$sube_kontrol = $vt->query("SELECT * FROM subeler WHERE yetkiliuye = '".$uye_yasak["id"]."'")->fetch(PDO::FETCH_ASSOC);  
 
-							$ilanlar=mysql_query("SELECT * FROM emlak_ilan where onay = 1 and ofisid = '".$sube_kontrol["id"]."'");
+							$ilanlar=$vt->query("SELECT * FROM emlak_ilan where onay = 1 and ofisid = '".$sube_kontrol["id"]."'");
 
 							} else {
 
-	                    		$ilanlar=mysql_query("SELECT * FROM emlak_ilan where onay = 1 && durum = 0 && satildi = 0 && kiralandi = 0 && yonetici_id = '".$kullanici["id"]."' order by id DESC");
+	                    		$ilanlar=$vt->query("SELECT * FROM emlak_ilan where onay = 1 AND durum = 0 AND satildi = 0 AND kiralandi = 0 AND yonetici_id = '".$kullanici["id"]."' order by id DESC");
 
 							}
 
@@ -262,36 +267,38 @@
 
                     	if ($uyeonay == "onaybekleyen") {
 
-                    		$ilanlar=mysql_query("SELECT * FROM emlak_ilan where onay = 0 order by id DESC");
+                    		$ilanlar=$vt->query("SELECT * FROM emlak_ilan where onay = 0 order by id DESC");
 
 						} else if ($uyeonay == "satildi") {
 
-							$ilanlar=mysql_query("SELECT * FROM emlak_ilan where satildi = 1 order by id DESC");
+							$ilanlar=$vt->query("SELECT * FROM emlak_ilan where satildi = 1 order by id DESC");
 
 						} else if ($uyeonay == "kiralandi") {
 
-							$ilanlar=mysql_query("SELECT * FROM emlak_ilan where kiralandi = 1 order by id DESC");
+							$ilanlar=$vt->query("SELECT * FROM emlak_ilan where kiralandi = 1 order by id DESC");
 
 						} else if ($uyeonay == "yayindaolmayan") {
 
-							$ilanlar=mysql_query("SELECT * FROM emlak_ilan where durum = 1 && onay = 1 order by id DESC");
+							$ilanlar=$vt->query("SELECT * FROM emlak_ilan where durum = 1 AND onay = 1 order by id DESC");
 
 						} else if (@$_GET["magaza"]) {
 							
-							$uye_yasak = $vt->query("SELECT * FROM yonetici WHERE id = '".$_SESSION["id"]."'")->fetch();
+							$stmt_uye_yasak2 = $vt->prepare("SELECT * FROM yonetici WHERE id = ?");
+							$stmt_uye_yasak2->execute([$_SESSION["id"]]);
+							$uye_yasak = $stmt_uye_yasak2->fetch();
 	
 							$sube_kontrol = $vt->query("SELECT * FROM subeler WHERE yetkiliuye = '".$uye_yasak["id"]."'")->fetch(PDO::FETCH_ASSOC);  
 
-							$ilanlar=mysql_query("SELECT * FROM emlak_ilan where onay = 1 and ofisid = '".$sube_kontrol["id"]."'");
+							$ilanlar=$vt->query("SELECT * FROM emlak_ilan where onay = 1 and ofisid = '".$sube_kontrol["id"]."'");
 
 						} else  {
 
-							$ilanlar=mysql_query("SELECT * FROM emlak_ilan where onay = 1 && durum = 0 && satildi = 0 && kiralandi = 0 order by id DESC");
+							$ilanlar=$vt->query("SELECT * FROM emlak_ilan where onay = 1 AND durum = 0 AND satildi = 0 AND kiralandi = 0 order by id DESC");
 
 						}
                 	}
 
-                	while ($ilan=mysql_fetch_array($ilanlar)) { 
+                	while ($ilan=$ilanlar->fetch()) { 
 
 						$doping_sicak_firsat 	= $vt->query("SELECT * FROM doping_ilanlari WHERE doping_adi LIKE '%sicak_firsat%' AND ilan_id = '{$ilan["id"]}'")->fetch();
 						$doping_vitrin_ilan 	= $vt->query("SELECT * FROM doping_ilanlari WHERE doping_adi LIKE '%vitrin_ilan%' AND ilan_id = '{$ilan["id"]}'")->fetch(); 
@@ -300,8 +307,8 @@
 
                     ?>
 					<?php
-						$katadi=mysql_query("SELECT * FROM emlak_kategori where kat_id = '$ilan[katid]'");
-						$k=mysql_fetch_array($katadi);
+						$katadi=$vt->query("SELECT * FROM emlak_kategori where kat_id = '$ilan[katid]'");
+						$k=$katadi->fetch();
 						
 						$proje_sekli = $vt->query("SELECT * FROM emlak_ilansekli WHERE id = '{$k["ilansekli"]}'")->fetch();
 						
@@ -315,8 +322,8 @@
 
 							<?php
 								$resver=$ilan['emlakno'];
-								$resim=mysql_query("SELECT * FROM emlak_resim where emlakno = '$resver' and kapak = '1'");
-								$r=mysql_fetch_array($resim);
+								$resim=$vt->query("SELECT * FROM emlak_resim where emlakno = '$resver' and kapak = '1'");
+								$r=$resim->fetch();
 								if (empty($r['emlakno'])) { ?>
 								<div class="resim_liste">
 									<img src="../uploads/resim/resim.png"/>
@@ -371,15 +378,15 @@
 								<a target="_blank" class="text" href="/<?=$ilan["seo"];?>-ilan-<?=$ilan['id']?>" title="<?=$ilan["baslik"];?>"> <?=$ilan["baslik"];?> </a>
 							<?php } ?>
 							<?php
-								$yoneticibaglan = mysql_query("SELECT * FROM yonetici where id = '".$ilan["yonetici_id"]."'");
-								$yoneticiver = mysql_fetch_array($yoneticibaglan);
+								$yoneticibaglan = $vt->query("SELECT * FROM yonetici where id = '".$ilan["yonetici_id"]."'");
+								$yoneticiver = $yoneticibaglan->fetch();
 							?>							
 							<?php
-								$ilandetayver = mysql_query("SELECT * FROM emlak_kategori where kat_id = '".$ilan["katid"]."'");
-								$ilandetay = mysql_fetch_array($ilandetayver);
+								$ilandetayver = $vt->query("SELECT * FROM emlak_kategori where kat_id = '".$ilan["katid"]."'");
+								$ilandetay = $ilandetayver->fetch();
 
-								$ilansekliver = mysql_query("SELECT * FROM emlak_ilansekli where id = '".$ilandetay["ilansekli"]."'");
-								$isekli = mysql_fetch_array($ilansekliver);
+								$ilansekliver = $vt->query("SELECT * FROM emlak_ilansekli where id = '".$ilandetay["ilansekli"]."'");
+								$isekli = $ilansekliver->fetch();
 								
 								
 							?>	
@@ -432,8 +439,8 @@
 
 	            		<th>
 	            		<?php
-	            			$ilantipi=mysql_query("SELECT * FROM emlak_ilantipi where id = '".$ilan["ilantipi"]."'");
-	            			$tip=mysql_fetch_array($ilantipi);
+	            			$ilantipi=$vt->query("SELECT * FROM emlak_ilantipi where id = '".$ilan["ilantipi"]."'");
+	            			$tip=$ilantipi->fetch();
 	            			if ($tip["id"]!=0) {
 	            		?>
 	            			<?php
@@ -541,8 +548,8 @@
 						<a href="index.php?do=doping/ilan_doping&ilan_id=<?php echo $ilan["id"]; ?>" class="btn btn-block btn-warning btn-xs"> <i class="fa fa-rocket"></i> <strong>DOPİNG YAP</strong> </a>
 
 	            		<?php
-	            			$uyelerbag = mysql_query("SELECT * FROM yonetici where id = '".$ilan["yonetici_id"]."'");
-	            			$uye = mysql_fetch_array($uyelerbag);
+	            			$uyelerbag = $vt->query("SELECT * FROM yonetici where id = '".$ilan["yonetici_id"]."'");
+	            			$uye = $uyelerbag->fetch();
 	            		?>
 						
 						<a href="index.php?do=islem&emlak=emlak_resim&resim=yukle&id=<?=$ilan['id']?>" class="btn btn-danger btn-xs btn-block"><i class="fa fa-edit"></i> <strong>RESİMLER</strong></a>
@@ -577,8 +584,8 @@
 										<div class="col-md-4">
 											<?php
 												$resver=$ilan['emlakno'];
-												$resim=mysql_query("SELECT * FROM emlak_resim where emlakno = '$resver' and kapak = '1'");
-												$r=mysql_fetch_array($resim);
+												$resim=$vt->query("SELECT * FROM emlak_resim where emlakno = '$resver' and kapak = '1'");
+												$r=$resim->fetch();
 												if (empty($r['emlakno'])) { ?>
 												<div class="resim _liste">
 													<img src="../uploads/resim/resim.png" height="80" class="img-thumbnail" />

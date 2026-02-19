@@ -25,7 +25,7 @@
 		<div class="box-body table-responsive">
 			<?php if ($hareket == "onay") { onay(); } ?>
 			<?php if ($islem == "sil") { 
-				$ilsil = mysql_query("delete from ilce where ilce_id = '$id'");
+				$ilsil = $vt->query("delete from ilce where ilce_id = '$id'");
 				go("index.php?do=islem&emlak=ilceler&hareket=onay",0);
 			} ?>
 			<div id="example1_wrapper" class="dataTables_wrapper form-inline dt-bootstrap">
@@ -43,16 +43,16 @@
 						if($islem == "ilceno") {
 					?>
 					<?php 
-						$dbilceler = mysql_query("select * from ilce where ilce_sehirkey = '$ilid'");
-						while($ilce = mysql_fetch_array($dbilceler)) {
+						$dbilceler = $vt->query("select * from ilce where ilce_sehirkey = '$ilid'");
+						while($ilce = $dbilceler->fetch()) {
 					?>
 					<tr>
 						<th><?=$ilce["ilce_id"];?></th>
 						<th><?=$ilce["ilce_title"];?></th>
 						<th>
 						<?php 
-							$sehir = mysql_query("select * from sehir where sehir_key = '$ilce[ilce_sehirkey]'");
-							$s=mysql_fetch_array($sehir);
+							$sehir = $vt->query("select * from sehir where sehir_key = '$ilce[ilce_sehirkey]'");
+							$s=$sehir->fetch();
 							echo $s["adi"];
 						?>
 						</th>
@@ -76,18 +76,18 @@
 					<?php } else { ?>
 					<?php 
 						if ($ilcelist) {
-							$dbilceler = mysql_query("select * from ilce where ilce_sehirkey = '$ilcelist'");
+							$dbilceler = $vt->query("select * from ilce where ilce_sehirkey = '$ilcelist'");
 						} else {
-							$dbilceler = mysql_query("select * from ilce order by ilce_sehirkey desc");
+							$dbilceler = $vt->query("select * from ilce order by ilce_sehirkey desc");
 						}
-						while($ilce = mysql_fetch_array($dbilceler)) {
+						while($ilce = $dbilceler->fetch()) {
 					?>
 					<tr>
 						<th><?=$ilce["ilce_id"];?></th>
 						<th>
 						<?php 
-							$sehir = mysql_query("select * from sehir where sehir_key = '$ilce[ilce_sehirkey]'");
-							$s=mysql_fetch_array($sehir);
+							$sehir = $vt->query("select * from sehir where sehir_key = '$ilce[ilce_sehirkey]'");
+							$s=$sehir->fetch();
 							echo $s["adi"];
 						?>
 						</th>

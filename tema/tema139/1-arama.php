@@ -210,8 +210,8 @@
 											
 										// emlak formlarina gore arama
 			
-										$ilanformara = mysql_query("SELECT * FROM emlak_form where arama = '1' order by sira asc");
-										while($io = mysql_fetch_array($ilanformara)) {
+										$stmt_ilanformara = $vt->query("SELECT * FROM emlak_form where arama = '1' order by sira asc");
+										while($io = $stmt_ilanformara->fetch()) {
 
 											$mintoplu = $_GET["mintoplu{$io['id']}"];
 											$maxtoplu = $_GET["maxtoplu{$io['id']}"];
@@ -227,12 +227,14 @@
 
 											if ($minpost != "" || $maxpost != "") {
 
-												$emlaknoverlist = mysql_query("SELECT * FROM emlak_ilandetay where seo BETWEEN '$minpost' and '$maxpost' && formid = '$minmaxid'");
-												while($emlaknover = mysql_fetch_array($emlaknoverlist)) {
+												$stmt_emlaknover1 = $vt->prepare("SELECT * FROM emlak_ilandetay where seo BETWEEN ? AND ? AND formid = ?");
+												$stmt_emlaknover1->execute([$minpost, $maxpost, $minmaxid]);
+												while($emlaknover = $stmt_emlaknover1->fetch()) {
 													if (is_numeric($emlaknover["seo"]))  {
 
-														$emlakver = mysql_query("SELECT * FROM emlak_ilan where emlakno = '".$emlaknover["emlakno"]."'");
-														while($emlak = mysql_fetch_array($emlakver)) { 
+														$stmt_emlakver = $vt->prepare("SELECT * FROM emlak_ilan where emlakno = ?");
+														$stmt_emlakver->execute([$emlaknover["emlakno"]]);
+														while($emlak = $stmt_emlakver->fetch()) { 
 
 															$emlak_kategori = $vt->query("SELECT * FROM emlak_kategori WHERE kat_id like '%".$_GET["kategori"]."%' AND kat_id = '".$emlak["katid"]."'")->fetch();
 															$emlak_ilan_tipi = $vt->query("SELECT * FROM emlak_ilantipi WHERE id = '".$emlak["ilantipi"]."'")->fetch();			                    				
@@ -380,12 +382,14 @@
 											
 											if ($mintoplu != "" || $maxtoplu != "") {
 
-												$emlaknoverlist = mysql_query("SELECT * FROM emlak_ilandetay where seo BETWEEN '$mintoplu' and '$maxtoplu' && formid = '$minmaxtoplu'");
-												while($emlaknover = mysql_fetch_array($emlaknoverlist)) {
+												$stmt_emlaknover2 = $vt->prepare("SELECT * FROM emlak_ilandetay where seo BETWEEN ? AND ? AND formid = ?");
+												$stmt_emlaknover2->execute([$mintoplu, $maxtoplu, $minmaxtoplu]);
+												while($emlaknover = $stmt_emlaknover2->fetch()) {
 													if (is_numeric($emlaknover["seo"]))  {
 
-														$emlakver = mysql_query("SELECT * FROM emlak_ilan where emlakno = '".$emlaknover["emlakno"]."'");
-														while($emlak = mysql_fetch_array($emlakver)) { 
+														$stmt_emlakver = $vt->prepare("SELECT * FROM emlak_ilan where emlakno = ?");
+														$stmt_emlakver->execute([$emlaknover["emlakno"]]);
+														while($emlak = $stmt_emlakver->fetch()) { 
 
 															$emlak_kategori = $vt->query("SELECT * FROM emlak_kategori WHERE kat_id like '%".$_GET["kategori"]."%' AND kat_id = '".$emlak["katid"]."'")->fetch();
 															$emlak_ilan_tipi = $vt->query("SELECT * FROM emlak_ilantipi WHERE id = '".$emlak["ilantipi"]."'")->fetch();			                    				
@@ -533,11 +537,13 @@
 
 											if ($io["toplusecim"] == 1 && $post != "") {
 												foreach ($post as $key) {
-													$emlaknoverlist = mysql_query("SELECT * FROM emlak_ilandetay where seo = '".$key."' && formid = '".$io["id"]."'");
-													while($emlaknover = mysql_fetch_array($emlaknoverlist)) {
+													$stmt_emlaknover3 = $vt->prepare("SELECT * FROM emlak_ilandetay where seo = ? AND formid = ?");
+													$stmt_emlaknover3->execute([$key, $io["id"]]);
+													while($emlaknover = $stmt_emlaknover3->fetch()) {
 
-														$emlakver = mysql_query("SELECT * FROM emlak_ilan where emlakno = '".$emlaknover["emlakno"]."'");
-														while($emlak = mysql_fetch_array($emlakver)) { 
+														$stmt_emlakver = $vt->prepare("SELECT * FROM emlak_ilan where emlakno = ?");
+														$stmt_emlakver->execute([$emlaknover["emlakno"]]);
+														while($emlak = $stmt_emlakver->fetch()) { 
 
 															$emlak_kategori = $vt->query("SELECT * FROM emlak_kategori WHERE kat_id like '%".$_GET["kategori"]."%' AND kat_id = '".$emlak["katid"]."'")->fetch();
 															$emlak_ilan_tipi = $vt->query("SELECT * FROM emlak_ilantipi WHERE id = '".$emlak["ilantipi"]."'")->fetch();			                    				
@@ -686,12 +692,14 @@
 
 											if ($io["toplusecim"] != 1 && $post != "") {
 												
-												$emlaknoverlist = mysql_query("SELECT * FROM emlak_ilandetay where seo = '".$post."' && formid = '".$io["id"]."'");
-												while($emlaknover = mysql_fetch_array($emlaknoverlist)) {
+												$stmt_emlaknover4 = $vt->prepare("SELECT * FROM emlak_ilandetay where seo = ? AND formid = ?");
+												$stmt_emlaknover4->execute([$post, $io["id"]]);
+												while($emlaknover = $stmt_emlaknover4->fetch()) {
 											
 
-														$emlakver = mysql_query("SELECT * FROM emlak_ilan where emlakno = '".$emlaknover["emlakno"]."'");
-														while($emlak = mysql_fetch_array($emlakver)) { 
+														$stmt_emlakver = $vt->prepare("SELECT * FROM emlak_ilan where emlakno = ?");
+														$stmt_emlakver->execute([$emlaknover["emlakno"]]);
+														while($emlak = $stmt_emlakver->fetch()) { 
 
 															$emlak_kategori = $vt->query("SELECT * FROM emlak_kategori WHERE kat_id like '%".$_GET["kategori"]."%' AND kat_id = '".$emlak["katid"]."'")->fetch();
 															$emlak_ilan_tipi = $vt->query("SELECT * FROM emlak_ilantipi WHERE id = '".$emlak["ilantipi"]."'")->fetch();			                    				
@@ -846,12 +854,14 @@
 
 										if ($ilce == "" && $mahalle == "") {
 
-											$ilanbul = mysql_query("SELECT * FROM emlak_ilan where il = '$il' && durum = 0 && onay = 1");
-											while($ilanver = mysql_fetch_array($ilanbul)) {
+											$stmt_ilanbul = $vt->prepare("SELECT * FROM emlak_ilan where il = ? AND durum = 0 AND onay = 1");
+											$stmt_ilanbul->execute([$il]);
+											while($ilanver = $stmt_ilanbul->fetch()) {
 											
 											
-												$emlakver = mysql_query("SELECT * FROM emlak_ilan where emlakno = '".$ilanver["emlakno"]."'");
-												while($emlak = mysql_fetch_array($emlakver)) { 
+												$stmt_emlakver = $vt->prepare("SELECT * FROM emlak_ilan where emlakno = ?");
+												$stmt_emlakver->execute([$ilanver["emlakno"]]);
+												while($emlak = $stmt_emlakver->fetch()) { 
 
 													$emlak_kategori = $vt->query("SELECT * FROM emlak_kategori WHERE kat_id like '%".$_GET["kategori"]."%' AND kat_id = '".$emlak["katid"]."'")->fetch();
 															$emlak_ilan_tipi = $vt->query("SELECT * FROM emlak_ilantipi WHERE id = '".$emlak["ilantipi"]."'")->fetch();			                    				
@@ -999,11 +1009,13 @@
 
 										} else if ($mahalle == "") {
 
-											$ilanbul = mysql_query("SELECT * FROM emlak_ilan where ilce = '$ilce' && durum = 0 && onay = 1");
-											while($ilanver = mysql_fetch_array($ilanbul)) {
+											$stmt_ilanbul = $vt->prepare("SELECT * FROM emlak_ilan where ilce = ? AND durum = 0 AND onay = 1");
+											$stmt_ilanbul->execute([$ilce]);
+											while($ilanver = $stmt_ilanbul->fetch()) {
 
-												$emlakver = mysql_query("SELECT * FROM emlak_ilan where emlakno = '".$ilanver["emlakno"]."'");
-												while($emlak = mysql_fetch_array($emlakver)) { 
+												$stmt_emlakver = $vt->prepare("SELECT * FROM emlak_ilan where emlakno = ?");
+												$stmt_emlakver->execute([$ilanver["emlakno"]]);
+												while($emlak = $stmt_emlakver->fetch()) { 
 
 													$emlak_kategori = $vt->query("SELECT * FROM emlak_kategori WHERE kat_id like '%".$_GET["kategori"]."%' AND kat_id = '".$emlak["katid"]."'")->fetch();
 															$emlak_ilan_tipi = $vt->query("SELECT * FROM emlak_ilantipi WHERE id = '".$emlak["ilantipi"]."'")->fetch();			                    				
@@ -1152,11 +1164,13 @@
 										} else if ($mahalle != "") {
 
 											foreach ($mahalle as $mah) {
-												$ilanbul = mysql_query("SELECT * FROM emlak_ilan where mahalle = '$mah' && durum = 0 && onay = 1");
-												while($ilanver = mysql_fetch_array($ilanbul)) {
+												$stmt_ilanbul = $vt->prepare("SELECT * FROM emlak_ilan where mahalle = ? AND durum = 0 AND onay = 1");
+												$stmt_ilanbul->execute([$mah]);
+												while($ilanver = $stmt_ilanbul->fetch()) {
 
-													$emlakver = mysql_query("SELECT * FROM emlak_ilan where emlakno = '".$ilanver["emlakno"]."'");
-													while($emlak = mysql_fetch_array($emlakver)) { 
+													$stmt_emlakver = $vt->prepare("SELECT * FROM emlak_ilan where emlakno = ?");
+													$stmt_emlakver->execute([$ilanver["emlakno"]]);
+													while($emlak = $stmt_emlakver->fetch()) { 
 
 														$emlak_kategori = $vt->query("SELECT * FROM emlak_kategori WHERE kat_id like '%".$_GET["kategori"]."%' AND kat_id = '".$emlak["katid"]."'")->fetch();
 															$emlak_ilan_tipi = $vt->query("SELECT * FROM emlak_ilantipi WHERE id = '".$emlak["ilantipi"]."'")->fetch();			                    				
@@ -1308,11 +1322,13 @@
 
 										$kategori = $_GET["kategori"];
 
-										$kategoriaramaver = mysql_query("SELECT * FROM emlak_ilan where katid = '$kategori' && durum = 0 && onay = 1");
-										while ($kategoriarama = mysql_fetch_array($kategoriaramaver)) {
+										$stmt_katara = $vt->prepare("SELECT * FROM emlak_ilan where katid = ? AND durum = 0 AND onay = 1");
+										$stmt_katara->execute([$kategori]);
+										while ($kategoriarama = $stmt_katara->fetch()) {
 
-												$emlakver = mysql_query("SELECT * FROM emlak_ilan where emlakno = '".$kategoriarama["emlakno"]."'");
-												while($emlak = mysql_fetch_array($emlakver)) { 
+												$stmt_emlakver = $vt->prepare("SELECT * FROM emlak_ilan where emlakno = ?");
+												$stmt_emlakver->execute([$kategoriarama["emlakno"]]);
+												while($emlak = $stmt_emlakver->fetch()) { 
 
 													$emlak_kategori = $vt->query("SELECT * FROM emlak_kategori WHERE kat_id like '%".$_GET["kategori"]."%' AND kat_id = '".$emlak["katid"]."'")->fetch();
 															$emlak_ilan_tipi = $vt->query("SELECT * FROM emlak_ilantipi WHERE id = '".$emlak["ilantipi"]."'")->fetch();			                    				
@@ -1463,11 +1479,13 @@
 										$emlaktipipost = $_GET["emlaktipi"];																				
 
 										if ($emlaktipipost != "") {
-											$emlaktipiaramaver = mysql_query("SELECT * FROM emlak_ilan where ilantipi = '$emlaktipipost' && durum = 0 && onay = 1");
-											while ($emlaktipiarama = mysql_fetch_array($emlaktipiaramaver)) {
+											$stmt_tipiara = $vt->prepare("SELECT * FROM emlak_ilan where ilantipi = ? AND durum = 0 AND onay = 1");
+											$stmt_tipiara->execute([$emlaktipipost]);
+											while ($emlaktipiarama = $stmt_tipiara->fetch()) {
 
-												$emlakver = mysql_query("SELECT * FROM emlak_ilan where emlakno = '".$emlaktipiarama["emlakno"]."'");
-												while($emlak = mysql_fetch_array($emlakver)) { 
+												$stmt_emlakver = $vt->prepare("SELECT * FROM emlak_ilan where emlakno = ?");
+												$stmt_emlakver->execute([$emlaktipiarama["emlakno"]]);
+												while($emlak = $stmt_emlakver->fetch()) { 
 
 													$emlak_kategori = $vt->query("SELECT * FROM emlak_kategori WHERE kat_id like '%".$_GET["kategori"]."%' AND kat_id = '".$emlak["katid"]."'")->fetch();
 															$emlak_ilan_tipi = $vt->query("SELECT * FROM emlak_ilantipi WHERE id = '".$emlak["ilantipi"]."'")->fetch();			                    				
@@ -1617,11 +1635,13 @@
 
 										$emlaksekli = $_GET["emlaksekli"];
 
-										$emlaksekliaramaver = mysql_query("SELECT * FROM emlak_ilan where ilansekli = '$emlaksekli' && durum = 0 && onay = 1");
-										while ($emlaksekliarama = mysql_fetch_array($emlaksekliaramaver)) {
+										$stmt_sekliara = $vt->prepare("SELECT * FROM emlak_ilan where ilansekli = ? AND durum = 0 AND onay = 1");
+										$stmt_sekliara->execute([$emlaksekli]);
+										while ($emlaksekliarama = $stmt_sekliara->fetch()) {
 
-												$emlakver = mysql_query("SELECT * FROM emlak_ilan where emlakno = '".$emlaksekliarama["emlakno"]."'");
-												while($emlak = mysql_fetch_array($emlakver)) { 
+												$stmt_emlakver = $vt->prepare("SELECT * FROM emlak_ilan where emlakno = ?");
+												$stmt_emlakver->execute([$emlaksekliarama["emlakno"]]);
+												while($emlak = $stmt_emlakver->fetch()) { 
 
 													$emlak_kategori = $vt->query("SELECT * FROM emlak_kategori WHERE kat_id like '%".$_GET["kategori"]."%' AND kat_id = '".$emlak["katid"]."'")->fetch();
 															$emlak_ilan_tipi = $vt->query("SELECT * FROM emlak_ilantipi WHERE id = '".$emlak["ilantipi"]."'")->fetch();			                    				
@@ -1772,11 +1792,13 @@
 
 										$fiyatkur = $_GET["fiyatkur"];
 
-										$fiyataraver = mysql_query("SELECT * FROM emlak_ilan where fiyat BETWEEN '$minfiyat' and '$maxfiyat' && fiyatkur like '%".$fiyatkur."%'");
-										while($fiyatara = mysql_fetch_array($fiyataraver)) {
+										$stmt_fiyatara2 = $vt->prepare("SELECT * FROM emlak_ilan where fiyat BETWEEN ? AND ? AND fiyatkur LIKE ?");
+										$stmt_fiyatara2->execute([$minfiyat, $maxfiyat, '%'.$fiyatkur.'%']);
+										while($fiyatara = $stmt_fiyatara2->fetch()) {
 
-												$emlakver = mysql_query("SELECT * FROM emlak_ilan where emlakno = '".$fiyatara["emlakno"]."'");
-												while($emlak = mysql_fetch_array($emlakver)) { 
+												$stmt_emlakver = $vt->prepare("SELECT * FROM emlak_ilan where emlakno = ?");
+												$stmt_emlakver->execute([$fiyatara["emlakno"]]);
+												while($emlak = $stmt_emlakver->fetch()) { 
 
 													$emlak_kategori = $vt->query("SELECT * FROM emlak_kategori WHERE kat_id like '%".$_GET["kategori"]."%' AND kat_id = '".$emlak["katid"]."'")->fetch();
 															$emlak_ilan_tipi = $vt->query("SELECT * FROM emlak_ilantipi WHERE id = '".$emlak["ilantipi"]."'")->fetch();			                    				
@@ -1929,8 +1951,9 @@
 									if (isset($aramaformu)) {
 
 
-										$aramabul = mysql_query("SELECT * FROM emlak_ilan where emlakno like '%".$aramaformu."%' or baslik like '%".$aramaformu."%'");
-										while($emlak = mysql_fetch_array($aramabul)) {
+										$stmt_aramabul = $vt->prepare("SELECT * FROM emlak_ilan where emlakno LIKE ? OR baslik LIKE ?");
+										$stmt_aramabul->execute(['%'.$aramaformu.'%', '%'.$aramaformu.'%']);
+										while($emlak = $stmt_aramabul->fetch()) {
 
 											$emlak_kategori = $vt->query("SELECT * FROM emlak_kategori WHERE kat_id like '%".$_GET["kategori"]."%' AND kat_id = '".$emlak["katid"]."'")->fetch();
 															$emlak_ilan_tipi = $vt->query("SELECT * FROM emlak_ilantipi WHERE id = '".$emlak["ilantipi"]."'")->fetch();			                    				

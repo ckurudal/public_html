@@ -9,7 +9,7 @@
 	$hareket = $_GET["hareket"];
 	$id = $_GET["id"];
 		
-	$dbiller = mysql_query("select * from sehir order by sehir_key desc");
+	$dbiller = $vt->query("select * from sehir order by sehir_key desc");
 
  ?> 
 <section class="content-header">
@@ -34,7 +34,7 @@
 			<?php if ($hareket == "onay") { onay(); } ?>
 			<?php if ($islem == "sil") { 
 			
-				$ilsil = mysql_query("delete from sehir where id = '$id'");
+				$ilsil = $vt->query("delete from sehir where id = '$id'");
 					
 				go("index.php?do=islem&emlak=iller&hareket=onay",0);
 			
@@ -51,9 +51,9 @@
 				</thead>
 				<tbody>
 					<?php 
-						while($iller = mysql_fetch_array($dbiller)) { 
-							$ilcelersay = mysql_query("SELECT COUNT(*) FROM ilce where ilce_sehirkey = '".$iller["sehir_key"]."'");
-							$ilcesay = mysql_fetch_array($ilcelersay);
+						while($iller = $dbiller->fetch()) { 
+							$ilcelersay = $vt->query("SELECT COUNT(*) FROM ilce where ilce_sehirkey = '".$iller["sehir_key"]."'");
+							$ilcesay = $ilcelersay->fetch();
 					?>
 					<tr> 
 						<th class="text-center"> <span> <?=$iller["sehir_key"];?> </th>

@@ -2,42 +2,42 @@
 
 echo !defined("ADMIN") ? die("Güvenlik Duvarı...") : null;
 
-$emlakmesajver = mysql_query("SELECT COUNT(*) FROM emlak_mesaj where onay = 0");
-$emlakmesaj = mysql_fetch_array($emlakmesajver);
+$emlakmesajver = $vt->query("SELECT COUNT(*) FROM emlak_mesaj where onay = 0");
+$emlakmesaj = $emlakmesajver->fetch();
 
-$gelenmesajver = mysql_query("SELECT COUNT(*) FROM emlak_mesajiletisim where onay = 0");
-$gelenmesaj = mysql_fetch_array($gelenmesajver);
+$gelenmesajver = $vt->query("SELECT COUNT(*) FROM emlak_mesajiletisim where onay = 0");
+$gelenmesaj = $gelenmesajver->fetch();
 
-$emlaktalepver = mysql_query("SELECT COUNT(*) FROM emlak_mesajemlaktalep where onay = 0");
-$emlaktalep = mysql_fetch_array($emlaktalepver);
+$emlaktalepver = $vt->query("SELECT COUNT(*) FROM emlak_mesajemlaktalep where onay = 0");
+$emlaktalep = $emlaktalepver->fetch();
 
-$emlakonay = mysql_fetch_array(mysql_query("SELECT COUNT(*) FROM emlak_ilan where onay = 0"));
+$emlakonay = $vt->query("SELECT COUNT(*) FROM emlak_ilan where onay = 0")->fetch();
 
-$doping_say = mysql_query("SELECT COUNT(*) FROM emlak_ilan where doping_onay = 0 AND doping = 'var'");
-$doping_onay_say = mysql_fetch_array($doping_say);
+$doping_say = $vt->query("SELECT COUNT(*) FROM emlak_ilan where doping_onay = 0 AND doping = 'var'");
+$doping_onay_say = $doping_say->fetch();
 
-$magaza_say = mysql_query("SELECT COUNT(*) FROM magaza_uye_paket where onay = 0");
-$magaza_onay_say = mysql_fetch_array($magaza_say); 
+$magaza_say = $vt->query("SELECT COUNT(*) FROM magaza_uye_paket where onay = 0");
+$magaza_onay_say = $magaza_say->fetch(); 
 
 $toplam = $emlakmesaj[0] + $gelenmesaj[0] + $emlaktalep[0] + $emlakonay[0] + gelen_mesaj($_SESSION["id"]) + $doping_onay_say[0] + $magaza_onay_say[0];  
 	
     if ($kullanici["yetki"] != 0) {
 
-    	$ilan          = $vt->query("SELECT COUNT(*) FROM emlak_ilan where onay = 1 && durum = 0 && satildi = 0 && kiralandi = 0 && yonetici_id = '".$kullanici["id"]."'")->fetch();
-    	$avitrin       = $vt->query("SELECT COUNT(*) FROM emlak_ilan where anavitrin = '1' && yonetici_id = '".$kullanici["id"]."'")->fetch();
-    	$kvitrin       = $vt->query("SELECT COUNT(*) FROM emlak_ilan where katvitrin = '1' && yonetici_id = '".$kullanici["id"]."'")->fetch();
-    	$fvitrin       = $vt->query("SELECT COUNT(*) FROM emlak_ilan where firsatvitrin = '1' && yonetici_id = '".$kullanici["id"]."'")->fetch();
-    	$ovitrin       = $vt->query("SELECT COUNT(*) FROM emlak_ilan where onecikan = '1' && yonetici_id = '".$kullanici["id"]."'")->fetch();
-    	$acilv         = $vt->query("SELECT COUNT(*) FROM emlak_ilan where acil = '1' && yonetici_id = '".$kullanici["id"]."'")->fetch();
+    	$ilan          = $vt->query("SELECT COUNT(*) FROM emlak_ilan where onay = 1 AND durum = 0 AND satildi = 0 AND kiralandi = 0 AND yonetici_id = '".$kullanici["id"]."'")->fetch();
+    	$avitrin       = $vt->query("SELECT COUNT(*) FROM emlak_ilan where anavitrin = '1' AND yonetici_id = '".$kullanici["id"]."'")->fetch();
+    	$kvitrin       = $vt->query("SELECT COUNT(*) FROM emlak_ilan where katvitrin = '1' AND yonetici_id = '".$kullanici["id"]."'")->fetch();
+    	$fvitrin       = $vt->query("SELECT COUNT(*) FROM emlak_ilan where firsatvitrin = '1' AND yonetici_id = '".$kullanici["id"]."'")->fetch();
+    	$ovitrin       = $vt->query("SELECT COUNT(*) FROM emlak_ilan where onecikan = '1' AND yonetici_id = '".$kullanici["id"]."'")->fetch();
+    	$acilv         = $vt->query("SELECT COUNT(*) FROM emlak_ilan where acil = '1' AND yonetici_id = '".$kullanici["id"]."'")->fetch();
         $kat           = $vt->query("SELECT COUNT(*) FROM emlak_kategori")->fetch();
-        $onaysay       = $vt->query("SELECT COUNT(*) FROM emlak_ilan where onay = 0 && yonetici_id = '".$kullanici["id"]."'")->fetch();
-        $satildisay    = $vt->query("SELECT COUNT(*) FROM emlak_ilan where satildi = 1 && yonetici_id = '".$kullanici["id"]."'")->fetch();
-        $kiralandisay  = $vt->query("SELECT COUNT(*) FROM emlak_ilan where kiralandi = 1 && yonetici_id = '".$kullanici["id"]."'")->fetch();
-        $pasifsay      = $vt->query("SELECT COUNT(*) FROM emlak_ilan where durum = 1 && onay = 1 && satildi = 0 && kiralandi = 0 && onay = 1 && yonetici_id = '".$kullanici["id"]."'")->fetch();
+        $onaysay       = $vt->query("SELECT COUNT(*) FROM emlak_ilan where onay = 0 AND yonetici_id = '".$kullanici["id"]."'")->fetch();
+        $satildisay    = $vt->query("SELECT COUNT(*) FROM emlak_ilan where satildi = 1 AND yonetici_id = '".$kullanici["id"]."'")->fetch();
+        $kiralandisay  = $vt->query("SELECT COUNT(*) FROM emlak_ilan where kiralandi = 1 AND yonetici_id = '".$kullanici["id"]."'")->fetch();
+        $pasifsay      = $vt->query("SELECT COUNT(*) FROM emlak_ilan where durum = 1 AND onay = 1 AND satildi = 0 AND kiralandi = 0 AND onay = 1 AND yonetici_id = '".$kullanici["id"]."'")->fetch();
 
     } else {
 
-        $ilan          = $vt->query("SELECT COUNT(*) FROM emlak_ilan where onay = 1 && durum = 0 && satildi = 0 && kiralandi = 0")->fetch();
+        $ilan          = $vt->query("SELECT COUNT(*) FROM emlak_ilan where onay = 1 AND durum = 0 AND satildi = 0 AND kiralandi = 0")->fetch();
         $avitrin       = $vt->query("SELECT COUNT(*) FROM emlak_ilan where anavitrin = '1'")->fetch();
         $kvitrin       = $vt->query("SELECT COUNT(*) FROM emlak_ilan where katvitrin = '1'")->fetch();
         $fvitrin       = $vt->query("SELECT COUNT(*) FROM emlak_ilan where firsatvitrin = '1'")->fetch();
@@ -47,7 +47,7 @@ $toplam = $emlakmesaj[0] + $gelenmesaj[0] + $emlaktalep[0] + $emlakonay[0] + gel
         $onaysay       = $vt->query("SELECT COUNT(*) FROM emlak_ilan where onay = 0")->fetch();
         $satildisay    = $vt->query("SELECT COUNT(*) FROM emlak_ilan where satildi = 1")->fetch();
         $kiralandisay  = $vt->query("SELECT COUNT(*) FROM emlak_ilan where kiralandi = 1")->fetch();
-        $pasifsay      = $vt->query("SELECT COUNT(*) FROM emlak_ilan where durum = 1 && satildi = 0 && kiralandi = 0 && onay = 1")->fetch();
+        $pasifsay      = $vt->query("SELECT COUNT(*) FROM emlak_ilan where durum = 1 AND satildi = 0 AND kiralandi = 0 AND onay = 1")->fetch();
     }
 
 ?>
@@ -261,8 +261,10 @@ $toplam = $emlakmesaj[0] + $gelenmesaj[0] + $emlaktalep[0] + $emlakonay[0] + gel
                 <li class="dropdown user user-menu">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                         <?php 
-                            $yoneticibilgi = mysql_query("SELECT * FROM yonetici where id = '".$_SESSION['id']."'");
-                            $yoneticiver = mysql_fetch_array($yoneticibilgi);
+                            $stmt_yoneticibilgi = $vt->prepare("SELECT * FROM yonetici WHERE id = ?");
+                            $stmt_yoneticibilgi->execute([$_SESSION['id']]);
+                            $yoneticibilgi = $stmt_yoneticibilgi;
+                            $yoneticiver = $yoneticibilgi->fetch();
                         ?>
                         <?php if ($yoneticiver["resim"] == "") { ?>
                             <img src="/uploads/resim/resim.png" class="user-image" alt="<?=$yoneticiver["adsoyad"];?>">

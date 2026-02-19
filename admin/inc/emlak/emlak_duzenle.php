@@ -23,14 +23,16 @@
 		$yoneticiid = $_POST["yoneticiid"];
 		$toplu = $_POST["toplu"];
 		if (yetki() == 2) {
-			$sube 		= $vt->query("SELECT * FROM subeler WHERE yetkiliuye = '".$_SESSION["id"]."'")->fetch();
+			$stmt_sube = $vt->prepare("SELECT * FROM subeler WHERE yetkiliuye = ?");
+			$stmt_sube->execute([$_SESSION["id"]]);
+			$sube = $stmt_sube->fetch();
 			if ($toplu == 1) {
-				$toplukaydet = mysql_query("UPDATE emlak_ilan SET yonetici_id = '$yoneticiid', ofisid = '".$sube["id"]."' where yonetici_id = '".$i["yonetici_id"]."'");
+				$toplukaydet = $vt->query("UPDATE emlak_ilan SET yonetici_id = '$yoneticiid', ofisid = '".$sube["id"]."' where yonetici_id = '".$i["yonetici_id"]."'");
 				if ($toplukaydet == true) {
 					go("index.php?do=islem&ofis=yonetici&islem=duzenle&id={$yoneticiid}&tab_goster=ilanlari", 0);
 				}
 			} else {
-				$dkaydet = mysql_query("UPDATE emlak_ilan SET yonetici_id = '$yoneticiid', ofisid = '".$sube["id"]."'  where id = '$id'");
+				$dkaydet = $vt->query("UPDATE emlak_ilan SET yonetici_id = '$yoneticiid', ofisid = '".$sube["id"]."'  where id = '$id'");
 				if ($dkaydet == true) {
 					go("index.php?do=islem&ofis=yonetici&islem=duzenle&id={$yoneticiid}&tab_goster=ilanlari", 0);
 				}
@@ -38,13 +40,13 @@
 		} else {
 			if ($toplu == 1) {
 				$yonetici 		= $vt->query("SELECT * FROM yonetici WHERE id = '".$yoneticiid."'")->fetch();
-				$toplukaydet = mysql_query("UPDATE emlak_ilan SET yonetici_id = '$yoneticiid', ofisid = '".$yonetici["ofis"]."' where yonetici_id = '".$i["yonetici_id"]."'");
+				$toplukaydet = $vt->query("UPDATE emlak_ilan SET yonetici_id = '$yoneticiid', ofisid = '".$yonetici["ofis"]."' where yonetici_id = '".$i["yonetici_id"]."'");
 				if ($toplukaydet == true) {
 					go("index.php?do=islem&ofis=yonetici&islem=duzenle&id={$yoneticiid}&tab_goster=ilanlari", 0);
 				}
 			} else {
 				$yonetici 		= $vt->query("SELECT * FROM yonetici WHERE id = '".$yoneticiid."'")->fetch();
-				$dkaydet = mysql_query("UPDATE emlak_ilan SET yonetici_id = '$yoneticiid', ofisid = '".$yonetici["ofis"]."' where id = '$id'");
+				$dkaydet = $vt->query("UPDATE emlak_ilan SET yonetici_id = '$yoneticiid', ofisid = '".$yonetici["ofis"]."' where id = '$id'");
 				if ($dkaydet == true) {
 					go("index.php?do=islem&ofis=yonetici&islem=duzenle&id={$yoneticiid}&tab_goster=ilanlari", 0);
 				}
@@ -70,8 +72,8 @@
 					<label class="col-sm-2 control-label">Şimdiki Danışman:</label>
 					<div class="col-sm-10">
 						<?php
-							$yoneticibaglan = mysql_query("SELECT * FROM yonetici where id = '".$i["yonetici_id"]."'");
-							$yoneticiver = mysql_fetch_array($yoneticibaglan);
+							$yoneticibaglan = $vt->query("SELECT * FROM yonetici where id = '".$i["yonetici_id"]."'");
+							$yoneticiver = $yoneticibaglan->fetch();
 						?>
 						<input type="text" name="emlakno" class="form-control" disabled value="<?=$yoneticiver['adsoyad'];?>">
 				  	</div>
@@ -81,10 +83,12 @@
 					<div class="col-sm-10">
 						<select class="form-control select2" name="yoneticiid">
 							<?php
-								$yoneticiliste = mysql_query("SELECT * FROM yonetici order by id asc");
-								while ($yoneticil = mysql_fetch_array($yoneticiliste)) {
+								$yoneticiliste = $vt->query("SELECT * FROM yonetici order by id asc");
+								while ($yoneticil = $yoneticiliste->fetch()) {
 									if ($i["yonetici_id"] !== $yoneticil["id"]) {
-									$sube = $vt->query("SELECT * FROM subeler WHERE yetkiliuye = '".$_SESSION["id"]."'")->fetch();										
+									$stmt_sube2 = $vt->prepare("SELECT * FROM subeler WHERE yetkiliuye = ?");
+									$stmt_sube2->execute([$_SESSION["id"]]);
+									$sube = $stmt_sube2->fetch();
 							?>							
 							<?php if (!yetki() == 0): ?>
 								<?php if ($yoneticil["ofis"] == $sube["id"]): ?>
@@ -130,14 +134,14 @@
 				$eformdetay	= $_POST["eformdetay"];
 				$formid		= $_POST["formid"];
 				$kat		= $_POST["kat"];
-				$katilansekliver = mysql_query("SELECT * FROM emlak_kategori where kat_id = '$kat'");
-				$katilansekli = mysql_fetch_array($katilansekliver);
-				$katduzenle = mysql_query("UPDATE emlak_ilan SET
+				$katilansekliver = $vt->query("SELECT * FROM emlak_kategori where kat_id = '$kat'");
+				$katilansekli = $katilansekliver->fetch();
+				$katduzenle = $vt->query("UPDATE emlak_ilan SET
 					katid 		= 	'$kat',
 					ilansekli	= 	'".$katilansekli["ilansekli"]."'
 				where id = '$id'");
-				$siled = mysql_query("delete from emlak_ilandetay where ilanid = '$id'");
-				$silod = mysql_query("delete from emlak_ozellikdetay where ilanid = '$id'");
+				$siled = $vt->query("delete from emlak_ilandetay where ilanid = '$id'");
+				$silod = $vt->query("delete from emlak_ozellikdetay where ilanid = '$id'");
 				go("index.php?do=islem&emlak=emlak_duzenle&id=$id",0);
 		?>
 		<div class="alert alert-success alert-dismissible">
@@ -172,9 +176,9 @@
 						  <?php
 							  // ilan kategori
 							  function kategori($id = 0, $i = 0) {
-								  $query = mysql_query("SELECT * FROM emlak_kategori WHERE kat_ustid = '$id' && kat_id");
-								  if (mysql_affected_rows()) {
-									  while ($row = mysql_fetch_array($query)) {
+								  $query = $vt->query("SELECT * FROM emlak_kategori WHERE kat_ustid = '$id' AND kat_id");
+								  if ($query->rowCount()) {
+									  while ($row = $query->fetch()) {
 										  if ($row["kat_durum"] == 1) {
 										  	echo '<option value="'.$row["kat_id"].'"> '.str_repeat("--", $i).$row["kat_adi"].' </option>';
 										  }
@@ -255,9 +259,15 @@
                     endif;
                 }
 				// emlak ilan tablo ayarlari			 
-                $il_adi = $vt->query("SELECT * FROM sehir WHERE sehir_key = '".$_POST["il"]."'")->fetch();
-                $ilce_adi = $vt->query("SELECT * FROM ilce WHERE ilce_key = '".$_POST["ilce"]."'")->fetch();
-                $ilantipi_adi = $vt->query("SELECT * FROM emlak_ilantipi WHERE id = '".$_POST["emlak_tipi"]."'")->fetch();	
+                $stmt_il = $vt->prepare("SELECT * FROM sehir WHERE sehir_key = ?");
+                $stmt_il->execute([$_POST["il"]]);
+                $il_adi = $stmt_il->fetch();
+                $stmt_ilce = $vt->prepare("SELECT * FROM ilce WHERE ilce_key = ?");
+                $stmt_ilce->execute([$_POST["ilce"]]);
+                $ilce_adi = $stmt_ilce->fetch();
+                $stmt_ilantipi = $vt->prepare("SELECT * FROM emlak_ilantipi WHERE id = ?");
+                $stmt_ilantipi->execute([$_POST["emlak_tipi"]]);
+                $ilantipi_adi = $stmt_ilantipi->fetch();
 		        $baslik 		= tirnak($_POST["baslik"]);
 		        $sifreli	= $_POST["sifreli"];
 		        if($sifreli==0) {
@@ -305,7 +315,7 @@
 				{				
 					hata_alert("Başlık boş bırakılamaz. Lütfen başlık giriniz.");
 				} else  {
-					$eilanduzenle = mysql_query("UPDATE emlak_ilan SET
+					$eilanduzenle = $vt->query("UPDATE emlak_ilan SET
 						baslik 		= 	'$baslik',
 						referans_kodu = 	'$referans_kodu',
 						sifreli = 	'$sifreli',
@@ -348,24 +358,22 @@
 						where id = '$id'");
 				}
 				if ($_POST["sokak"] == "") {
-					$sokaksil = mysql_query("UPDATE emlak_ilan SET sokak = '' where id = '$id'");
+					$sokaksil = $vt->query("UPDATE emlak_ilan SET sokak = '' where id = '$id'");
 				}
 				// emlak ilan detay tablo ayarlari
 				$eformdetay		= 	$_POST["eformdetay"];
 				$formid			=	$_POST["formid"];
-				$sil = mysql_query("delete from emlak_ilandetay where ilanid = '$id'");
+				$sil = $vt->query("delete from emlak_ilandetay where ilanid = '$id'");
 				for ($i=0; $i<count($eformdetay);$i++){
-					$ilanid=mysql_query("SELECT * FROM emlak_ilan where id = '$id'");
-					$i2=mysql_fetch_array($ilanid);
+					$ilanid=$vt->query("SELECT * FROM emlak_ilan where id = '$id'");
+					$i2=$ilanid->fetch();
 					if (!empty($eformdetay[$i]) AND $eformdetay[$i]!="Seçiniz") {
-					$ekle=mysql_query("INSERT INTO emlak_ilandetay (eformdetay, seo, formid, ilanid, emlakno, ilansekli) values ('".$eformdetay[$i]."','".seo($eformdetay[$i])."','".$formid[$i]."','$i2[id]','$i2[emlakno]','$i2[ilansekli]')");
+					$ekle=$vt->query("INSERT INTO emlak_ilandetay (eformdetay, seo, formid, ilanid, emlakno, ilansekli) values ('".$eformdetay[$i]."','".seo($eformdetay[$i])."','".$formid[$i]."','$i2[id]','$i2[emlakno]','$i2[ilansekli]')");
 					}
 				}
 				if ($eilanduzenle) {
 					go("index.php?do=islem&emlak=emlak_ilanlar&hareket=onay&id=$id",0);
-				} else {
-					echo mysql_error();
-                } 
+				} 
 			}
 		?>
 	<div class="row">
@@ -401,18 +409,26 @@
                 <?php endif; ?>
                 <?php
                     if ($_GET["kat_plani_sil"]):
-                        $proje_resim_sil = $vt->query("SELECT * FROM projeler WHERE id = {$_GET["kat_plani_sil"]}")->fetch();
-                        @unlink('../uploads/proje_resim/'.$proje_resim_sil[plan_resim]);
-                        $plan_sil = $vt->query("DELETE FROM projeler WHERE id = {$_GET["kat_plani_sil"]}");
-                        if ($plan_sil):
+                        $kat_plani_sil_id = (int)$_GET["kat_plani_sil"];
+                        $stmt_proje = $vt->prepare("SELECT * FROM projeler WHERE id = ?");
+                        $stmt_proje->execute([$kat_plani_sil_id]);
+                        $proje_resim_sil = $stmt_proje->fetch();
+                        @unlink('../uploads/proje_resim/'.$proje_resim_sil['plan_resim']);
+                        $stmt_plan_sil = $vt->prepare("DELETE FROM projeler WHERE id = ?");
+                        $stmt_plan_sil->execute([$kat_plani_sil_id]);
+                        if ($stmt_plan_sil->rowCount() > 0):
                             go("index.php?do=islem&emlak=emlak_duzenle&id={$id}&hareket=onay");
                         endif;
                     endif;
                     if ($_GET["proje_kapak_sil"]):
-                        $proje_kapak_resim_sil = $vt->query("SELECT * FROM proje_kapak WHERE id = {$_GET["proje_kapak_sil"]}")->fetch();
-                        @unlink('../uploads/proje_resim/'.$proje_kapak_resim_sil[proje_kapak]);
-                        $plan_sil = $vt->query("DELETE FROM proje_kapak WHERE id = {$_GET["proje_kapak_sil"]}");
-                        if ($plan_sil):
+                        $proje_kapak_sil_id = (int)$_GET["proje_kapak_sil"];
+                        $stmt_kapak = $vt->prepare("SELECT * FROM proje_kapak WHERE id = ?");
+                        $stmt_kapak->execute([$proje_kapak_sil_id]);
+                        $proje_kapak_resim_sil = $stmt_kapak->fetch();
+                        @unlink('../uploads/proje_resim/'.$proje_kapak_resim_sil['proje_kapak']);
+                        $stmt_kapak_sil = $vt->prepare("DELETE FROM proje_kapak WHERE id = ?");
+                        $stmt_kapak_sil->execute([$proje_kapak_sil_id]);
+                        if ($stmt_kapak_sil->rowCount() > 0):
                             go("index.php?do=islem&emlak=emlak_duzenle&id={$id}&hareket=onay");
                         endif;
                     endif;
@@ -546,21 +562,21 @@
 				<div class="box-body">
 					<div class="form-horizontal">
 						<?php
-							$formkat=mysql_query("SELECT emlak_form_kat.* FROM emlak_form_kat INNER JOIN emlak_form ON emlak_form_kat.eformid=emlak_form.id where emlak_form_kat.kat = '$kategori' ORDER BY emlak_form.sira ASC");
-							while ($f=mysql_fetch_array($formkat)) {
+							$formkat=$vt->query("SELECT emlak_form_kat.* FROM emlak_form_kat INNER JOIN emlak_form ON emlak_form_kat.eformid=emlak_form.id where emlak_form_kat.kat = '$kategori' ORDER BY emlak_form.sira ASC");
+							while ($f=$formkat->fetch()) {
 						?>
 						<?php
 							// Emlak Form
-							$eform = mysql_query("select * from emlak_form where id = '$f[eformid]'");
-					 		while ($formrow = mysql_fetch_array($eform)) {
+							$eform = $vt->query("select * from emlak_form where id = '$f[eformid]'");
+					 		while ($formrow = $eform->fetch()) {
 					 			$deg = trim($formrow[deg]);
 						 		$ayir = explode(",", $deg);
 						 		$say = trim(count($ayir));
 						?>
 						<div class="form-horizontal">
 							<?php
-								$idetaykont=mysql_query("SELECT * FROM emlak_ilandetay where ilanid = '$id' and formid = '$f[eformid]'");
-								$dk=mysql_fetch_array($idetaykont);
+								$idetaykont=$vt->query("SELECT * FROM emlak_ilandetay where ilanid = '$id' and formid = '$f[eformid]'");
+								$dk=$idetaykont->fetch();
 								if (empty($dk)) {
 							?>
 							  <div class="col-sm-3 <?php if ($formrow[durum] == 1) { echo "hidden";}?>">
@@ -591,8 +607,8 @@
 							<select name="eformdetay[]" class="form-control select2"> 
 								<option value="Seçiniz"> Seçiniz </option>
 								<?php
-									$idetay=mysql_query("SELECT * FROM emlak_ilandetay where ilanid = '$id' and formid = '$f[eformid]'");
-									while($ide=mysql_fetch_array($idetay)) {
+									$idetay=$vt->query("SELECT * FROM emlak_ilandetay where ilanid = '$id' and formid = '$f[eformid]'");
+									while($ide=$idetay->fetch()) {
 								?>
 								<?php
 									if ($ide['formid']) {
@@ -613,8 +629,8 @@
 							<input type="text" name="formid[]" value="<?=$formrow["id"]?>" class="form-control hidden">
 							<input type="text" name="eformdetay[]" class="form-control"
 							<?php
-								$idetay2=mysql_query("SELECT * FROM emlak_ilandetay where ilanid = '$id' and formid = '$f[eformid]'");
-								while($ide2=mysql_fetch_array($idetay2)) {
+								$idetay2=$vt->query("SELECT * FROM emlak_ilandetay where ilanid = '$id' and formid = '$f[eformid]'");
+								while($ide2=$idetay2->fetch()) {
 							?>
 								value="<?=trim($ide2['eformdetay']);?>"
 							<?php } ?>
@@ -633,16 +649,16 @@
 				<div class="box-body"> 
 					<?php
 						if (isset($_POST["emlakduzenle"])) {
-							$silod = mysql_query("delete from emlak_ozellikdetay where ilanid = '$id'");
+							$silod = $vt->query("delete from emlak_ozellikdetay where ilanid = '$id'");
 							$ozid=$_POST["ozid"];
 							$oztip=$_POST["oztip"];
 							if (!$_POST["ozid"]=="") {
 								foreach ($ozid as $oid) {
-									$liste=mysql_query("SELECT * FROM emlak_ozellik where id = '$oid'");
-									while ($l=mysql_fetch_array($liste)) {
-										$ilanid=mysql_query("SELECT * FROM emlak_ilan where id = '$id'");
-										$i=mysql_fetch_array($ilanid);
-										$ekle=mysql_query("INSERT INTO emlak_ozellikdetay (ozelliktip, ad, ilanid, ilansekli, ozellik) values ('$l[ozelliktipi]','$l[ad]','$i[id]','$q[ilansekli]','$l[id]')");
+									$liste=$vt->query("SELECT * FROM emlak_ozellik where id = '$oid'");
+									while ($l=$liste->fetch()) {
+										$ilanid=$vt->query("SELECT * FROM emlak_ilan where id = '$id'");
+										$i=$ilanid->fetch();
+										$ekle=$vt->query("INSERT INTO emlak_ozellikdetay (ozelliktip, ad, ilanid, ilansekli, ozellik) values ('$l[ozelliktipi]','$l[ad]','$i[id]','$q[ilansekli]','$l[id]')");
 									}
 								}
 							}
@@ -650,11 +666,11 @@
 					?>
 					<div class="form-horizontal">
 						<?php
-							$ozelliktipliste2 = mysql_query("SELECT * FROM emlak_ozelliktipliste where kat = '$q[kat_id]'");
-							while ($ot2=mysql_fetch_array($ozelliktipliste2)) {
+							$ozelliktipliste2 = $vt->query("SELECT * FROM emlak_ozelliktipliste where kat = '$q[kat_id]'");
+							while ($ot2=$ozelliktipliste2->fetch()) {
 								// Emlak Ozellik Tipi
-								$ozelliktip = mysql_query("SELECT * FROM emlak_ozelliktip where id = '$ot2[ozellikid]'");
-						 		$ot = mysql_fetch_array($ozelliktip);
+								$ozelliktip = $vt->query("SELECT * FROM emlak_ozelliktip where id = '$ot2[ozellikid]'");
+						 		$ot = $ozelliktip->fetch();
 						?>
 						<div class="form-group" <?php if ($ot["durum"]==1) {echo "hidden";} ?>>
 						<input type="text" name="oztip[]" value="<?=$ot['id']?>" class="hidden">
@@ -662,13 +678,13 @@
 						  	<h5><strong><i class="fa fa-arrow-right"></i> <?=$ot["ad"];?>:</strong></h5>
 								<?php
 									// Emlak Ozellikleri
-									$ozellik = mysql_query("SELECT * FROM emlak_ozellik WHERE ozelliktipi = '$ot[id]'");
-									while ($o = mysql_fetch_array($ozellik)) {
+									$ozellik = $vt->query("SELECT * FROM emlak_ozellik WHERE ozelliktipi = '$ot[id]'");
+									while ($o = $ozellik->fetch()) {
 								?>
 								<div class="col-md-3 col-xs-6" <?php if ($o["durum"]==1) {echo "hidden";} ?>>
 									<label for="ozad" class="">
 										<div class="icheckbox_minimal-blue" aria-checked="false" aria-disabled="false" style="position: relative;">
-											<input type="checkbox" name="ozid[]" <?php $ozellikdetay=mysql_query("SELECT * FROM emlak_ozellikdetay where ilanid = '$id'"); while($od=mysql_fetch_array($ozellikdetay)) {  if ($o['id'] == $od['ozellik']) {echo "checked";} } ?> value="<?=$o['id'];?>" class="minimal">
+											<input type="checkbox" name="ozid[]" <?php $ozellikdetay=$vt->query("SELECT * FROM emlak_ozellikdetay where ilanid = '$id'"); while($od=$ozellikdetay->fetch()) {  if ($o['id'] == $od['ozellik']) {echo "checked";} } ?> value="<?=$o['id'];?>" class="minimal">
 										</div>
 										<?=$o["ad"];?>
 									</label>
@@ -734,13 +750,13 @@
 							<div class="row">
 								<?php
 									// Emlak Tipi
-									$emlaktip = mysql_query("select * from emlak_ilantipi where id");
-									while ($t = mysql_fetch_array($emlaktip)) {
-										$tipkatliste = mysql_query("SELECT * FROM emlak_ilantipi_katliste where katid = '".$q["kat_id"]."' && ilantipid = '".$t["id"]."'");
+									$emlaktip = $vt->query("select * from emlak_ilantipi where id");
+									while ($t = $emlaktip->fetch()) {
+										$tipkatliste = $vt->query("SELECT * FROM emlak_ilantipi_katliste where katid = '".$q["kat_id"]."' AND ilantipid = '".$t["id"]."'");
 								?>
 								<?php if ($t["durum"]=="0") { ?>
 									<div class="col-md-2">
-									<?php if (mysql_num_rows($tipkatliste)) { ?>
+									<?php if ($tipkatliste->rowCount()) { ?>
 									<label for="ilan_tipi">
 									  <input type="radio" <?php if ($i['ilantipi'] == $t['id']) {echo "checked";} ?> name="emlak_tipi" value="<?=$t["id"];?>" class="minimal">
 									  <?=$t["ad"];?>
@@ -761,8 +777,8 @@
 								<option value="<?=$i["fiyatkur"];?>" selected> <?=$i["fiyatkur"];?> </option>
 								<?php
 									// Para Birimi
-										$parabirim = mysql_query("select * from para_birimi where id");
-										while ($paraver = mysql_fetch_array($parabirim)) { ?>
+										$parabirim = $vt->query("select * from para_birimi where id");
+										while ($paraver = $parabirim->fetch()) { ?>
 										<option value="<?=$paraver["ad"];?>"> <?=$paraver["ad"];?> </option>
 								<?php } ?>
 							</select>
@@ -871,8 +887,8 @@
     								<option value="<?=$i["gunluk_fiyat_birim"];?>" selected> <?=$i["gunluk_fiyat_birim"];?> </option> 
     								<?php
     									// Para Birimi
-    										$parabirim = mysql_query("select * from para_birimi where id");
-    										while ($paraver = mysql_fetch_array($parabirim)) { ?>
+    										$parabirim = $vt->query("select * from para_birimi where id");
+    										while ($paraver = $parabirim->fetch()) { ?>
     										<option value="<?=$paraver["ad"];?>"> <?=$paraver["ad"];?> </option>
     								<?php } ?>
     							</select>
@@ -955,8 +971,8 @@
                                             <label class="control-label">İl:</label>
 									<select name="il" id="il" class="form-control select2">
 										<?php
-											$illersec = mysql_query("select * from sehir where sehir_key = '$i[il]'");
-											$ilsec=mysql_fetch_array($illersec);
+											$illersec = $vt->query("select * from sehir where sehir_key = '$i[il]'");
+											$ilsec=$illersec->fetch();
 											if ($ilsec["sehir_key"]==$i["il"]) {
 												echo '<option value="'.$ilsec["sehir_key"].'" selected="selected">'.$ilsec["adi"].'</option>';
 											} else {
@@ -964,8 +980,8 @@
 										<option selected> İL SEÇİNİZ </option>
 										<?php } ?>
 										<?php
-											$iller = mysql_query("select * from sehir order by sehir_key asc");
-											while($il=mysql_fetch_array($iller)) {
+											$iller = $vt->query("select * from sehir order by sehir_key asc");
+											while($il=$iller->fetch()) {
 										?>
 											<option value="<?=$il['sehir_key'];?>"> <?=$il['adi'];?> </option>
 										<?php } ?>
@@ -975,8 +991,8 @@
                                             <label class="control-label">İlçe:</label>
 									<select name="ilce" id="ilce" class="form-control select2">
 										<?php
-											$ilcelersec = mysql_query("select * from ilce where ilce_key = '$i[ilce]'");
-											$ilcesec=mysql_fetch_array($ilcelersec);
+											$ilcelersec = $vt->query("select * from ilce where ilce_key = '$i[ilce]'");
+											$ilcesec=$ilcelersec->fetch();
 											if ($ilcesec["ilce_key"]==$i["ilce"]) {
 												echo '<option value="'.$ilcesec["ilce_key"].'" selected="selected">'.$ilcesec["ilce_title"].'</option>';
 											} else {
@@ -984,8 +1000,8 @@
 										<option selected="selected"> İLÇE SEÇİNİZ </option>
 										<?php } ?>
 										<?php
-											$ilceler = mysql_query("SELECT * FROM ilce where ilce_sehirkey = '$i[il]'");
-											while($ilce=mysql_fetch_array($ilceler)) {
+											$ilceler = $vt->query("SELECT * FROM ilce where ilce_sehirkey = '$i[il]'");
+											while($ilce=$ilceler->fetch()) {
 												echo '<option value="'.$ilce["ilce_key"].'">'.$ilce["ilce_title"].'</option>';
 											}
 										?>
@@ -997,8 +1013,8 @@
 											<div class="col-sm-12">
 												<select name="mahalle" id="mahalle" class="form-control select2">
 													<?php
-														$mahallelersec = mysql_query("select * from mahalle where mahalle_id = '$i[mahalle]'");
-														$mahallesec=mysql_fetch_array($mahallelersec);
+														$mahallelersec = $vt->query("select * from mahalle where mahalle_id = '$i[mahalle]'");
+														$mahallesec=$mahallelersec->fetch();
 														if ($mahallesec["mahalle_id"]==$i["mahalle"]) {
 															echo '<option value="'.$mahallesec["mahalle_id"].'" selected="selected">'.$mahallesec["mahalle_title"].'</option>';
 														} else {
@@ -1006,8 +1022,8 @@
 													<option selected="selected"> MAHALLE SEÇİNİZ </option>
 													<?php } ?>
 													<?php
-														$mahalleler = mysql_query("SELECT * FROM mahalle where mahalle_ilcekey = '$ilcesec[ilce_key]'");
-														while($mahalle=mysql_fetch_array($mahalleler)) {
+														$mahalleler = $vt->query("SELECT * FROM mahalle where mahalle_ilcekey = '$ilcesec[ilce_key]'");
+														while($mahalle=$mahalleler->fetch()) {
 															echo '<option value="'.$mahalle["mahalle_id"].'">'.$mahalle["mahalle_title"].'</option>';
 														}
 													?>

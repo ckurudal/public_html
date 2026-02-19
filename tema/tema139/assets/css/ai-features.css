@@ -1,0 +1,435 @@
+/* ============================================================
+   AI FEATURES - Modern Real Estate Portal CSS
+   Emlakbudur Next Generation
+============================================================ */
+
+/* --- Lazy Loading Animation --- */
+img.lazy {
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+}
+img.lazy-loaded {
+    opacity: 1;
+}
+@keyframes shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+}
+
+/* --- AI Notification Toast --- */
+.ai-bildirim {
+    position: fixed;
+    bottom: 90px;
+    right: 20px;
+    padding: 12px 20px;
+    border-radius: 8px;
+    color: #fff;
+    font-size: 14px;
+    z-index: 9999;
+    max-width: 320px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.18);
+    animation: slideInRight 0.3s ease;
+    transition: opacity 0.4s;
+}
+.ai-bildirim-success { background: #28a745; }
+.ai-bildirim-warning { background: #ffc107; color: #000; }
+.ai-bildirim-info    { background: #17a2b8; }
+.ai-bildirim-gizle   { opacity: 0; }
+@keyframes slideInRight {
+    from { transform: translateX(100%); opacity: 0; }
+    to   { transform: translateX(0);   opacity: 1; }
+}
+
+/* --- AI Chatbot Widget --- */
+#chatbot-widget {
+    position: fixed;
+    bottom: 90px;
+    right: 20px;
+    z-index: 1050;
+}
+#chatbot-toggle {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #e63946, #c62828);
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 4px 20px rgba(230,57,70,0.4);
+    font-size: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s, box-shadow 0.2s;
+    position: relative;
+}
+#chatbot-toggle:hover {
+    transform: scale(1.08);
+    box-shadow: 0 6px 28px rgba(230,57,70,0.5);
+}
+#chatbot-badge {
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    background: #28a745;
+    color: #fff;
+    border-radius: 50%;
+    width: 18px;
+    height: 18px;
+    font-size: 11px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+}
+#chatbot-pencere {
+    display: none;
+    flex-direction: column;
+    position: absolute;
+    bottom: 68px;
+    right: 0;
+    width: 320px;
+    height: 400px;
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.18);
+    overflow: hidden;
+    animation: fadeInUp 0.3s ease;
+}
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+.chatbot-header {
+    background: linear-gradient(135deg, #e63946, #c62828);
+    color: #fff;
+    padding: 14px 16px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.chatbot-header i { font-size: 20px; }
+.chatbot-header .chatbot-ai-badge {
+    background: rgba(255,255,255,0.25);
+    font-size: 10px;
+    padding: 2px 8px;
+    border-radius: 20px;
+    margin-left: auto;
+    font-weight: normal;
+}
+#chatbot-mesajlar {
+    flex: 1;
+    overflow-y: auto;
+    padding: 12px;
+    background: #f8f9fa;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+.chatbot-mesaj {
+    max-width: 80%;
+    padding: 8px 12px;
+    border-radius: 12px;
+    font-size: 13px;
+    line-height: 1.4;
+    word-break: break-word;
+}
+.chatbot-mesaj-bot {
+    background: #fff;
+    color: #333;
+    border: 1px solid #e0e0e0;
+    align-self: flex-start;
+    border-bottom-left-radius: 4px;
+}
+.chatbot-mesaj-kullanici {
+    background: linear-gradient(135deg, #e63946, #c62828);
+    color: #fff;
+    align-self: flex-end;
+    border-bottom-right-radius: 4px;
+}
+.chatbot-footer {
+    padding: 10px;
+    background: #fff;
+    border-top: 1px solid #eee;
+    display: flex;
+    gap: 8px;
+}
+.chatbot-footer input {
+    flex: 1;
+    border: 1px solid #ddd;
+    border-radius: 20px;
+    padding: 8px 14px;
+    font-size: 13px;
+    outline: none;
+}
+.chatbot-footer input:focus { border-color: #e63946; }
+.chatbot-footer button {
+    background: linear-gradient(135deg, #e63946, #c62828);
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.2s;
+}
+.chatbot-footer button:hover { opacity: 0.85; }
+
+/* --- Property Comparison Bar --- */
+#karsilastir-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(90deg, #1a1a2e, #16213e);
+    color: #fff;
+    padding: 12px 20px;
+    display: none;
+    align-items: center;
+    gap: 12px;
+    z-index: 1040;
+    box-shadow: 0 -4px 20px rgba(0,0,0,0.2);
+    flex-wrap: wrap;
+}
+#karsilastir-bar .kb-title {
+    font-weight: bold;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+#karsilastir-bar .kb-sayac {
+    background: #e63946;
+    color: #fff;
+    border-radius: 50%;
+    width: 22px;
+    height: 22px;
+    font-size: 12px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+}
+#karsilastir-listele-btn {
+    background: linear-gradient(135deg, #e63946, #c62828);
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 8px 20px;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 13px;
+    transition: opacity 0.2s;
+    margin-left: auto;
+}
+#karsilastir-listele-btn:hover { opacity: 0.85; }
+#karsilastir-temizle-btn {
+    background: transparent;
+    color: #aaa;
+    border: 1px solid #aaa;
+    border-radius: 6px;
+    padding: 7px 14px;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+#karsilastir-temizle-btn:hover { color: #fff; border-color: #fff; }
+
+/* --- Mortgage Calculator Card --- */
+.kredi-hesap-card {
+    background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%);
+    border-radius: 16px;
+    padding: 30px;
+    box-shadow: 0 4px 30px rgba(0,0,0,0.08);
+    border: 1px solid rgba(0,0,0,0.06);
+}
+.kredi-hesap-card h4 {
+    background: linear-gradient(135deg, #e63946, #c62828);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-weight: 800;
+    margin-bottom: 24px;
+}
+.kredi-sonuc-item {
+    background: #fff;
+    border-radius: 12px;
+    padding: 16px 20px;
+    text-align: center;
+    border: 1px solid #eee;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+.kredi-sonuc-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+}
+.kredi-sonuc-item .kredi-label {
+    font-size: 12px;
+    color: #666;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 6px;
+}
+.kredi-sonuc-item .kredi-deger {
+    font-size: 22px;
+    font-weight: 800;
+    color: #e63946;
+}
+
+/* --- AI Search Badge --- */
+.ai-onerildi-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: #fff;
+    font-size: 10px;
+    padding: 2px 8px;
+    border-radius: 20px;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+}
+.ai-onerildi-badge i { font-size: 9px; }
+
+/* --- Hover Effect for Property Cards --- */
+.hover-box {
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+.hover-box:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 16px 40px rgba(0,0,0,0.14) !important;
+}
+
+/* --- Image Lazy Load Wrapper --- */
+.emlak-grid-resim img {
+    transition: transform 0.35s ease;
+}
+.emlak-grid-resim:hover img {
+    transform: scale(1.04);
+}
+.emlak-grid-resim {
+    overflow: hidden;
+    display: block;
+}
+
+/* --- Back to Top Button --- */
+#back-to-top {
+    position: fixed;
+    bottom: 90px;
+    left: 20px;
+    width: 40px;
+    height: 40px;
+    background: rgba(0,0,0,0.5);
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    transition: background 0.2s;
+    z-index: 1000;
+}
+#back-to-top:hover { background: rgba(0,0,0,0.75); }
+
+/* --- Franchise Section --- */
+.franchise-hero {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+    color: #fff;
+    padding: 80px 0;
+    text-align: center;
+}
+.franchise-hero h1 {
+    font-size: 2.8rem;
+    font-weight: 900;
+    margin-bottom: 20px;
+}
+.franchise-hero p {
+    font-size: 1.2rem;
+    opacity: 0.85;
+    max-width: 600px;
+    margin: 0 auto 30px;
+}
+.franchise-stat-card {
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 12px;
+    padding: 24px;
+    text-align: center;
+    backdrop-filter: blur(10px);
+    transition: background 0.2s;
+}
+.franchise-stat-card:hover { background: rgba(255,255,255,0.14); }
+.franchise-stat-card .stat-number {
+    font-size: 2.5rem;
+    font-weight: 900;
+    color: #e63946;
+}
+.franchise-stat-card .stat-label {
+    font-size: 14px;
+    opacity: 0.8;
+    margin-top: 4px;
+}
+.franchise-benefit-icon {
+    width: 64px;
+    height: 64px;
+    border-radius: 16px;
+    background: linear-gradient(135deg, #e63946, #c62828);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    color: #fff;
+    margin: 0 auto 16px;
+    box-shadow: 0 8px 20px rgba(230,57,70,0.3);
+}
+
+/* --- Modern Section Titles --- */
+.section-title-modern {
+    position: relative;
+    display: inline-block;
+    margin-bottom: 12px;
+}
+.section-title-modern::after {
+    content: '';
+    position: absolute;
+    bottom: -6px;
+    left: 0;
+    width: 50px;
+    height: 3px;
+    background: linear-gradient(90deg, #e63946, #c62828);
+    border-radius: 2px;
+}
+
+/* --- AI Recommendation Section --- */
+.ai-tavsiye-baslik {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 24px;
+}
+.ai-tavsiye-baslik .ai-chip {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: #fff;
+    padding: 4px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+
+/* --- Responsive Adjustments --- */
+@media (max-width: 768px) {
+    #chatbot-pencere { width: 290px; height: 360px; }
+    .franchise-hero h1 { font-size: 2rem; }
+    #karsilastir-bar { flex-direction: column; align-items: flex-start; }
+    #karsilastir-listele-btn { margin-left: 0; }
+}

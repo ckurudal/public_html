@@ -29,18 +29,18 @@
 
 		if ($hareket == "sil") {
 			
-			$sil = mysql_query("DELETE FROM emlak_mesaj where id = '$id'"); 
+			$sil = $vt->query("DELETE FROM emlak_mesaj where id = '$id'"); 
 
 			go("index.php?do=bildirim/emlakmesaj&hareket=onay",0);
 
 		}
 
 		if ($durum == "0") {
-			$d = mysql_query("UPDATE emlak_mesaj SET onay = '0' where id = '$id'"); 
+			$d = $vt->query("UPDATE emlak_mesaj SET onay = '0' where id = '$id'"); 
 			go("index.php?do=bildirim/emlakmesaj&hareket=onay&id=$id",0);
 		}
 		if ($durum == "1") {
-			$d = mysql_query("UPDATE emlak_mesaj SET onay = '1' where id = '$id'"); 
+			$d = $vt->query("UPDATE emlak_mesaj SET onay = '1' where id = '$id'"); 
 			go("index.php?do=bildirim/emlakmesaj&hareket=onay&id=$id",0);
 		}
 	?>
@@ -68,8 +68,8 @@
 			   		</thead>
 			    	<tbody>
 			    		<?php 
-			    			$mesajliste = mysql_query("SELECT * FROM emlak_mesaj where id order by id desc");
-				    		while($mliste = mysql_fetch_array($mesajliste)) {
+			    			$mesajliste = $vt->query("SELECT * FROM emlak_mesaj where id order by id desc");
+				    		while($mliste = $mesajliste->fetch()) {
 				    	?> 
 			    		<tr>
 			    			<th class="text-center" style="<?php if ($mliste["onay"] == 0) { ?> background:#fcf8e3; <?php } else { ?> background: #dff0d8; <?php } ?>">
@@ -77,8 +77,8 @@
 			    			</th>
 			    			<th>
 			    				<?php 
-			    					$emlak = mysql_query("SELECT * FROM emlak_ilan where id = '".$mliste["emlakid"]."'");
-			    					$e = mysql_fetch_array($emlak);
+			    					$emlak = $vt->query("SELECT * FROM emlak_ilan where id = '".$mliste["emlakid"]."'");
+			    					$e = $emlak->fetch();
 			    				?>
 			    				<a href="/<?=$e["seo"];?>" target="_blank"><?=$e["baslik"];?></a>
 			    			</th>

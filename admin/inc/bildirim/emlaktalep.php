@@ -31,18 +31,18 @@
 
 		if ($hareket == "sil") {
 			
-			$sil = mysql_query("DELETE FROM emlak_mesajemlaktalep where id = '$id'"); 
+			$sil = $vt->query("DELETE FROM emlak_mesajemlaktalep where id = '$id'"); 
 
 			go("index.php?do=bildirim/emlaktalep&hareket=onay",0);
 
 		}
 
 		if ($durum == "0") {
-			$d = mysql_query("UPDATE emlak_mesajemlaktalep SET onay = '0' where id = '$id'"); 
+			$d = $vt->query("UPDATE emlak_mesajemlaktalep SET onay = '0' where id = '$id'"); 
 			go("index.php?do=bildirim/emlaktalep&hareket=onay&id=$id",0);
 		}
 		if ($durum == "1") {
-			$d = mysql_query("UPDATE emlak_mesajemlaktalep SET onay = '1' where id = '$id'"); 
+			$d = $vt->query("UPDATE emlak_mesajemlaktalep SET onay = '1' where id = '$id'"); 
 			go("index.php?do=bildirim/emlaktalep&hareket=onay&id=$id",0);
 		}
 
@@ -74,8 +74,8 @@
 			   		</thead>
 			    	<tbody>
 			    		<?php 
-			    			$mesajliste = mysql_query("SELECT * FROM emlak_mesajemlaktalep where id order by id desc");
-				    		while($mliste = mysql_fetch_array($mesajliste)) {
+			    			$mesajliste = $vt->query("SELECT * FROM emlak_mesajemlaktalep where id order by id desc");
+				    		while($mliste = $mesajliste->fetch()) {
 				    	?> 
 			    		<tr>
 			    			<th class="text-center" style="<?php if ($mliste["onay"] == 0) { ?> background:#fcf8e3; <?php } else { ?> background: #dff0d8; <?php } ?>">
@@ -100,14 +100,14 @@
 			    					$adres = $mliste["adres"];
 			    					$kelimeler = explode(",", $adres);
 
-			    					$sehirler2 = mysql_query("SELECT * FROM sehir where sehir_key = '".$kelimeler[0]."'");
-			    					$sehir2 = mysql_fetch_array($sehirler2);
+			    					$sehirler2 = $vt->query("SELECT * FROM sehir where sehir_key = '".$kelimeler[0]."'");
+			    					$sehir2 = $sehirler2->fetch();
 
-			    					$ilceler = mysql_query("SELECT * FROM ilce where ilce_key = '".$kelimeler[1]."'");
-			    					$ilce = mysql_fetch_array($ilceler);
+			    					$ilceler = $vt->query("SELECT * FROM ilce where ilce_key = '".$kelimeler[1]."'");
+			    					$ilce = $ilceler->fetch();
 
-			    					$mahler = mysql_query("SELECT * FROM mahalle where mahalle_id = '".$kelimeler[2]."'");
-			    					$mah = mysql_fetch_array($mahler);
+			    					$mahler = $vt->query("SELECT * FROM mahalle where mahalle_id = '".$kelimeler[2]."'");
+			    					$mah = $mahler->fetch();
 
 			    					if ($mliste["adres"] == 0) {
 			    						echo "-";

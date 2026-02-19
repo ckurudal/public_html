@@ -6,11 +6,13 @@
 
     $blogdetay = $_GET["blogdetay"];
     
-    $bloglar = mysql_query("SELECT * FROM blog where id = '$detay'");
-    $blogs = mysql_fetch_array($bloglar); 
+    $stmt_blog = $vt->prepare("SELECT * FROM blog where id = ?");
+    $stmt_blog->execute([$detay]);
+    $blogs = $stmt_blog->fetch();
 
-    $blogkatlar = mysql_query("SELECT * FROM blog_kategori where id = '".$kategori."'");
-    $kat = mysql_fetch_array($blogkatlar);
+    $stmt_blogkat = $vt->prepare("SELECT * FROM blog_kategori where id = ?");
+    $stmt_blogkat->execute([$kategori]);
+    $kat = $stmt_blogkat->fetch();
 
 ?>
 <!doctype html>
@@ -50,8 +52,8 @@
                 <div class="row">
                     <?php if (!$kategori && !$detay) { ?>
                     <?php
-                        $blogsayfa = mysql_query("SELECT * FROM blog");
-                        while($bsayfa = mysql_fetch_array($blogsayfa)) {
+                        $stmt_blogsayfa = $vt->query("SELECT * FROM blog");
+                        while($bsayfa = $stmt_blogsayfa->fetch()) {
                             $bkat = $vt->query("SELECT * FROM blog_kategori WHERE id = '".$bsayfa["kategori"]."'")->fetch(); 
                     ?>
                     <div class="col-xl-12 col-lg-12 col-md-12 mb-3">
@@ -90,8 +92,9 @@
                     <?php } ?>
                     <?php if ($kategori && !$detay) { ?>
                     <?php
-                       $blogsayfa = mysql_query("SELECT * FROM blog where kategori = '$kategori'");
-                        while($bsayfa = mysql_fetch_array($blogsayfa)) {
+                       $stmt_blogsayfa2 = $vt->prepare("SELECT * FROM blog where kategori = ?");
+                        $stmt_blogsayfa2->execute([$kategori]);
+                        while($bsayfa = $stmt_blogsayfa2->fetch()) {
                             $bkat = $vt->query("SELECT * FROM blog_kategori WHERE id = '".$bsayfa["kategori"]."'")->fetch(); 
                     ?>
                     <div class="col-xl-12 col-lg-12 col-md-12 mb-5">
@@ -130,8 +133,9 @@
                     <?php } ?>
                     <?php if ($detay) { ?>
                     <?php
-                       $detayb = mysql_query("SELECT * FROM blog where id = '$detay'");
-                        $b = mysql_fetch_array($detayb);
+                       $stmt_detayb = $vt->prepare("SELECT * FROM blog where id = ?");
+                        $stmt_detayb->execute([$detay]);
+                        $b = $stmt_detayb->fetch();
                             
                     ?>
                     <div class="col-xl-12 col-lg-12 col-md-12">
@@ -185,8 +189,8 @@
                             <div class="item-list">
                                 <ul class="list-group mb-0"> 
                                     <?php 
-                                        $blogkat = mysql_query("SELECT * FROM blog_kategori where id");
-                                        while($blogbaslik = mysql_fetch_array($blogkat)) {
+                                        $stmt_blogkat2 = $vt->query("SELECT * FROM blog_kategori");
+                                        while($blogbaslik = $stmt_blogkat2->fetch()) {
                                     ?>
                                     <li class="list-group-item border-bottom-0">
                                         <a href="/<?=$blogbaslik["seo"];?>-blogkategori-<?=$blogbaslik["id"];?>" class="text-dark"><?=$blogbaslik["baslik"];?></a>

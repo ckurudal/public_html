@@ -9,33 +9,31 @@
 	$hareket = $_GET["hareket"];
 	$durum = $_GET["durum"];
 
-	$sayfalar = mysql_query("SELECT * FROM sayfa_kategori where id = '$id'");
-	$sayfakatliste = mysql_query("SELECT * FROM sayfa_kategori order by id desc");
+	$sayfalar = $vt->query("SELECT * FROM sayfa_kategori where id = '$id'");
+	$sayfakatliste = $vt->query("SELECT * FROM sayfa_kategori order by id desc");
 ?>
 <section class="co ntent"> 
 <?php 
 	if (isset($_POST["sayfakategoriekle"]) || isset($_POST["sayfakategorikaydet"])) {
 
-		$baslik 		= trim(mysql_real_escape_string($_POST["baslik"]));
+		$baslik 		= trim($_POST["baslik"]);
 		$seo 			= seo($_POST["baslik"]);
-		$title 			= trim(mysql_real_escape_string($_POST["title"]));
-		$aciklama 		= trim(mysql_real_escape_string($_POST["aciklama"]));
-		$keyw			= trim(mysql_real_escape_string($_POST["keyw"]));
+		$title 			= trim($_POST["title"]);
+		$aciklama 		= trim($_POST["aciklama"]);
+		$keyw			= trim($_POST["keyw"]);
 
 		if (isset($_POST["sayfakategoriekle"])) {
 
-			$sayfakategoriekle = mysql_query("INSERT INTO sayfa_kategori (baslik, seo, title, aciklama, keyw) values ('$baslik','$seo','$title','$aciklama','$keyw')");	
+			$sayfakategoriekle = $vt->query("INSERT INTO sayfa_kategori (baslik, seo, title, aciklama, keyw) values ('$baslik','$seo','$title','$aciklama','$keyw')");	
 
 			if ($sayfakategoriekle == true) {
 				go("index.php?do=islem&icerik=sayfakategori&islem=liste&hareket=onay",0);
-			} else {
-				echo mysql_error();
 			}
 		}
 
 		if (isset($_POST["sayfakategorikaydet"])) {
 
-			$unvankaydet = mysql_query("UPDATE sayfa_kategori SET baslik = '$baslik', seo = '$seo', title = '$title', aciklama = '$aciklama', keyw = '$keyw'  where id = '$id'");	
+			$unvankaydet = $vt->query("UPDATE sayfa_kategori SET baslik = '$baslik', seo = '$seo', title = '$title', aciklama = '$aciklama', keyw = '$keyw'  where id = '$id'");	
 
 			if ($unvankaydet == true) {
 				go("index.php?do=islem&icerik=sayfakategori&islem=liste&hareket=onay",0);
@@ -103,7 +101,7 @@
 <?php if ($islem == "duzenle") { ?>
 <form action="" method="post" enctype="multipart/form-data">
 	<?php 
-		$sk = mysql_fetch_array($sayfalar);
+		$sk = $sayfalar->fetch();
 	?>
 	<section class="content"> 
 		<div class="box"> 
@@ -157,18 +155,18 @@
 
 		if ($hareket == "sil") {
 				
-			$sil = mysql_query("DELETE FROM sayfa_kategori where id = '$id'"); 
+			$sil = $vt->query("DELETE FROM sayfa_kategori where id = '$id'"); 
 
 			go("index.php?do=islem&icerik=sayfakategori&islem=liste&hareket=onay&id=$id",0);
 
 		}
 
 		if ($durum == "0") {
-			$d = mysql_query("UPDATE sayfa_kategori SET durum = '0' where id = '$id'"); 
+			$d = $vt->query("UPDATE sayfa_kategori SET durum = '0' where id = '$id'"); 
 			go("index.php?do=islem&icerik=sayfakategori&islem=liste&hareket=onay&id=$id",0);
 		}
 		if ($durum == "1") {
-			$d = mysql_query("UPDATE sayfa_kategori SET durum = '1' where id = '$id'"); 
+			$d = $vt->query("UPDATE sayfa_kategori SET durum = '1' where id = '$id'"); 
 			go("index.php?do=islem&icerik=sayfakategori&islem=liste&hareket=onay&id=$id",0);
 		}
 	?>
@@ -189,7 +187,7 @@
 		   		</thead>
 		    	<tbody>
 			    	<?php 
-			    		while($skliste = mysql_fetch_array($sayfakatliste)) {
+			    		while($skliste = $sayfakatliste->fetch()) {
 			    	?>
 		    		<tr>
 		    			<th><?=$skliste["id"];?></th>

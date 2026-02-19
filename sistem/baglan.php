@@ -1,27 +1,53 @@
 <?php 
 	@session_start();
-	ob_start(); 
-	$dbhost		= "localhost";
-	$dbuser		= "emlakbudur_jokergyo"; 
-	$dbname		= "emlakbudur_joker";
-	$dbpass		= "serrasu112233***A"; 
-	$baglan = @mysql_connect("$dbhost","$dbuser","$dbpass") or die ("MYSQL Bağlantısı yapılamadı...");	
-	$db = mysql_select_db("$dbname", $baglan) or die ("Veritabanına bağlanamadı..."); 
-	mysql_query("SET CHARACTER SET 'utf8'");
-	mysql_query("SET NAMES 'utf8'");  
-	try {$vt = new PDO("mysql:host=$dbhost;dbname=$dbname;charset=utf8", "$dbuser", "$dbpass");
-    $vt->exec("set names utf8");} catch ( PDOException $e ){ print $e->getMessage();}
-	$pdoAyar = $vt->query("SELECT * FROM ayarlar where id = 1")->fetch();   
-	date_default_timezone_set('Europe/Istanbul'); 
-	$ayar = $vt->query("SELECT * FROM ayarlar")->fetch();  
-	$paytr_api = $vt->query("SELECT * FROM odeme_paytr")->fetch();	   
-	@$uyelik_yetki = $vt->query("SELECT * FROM yonetici WHERE id = '".$_SESSION["id"]."'")->fetch();
-	@$uye_yetki = $uyelik_yetki["yetki"];  
-	$tema = $vt->query("SELECT * FROM ayar_tema where aktif = 1")->fetch();   
-	$site = $vt->query("SELECT * FROM ayar_site")->fetch();   
+	ob_start();
+
+	// ── Yerel geliştirme ortamı desteği ──────────────────────────
+	// sistem/baglan.local.php dosyası varsa yerel ayarları kullan.
+	// (bu dosya .gitignore ile korunur, repo'ya gönderilmez)
+	$_localConfig = __DIR__ . '/baglan.local.php';
+	if (file_exists($_localConfig)) {
+		require_once $_localConfig;
+	} else {
+		// ── Canlı sunucu veritabanı ayarları ─────────────────────
+		$dbhost = "localhost";
+		$dbuser = "emlakbudur_jokergyo";
+		$dbname = "emlakbudur_joker";
+		$dbpass = "serrasu112233***A";
+	}
+
+	try {
+        $vt = new PDO("mysql:host=$dbhost;dbname=$dbname;charset=utf8", $dbuser, $dbpass, [
+            PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
+            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+            PDO::ATTR_EMULATE_PREPARES   => false,
+        ]);
+    } catch (PDOException $e) {
+        die("Veritabanına bağlanamadı: " . $e->getMessage());
+    }
+	$pdoAyar = $vt->query("SELECT * FROM ayarlar where id = 1")->fetch();
+	date_default_timezone_set('Europe/Istanbul');
+	$ayar = $vt->query("SELECT * FROM ayarlar")->fetch();
+
+	// Yerel ortamda site_url'yi otomatik olarak override et
+	if (file_exists($_localConfig) && defined('LOCAL_SITE_URL')) {
+		$ayar['site_url'] = LOCAL_SITE_URL;
+	}
+
+	$paytr_api = $vt->query("SELECT * FROM odeme_paytr")->fetch();
+	if (!empty($_SESSION["id"])) {
+		$stmt_yk = $vt->prepare("SELECT * FROM yonetici WHERE id = ?");
+		$stmt_yk->execute([(int)$_SESSION["id"]]);
+		$uyelik_yetki = $stmt_yk->fetch();
+	} else {
+		$uyelik_yetki = null;
+	}
+	@$uye_yetki = $uyelik_yetki["yetki"];
+	$tema = $vt->query("SELECT * FROM ayar_tema where aktif = 1")->fetch();
+	$site = $vt->query("SELECT * FROM ayar_site")->fetch();
 	@define("PATH", realpath("."));
 	@define("RESIMLER", $_SERVER['DOCUMENT_ROOT'].'/uploads/resim/');
-	@define("URL", rtrim($ayar["site_url"], '/'));	
-	@define("RESIM", URL."/uploads/resim/");	  
-    require_once ('verot/class.upload.php');   
+	@define("URL", rtrim($ayar["site_url"], '/'));
+	@define("RESIM", URL."/uploads/resim/");
+    require_once ('verot/class.upload.php');
 ?> 

@@ -19,7 +19,9 @@
     $reklam            = $_GET["reklam"];
     $magaza            = $_GET["magaza"];
 
-    $emlak_ofisim = $vt->query("SELECT * FROM subeler WHERE yetkiliuye = '".$_SESSION["id"]."' ")->fetch();    
+    $stmt_ofisim = $vt->prepare("SELECT * FROM subeler WHERE yetkiliuye = ?");
+    $stmt_ofisim->execute([$_SESSION["id"]]);
+    $emlak_ofisim = $stmt_ofisim->fetch();
 
  ?>
 
@@ -28,8 +30,10 @@
     <div class="user-panel">
         <div class="image hidden-xs">
           <?php 
-                $yoneticibilgi = mysql_query("SELECT * FROM yonetici where id = '".$_SESSION['id']."'");
-                $yoneticiver = mysql_fetch_array($yoneticibilgi);
+                $stmt_yoneticibilgi = $vt->prepare("SELECT * FROM yonetici WHERE id = ?");
+                $stmt_yoneticibilgi->execute([$_SESSION['id']]);
+                $yoneticibilgi = $stmt_yoneticibilgi;
+                $yoneticiver = $yoneticibilgi->fetch();
             ?>
             <?php if ($yoneticiver["resim"] == "") { ?>
                 <img src="/uploads/resim/resim.png" class="user-image img-circle" alt="<?=$yoneticiver["adsoyad"];?>" width="200">

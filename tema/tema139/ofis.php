@@ -6,9 +6,9 @@
     $kat_danisman = $_GET["danisman"];
     $fiyat = $_GET["fiyat"];
 
-    $subeler = mysql_query("SELECT * FROM subeler where id = '$id'");
-
-    $sube = mysql_fetch_array($subeler);
+    $stmt_sube = $vt->prepare("SELECT * FROM subeler where id = ?");
+    $stmt_sube->execute([$id]);
+    $sube = $stmt_sube->fetch();
 
     $ofis_sehir = $vt->query("SELECT * FROM sehir WHERE sehir_key = '".$sube["il"]."'")->fetch();
 
@@ -320,7 +320,8 @@
                                     </div>
                                 ';
                             } else {
-                                $gonder = mysql_query("INSERT INTO emlak_ofisgelenmesaj (kimden, kime, email, tel, mesaj, tarih) values ('".$uye["id"]."','".$firmasahibi["id"]."','$email','$tel','$mesaj','$tarih')");
+                                $stmt_gonder = $vt->prepare("INSERT INTO emlak_ofisgelenmesaj (kimden, kime, email, tel, mesaj, tarih) values (?,?,?,?,?,?)");
+                                $stmt_gonder->execute([$uye["id"], $firmasahibi["id"], $email, $tel, $mesaj, $tarih]);
                                 echo '
                                     <div class="alert alert-success">
                                         <i class="fa fa-check fa-lg"></i> Sayın '.$uye["adsoyad"].', Mesajınız başarılı bir şekilde gönderilmiştir.
@@ -347,7 +348,8 @@
                                     </div>
                                 ';
                             } else {
-                                $gonder = mysql_query("INSERT INTO emlak_ofisgelenmesaj (kimden, kime, email, tel, ozgecmis, mesaj, basvuru, tarih) values ('$kimden','".$firmasahibi["id"]."','$email','$tel','$ozgecmis','$mesaj','$basvuru','$tarih')");
+                                $stmt_gonder2 = $vt->prepare("INSERT INTO emlak_ofisgelenmesaj (kimden, kime, email, tel, ozgecmis, mesaj, basvuru, tarih) values (?,?,?,?,?,?,?,?)");
+                                $stmt_gonder2->execute([$kimden, $firmasahibi["id"], $email, $tel, $ozgecmis, $mesaj, $basvuru, $tarih]);
                                 echo '
                                     <div class="alert alert-success">
                                         <i class="fa fa-check fa-lg"></i> Sayın '.$kimden.', Mesajınız başarılı bir şekilde gönderilmiştir.
@@ -448,31 +450,31 @@
 
                     while ($liste = $ilanliste->fetch(PDO::FETCH_ASSOC)) {
 
-                        $iller = mysql_query("SELECT * FROM sehir where sehir_key = '".$liste["il"]."'");
-                        $il = mysql_fetch_array($iller);
+                        $stmt_il = $vt->prepare("SELECT * FROM sehir where sehir_key = ?");
+                        $stmt_il->execute([$liste["il"]]); $il = $stmt_il->fetch();
 
-                        $ilceler = mysql_query("SELECT * FROM ilce where ilce_key = '".$liste["ilce"]."'");
-                        $ilce = mysql_fetch_array($ilceler);
+                        $stmt_ilce = $vt->prepare("SELECT * FROM ilce where ilce_key = ?");
+                        $stmt_ilce->execute([$liste["ilce"]]); $ilce = $stmt_ilce->fetch();
 
-                        $mahalle_ver = mysql_query("SELECT * FROM mahalle where mahalle_id = '".$liste["mahalle"]."'");
-                        $mahalle = mysql_fetch_array($mahalle_ver);
+                        $stmt_mah = $vt->prepare("SELECT * FROM mahalle where mahalle_id = ?");
+                        $stmt_mah->execute([$liste["mahalle"]]); $mahalle = $stmt_mah->fetch();
 
-                        $ilantipi = mysql_query("SELECT * FROM emlak_ilantipi where id = '".$liste["ilantipi"]."' && durum != 1");
-                        $it = mysql_fetch_array($ilantipi);
+                        $stmt_ilantipi = $vt->prepare("SELECT * FROM emlak_ilantipi where id = ? AND durum != 1");
+                        $stmt_ilantipi->execute([$liste["ilantipi"]]); $it = $stmt_ilantipi->fetch();
 
-                        $ilansekli = mysql_query("SELECT * FROM emlak_ilansekli where id = '".$liste["ilansekli"]."' && durum != 1");
-                        $sekil = mysql_fetch_array($ilansekli);
+                        $stmt_sekli = $vt->prepare("SELECT * FROM emlak_ilansekli where id = ? AND durum != 1");
+                        $stmt_sekli->execute([$liste["ilansekli"]]); $sekil = $stmt_sekli->fetch();
 
-                        $kategori = mysql_query("SELECT * FROM emlak_kategori where kat_id = '".$liste["katid"]."' && kat_durum = 1");
-                        $kat = mysql_fetch_array($kategori);
+                        $stmt_kat = $vt->prepare("SELECT * FROM emlak_kategori where kat_id = ? AND kat_durum = 1");
+                        $stmt_kat->execute([$liste["katid"]]); $kat = $stmt_kat->fetch();
                         
                         $dizi = explode (" ",$it['ad']);
 
-                        $kategoriver = mysql_query("SELECT * FROM emlak_kategori where kat_id = '".$liste["katid"]."'");
-                        $kategori = mysql_fetch_array($kategoriver);
+                        $stmt_kategoriver = $vt->prepare("SELECT * FROM emlak_kategori where kat_id = ?");
+                        $stmt_kategoriver->execute([$liste["katid"]]); $kategori = $stmt_kategoriver->fetch();
                         
-                        $resver = mysql_query("SELECT * FROM emlak_resim where emlakno = '".$liste["emlakno"]."' && kapak = '1'");
-                        $resl = mysql_fetch_array($resver);
+                        $stmt_resim = $vt->prepare("SELECT * FROM emlak_resim where emlakno = ? AND kapak = '1'");
+                        $stmt_resim->execute([$liste["emlakno"]]); $resl = $stmt_resim->fetch();
 
                         ?> 
                         <div class="col-lg-4 col-md-12 col-xl-4">

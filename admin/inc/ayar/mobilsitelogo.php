@@ -28,7 +28,7 @@
 		
 		$mobillogouzunluk = $_POST["mobillogouzunluk"];  
 
-		$resimkaydet = mysql_query("UPDATE ayarlar SET mobillogouzunluk = '$mobillogouzunluk' where id = '1'");	
+		$resimkaydet = $vt->query("UPDATE ayarlar SET mobillogouzunluk = '$mobillogouzunluk' where id = '1'");	
 
 			// resim yukleme
 				
@@ -47,13 +47,13 @@
 			            $dosya = "../uploads/resim/".$saat.".jpg";
 			            if (move_uploaded_file($_FILES["resim"]["tmp_name"][$i], $dosya)) {
 							
-			                $ids = mysql_query("SELECT * FROM ayarlar where id = '1'");
-			                $id = mysql_fetch_array($ids); 
+			                $ids = $vt->query("SELECT * FROM ayarlar where id = '1'");
+			                $id = $ids->fetch(); 
 
 			                $sil = @unlink("..".$id['mobilsitelogo']);
 
 			                $link = "/uploads/resim/".$saat.".jpg";
-			                $ekle = mysql_query("UPDATE ayarlar SET mobilsitelogo = '$link' where id = '1'");
+			                $ekle = $vt->query("UPDATE ayarlar SET mobilsitelogo = '$link' where id = '1'");
 			                $yuklenenler++; 
 
 			            }

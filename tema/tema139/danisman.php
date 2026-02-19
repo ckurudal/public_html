@@ -6,14 +6,16 @@
 
      $kat_emlak_tipi = $_GET["emlak-tipi"];
 
-    $danismanlarid = mysql_query("SELECT * FROM yonetici where id = '$id'");
-    $d = mysql_fetch_array($danismanlarid);
+    $stmt_d = $vt->prepare("SELECT * FROM yonetici where id = ?");
+    $stmt_d->execute([$id]); $d = $stmt_d->fetch();
 
-    $emlakofisi = mysql_fetch_array(mysql_query("SELECT * FROM subeler where id = '".$d["ofis"]."'"));
-    $kurumsalemlakofisi = mysql_fetch_array(mysql_query("SELECT * FROM subeler where yetkiliuye = '".$d["id"]."'"));
+    $stmt_emlakofisi = $vt->prepare("SELECT * FROM subeler where id = ?");
+    $stmt_emlakofisi->execute([$d["ofis"]]); $emlakofisi = $stmt_emlakofisi->fetch();
+    $stmt_kurumsalofisi = $vt->prepare("SELECT * FROM subeler where yetkiliuye = ?");
+    $stmt_kurumsalofisi->execute([$d["id"]]); $kurumsalemlakofisi = $stmt_kurumsalofisi->fetch();
 
-    $danismanlar = mysql_query("SELECT * FROM yonetici where id = '$id'");
-    $dan = mysql_fetch_array($danismanlar);
+    $stmt_dan = $vt->prepare("SELECT * FROM yonetici where id = ?");
+    $stmt_dan->execute([$id]); $dan = $stmt_dan->fetch();
 
     $uye_login = $vt->query("SELECT * FROM yonetici WHERE id = '".$_SESSION["id"]."'")->fetch();
 
@@ -23,14 +25,14 @@
     $danisman_bilgi = $vt->query("SELECT * FROM yonetici WHERE id = '$id'");
     $danisman_veri = $danisman_bilgi->fetch(PDO::FETCH_OBJ);
 
-    $iller = mysql_query("SELECT * FROM sehir where sehir_key = '".$dan["il"]."'");
-    $ilver = mysql_fetch_array($iller);
+    $stmt_ilver = $vt->prepare("SELECT * FROM sehir where sehir_key = ?");
+    $stmt_ilver->execute([$dan["il"]]); $ilver = $stmt_ilver->fetch();
 
-    $ilceler = mysql_query("SELECT * FROM ilce where ilce_key = '".$dan["ilce"]."'");
-    $ilce = mysql_fetch_array($ilceler);
+    $stmt_ilce2 = $vt->prepare("SELECT * FROM ilce where ilce_key = ?");
+    $stmt_ilce2->execute([$dan["ilce"]]); $ilce = $stmt_ilce2->fetch();
 
-    $mahalle_ver = mysql_query("SELECT * FROM mahalle where mahalle_id = '".$dan["mahalle"]."'");
-    $mahalle = mysql_fetch_array($mahalle_ver);
+    $stmt_mah2 = $vt->prepare("SELECT * FROM mahalle where mahalle_id = ?");
+    $stmt_mah2->execute([$dan["mahalle"]]); $mahalle = $stmt_mah2->fetch();
 	
 ?>
 <!doctype html>
@@ -113,10 +115,11 @@
             <div class="col-md-3">
                 <div class="card text-center">
                     <?php
-                        $danismanlar = mysql_query("SELECT * FROM yonetici where id = '".$id."'");
-                        while($dan = mysql_fetch_array($danismanlar)) {
+                        $stmt_danliste = $vt->prepare("SELECT * FROM yonetici where id = ?");
+                        $stmt_danliste->execute([$id]);
+                        while($dan = $stmt_danliste->fetch()) {
 
-                            $subeler = mysql_query("SELECT * FROM subeler where");
+                            // $subeler removed (invalid query with no condition)
                     ?>
                     <div class="card-body  item-user">
                         <div class="profile-pic mb-0">
@@ -244,42 +247,40 @@
                     <?php  
                                                                                 
                         if ($kat_emlak_tipi) {
-                            
-                            $ilanliste = mysql_query("SELECT * FROM emlak_ilan where yonetici_id = '$id' and durum = 0 AND onay = 1 AND ilantipi = '". $kat_emlak_tipi."' ORDER BY fiyat $fiyat");
-
+                            $stmt_ilanliste = $vt->prepare("SELECT * FROM emlak_ilan where yonetici_id = ? and durum = 0 AND onay = 1 AND ilantipi = ? ORDER BY fiyat $fiyat");
+                            $stmt_ilanliste->execute([$id, $kat_emlak_tipi]);
                         } else {
-
-                            $ilanliste = mysql_query("SELECT * FROM emlak_ilan where yonetici_id = '$id' and durum = 0 AND onay = 1 ORDER BY fiyat $fiyat");
-
+                            $stmt_ilanliste = $vt->prepare("SELECT * FROM emlak_ilan where yonetici_id = ? and durum = 0 AND onay = 1 ORDER BY fiyat $fiyat");
+                            $stmt_ilanliste->execute([$id]);
                         }
 
-                        while ($liste = mysql_fetch_array($ilanliste)) {
+                        while ($liste = $stmt_ilanliste->fetch()) {
 
-                            $iller = mysql_query("SELECT * FROM sehir where sehir_key = '".$liste["il"]."'");
-                            $il = mysql_fetch_array($iller);
+                            $stmt_il = $vt->prepare("SELECT * FROM sehir where sehir_key = ?");
+                            $stmt_il->execute([$liste["il"]]); $il = $stmt_il->fetch();
 
-                            $ilceler = mysql_query("SELECT * FROM ilce where ilce_key = '".$liste["ilce"]."'");
-                            $ilce = mysql_fetch_array($ilceler);
+                            $stmt_ilce = $vt->prepare("SELECT * FROM ilce where ilce_key = ?");
+                            $stmt_ilce->execute([$liste["ilce"]]); $ilce = $stmt_ilce->fetch();
 
-                            $mahalle_ver = mysql_query("SELECT * FROM mahalle where mahalle_id = '".$liste["mahalle"]."'");
-                            $mahalle = mysql_fetch_array($mahalle_ver);
+                            $stmt_mah = $vt->prepare("SELECT * FROM mahalle where mahalle_id = ?");
+                            $stmt_mah->execute([$liste["mahalle"]]); $mahalle = $stmt_mah->fetch();
 
-                            $ilantipi = mysql_query("SELECT * FROM emlak_ilantipi where id = '".$liste["ilantipi"]."' && durum != 1");
-                            $it = mysql_fetch_array($ilantipi);
+                            $stmt_ilantipi = $vt->prepare("SELECT * FROM emlak_ilantipi where id = ? AND durum != 1");
+                            $stmt_ilantipi->execute([$liste["ilantipi"]]); $it = $stmt_ilantipi->fetch();
 
-                            $ilansekli = mysql_query("SELECT * FROM emlak_ilansekli where id = '".$liste["ilansekli"]."' && durum != 1");
-                            $sekil = mysql_fetch_array($ilansekli);
+                            $stmt_sekli = $vt->prepare("SELECT * FROM emlak_ilansekli where id = ? AND durum != 1");
+                            $stmt_sekli->execute([$liste["ilansekli"]]); $sekil = $stmt_sekli->fetch();
 
-                            $kategori = mysql_query("SELECT * FROM emlak_kategori where kat_id = '".$liste["katid"]."' && kat_durum = 1");
-                            $kat = mysql_fetch_array($kategori);
+                            $stmt_kat = $vt->prepare("SELECT * FROM emlak_kategori where kat_id = ? AND kat_durum = 1");
+                            $stmt_kat->execute([$liste["katid"]]); $kat = $stmt_kat->fetch();
                             
                             $dizi = explode (" ",$it['ad']);
 
-                            $kategoriver = mysql_query("SELECT * FROM emlak_kategori where kat_id = '".$liste["katid"]."'");
-                            $kategori = mysql_fetch_array($kategoriver);
+                            $stmt_kategoriver = $vt->prepare("SELECT * FROM emlak_kategori where kat_id = ?");
+                            $stmt_kategoriver->execute([$liste["katid"]]); $kategori = $stmt_kategoriver->fetch();
                             
-                            $resver = mysql_query("SELECT * FROM emlak_resim where emlakno = '".$liste["emlakno"]."' && kapak = '1'");
-                            $resl = mysql_fetch_array($resver);
+                            $stmt_resim = $vt->prepare("SELECT * FROM emlak_resim where emlakno = ? AND kapak = '1'");
+                            $stmt_resim->execute([$liste["emlakno"]]); $resl = $stmt_resim->fetch();
 
                     ?>
 

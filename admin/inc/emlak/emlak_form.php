@@ -6,35 +6,35 @@
 	$durum = $_GET["durum"];
 	$hareket = $_GET["hareket"];
     if ($islem == "aramaaktif") {
-    	$aramaaktif = mysql_query("UPDATE emlak_form SET arama = '1' where id = '$id'");
+    	$aramaaktif = $vt->query("UPDATE emlak_form SET arama = '1' where id = '$id'");
     	go("index.php?do=emlak/emlak_form&hareket=onay");
     }
     if ($islem == "aramapasif") {
-    	$aramapasif = mysql_query("UPDATE emlak_form SET arama = '0', metinalani = '0', toplusecim = '0', minmax = '0' where id = '$id'");
+    	$aramapasif = $vt->query("UPDATE emlak_form SET arama = '0', metinalani = '0', toplusecim = '0', minmax = '0' where id = '$id'");
     	go("index.php?do=emlak/emlak_form&hareket=onay");
     }
     if ($islem == "topluaktif") {
-    	$aramaaktif = mysql_query("UPDATE emlak_form SET toplusecim = '1', metinalani = '0', arama = '1' where id = '$id'");
+    	$aramaaktif = $vt->query("UPDATE emlak_form SET toplusecim = '1', metinalani = '0', arama = '1' where id = '$id'");
     	go("index.php?do=emlak/emlak_form&hareket=onay");
     }
     if ($islem == "toplupasif") {
-    	$aramapasif = mysql_query("UPDATE emlak_form SET toplusecim = '0' where id = '$id'");
+    	$aramapasif = $vt->query("UPDATE emlak_form SET toplusecim = '0' where id = '$id'");
     	go("index.php?do=emlak/emlak_form&hareket=onay");
     }
     if ($islem == "metinalaniaktif") {
-    	$aramaaktif = mysql_query("UPDATE emlak_form SET metinalani = '1', toplusecim = '0', minmax = '0', arama = '1' where id = '$id'");
+    	$aramaaktif = $vt->query("UPDATE emlak_form SET metinalani = '1', toplusecim = '0', minmax = '0', arama = '1' where id = '$id'");
     	go("index.php?do=emlak/emlak_form&hareket=onay");
     }
     if ($islem == "metinalanipasif") {
-    	$aramapasif = mysql_query("UPDATE emlak_form SET metinalani = '0' where id = '$id'");
+    	$aramapasif = $vt->query("UPDATE emlak_form SET metinalani = '0' where id = '$id'");
     	go("index.php?do=emlak/emlak_form&hareket=onay");
     }
     if ($islem == "minmaxaktif") {
-    	$aramaaktif = mysql_query("UPDATE emlak_form SET minmax = '1', metinalani = '0', arama = '1' where id = '$id'");
+    	$aramaaktif = $vt->query("UPDATE emlak_form SET minmax = '1', metinalani = '0', arama = '1' where id = '$id'");
     	go("index.php?do=emlak/emlak_form&hareket=onay");
     }
     if ($islem == "minmaxpasif") {
-    	$aramapasif = mysql_query("UPDATE emlak_form SET minmax = '0' where id = '$id'");
+    	$aramapasif = $vt->query("UPDATE emlak_form SET minmax = '0' where id = '$id'");
     	go("index.php?do=emlak/emlak_form&hareket=onay");
     }
  ?>
@@ -52,18 +52,18 @@
 				$sira = $_POST["sira"]; 
 				$siraid = $_POST["siraid"]; 
 				for ($i=0; $i < count($sira); $i++) { 
-					$sirakaydet = mysql_query("UPDATE emlak_form SET sira = '$sira[$i]' where id = '$siraid[$i]'");
+					$sirakaydet = $vt->query("UPDATE emlak_form SET sira = '$sira[$i]' where id = '$siraid[$i]'");
 				}
 			}
 			 // durum guncelle 
 	        if ($durum) {
-	            $ver = mysql_fetch_array(mysql_query("SELECT * FROM emlak_form WHERE id = '$durum'"));
+	            $ver = $vt->query("SELECT * FROM emlak_form WHERE id = '$durum'")->fetch();
 	            $kdurum = $ver["durum"];
 	            if ($ver["durum"] == 1) {
-	                    mysql_query("UPDATE emlak_form SET durum = '0' WHERE id = '$durum'");
+	                    $vt->query("UPDATE emlak_form SET durum = '0' WHERE id = '$durum'");
 	                    onay();
 	                } else {
-	                    mysql_query("UPDATE emlak_form SET durum  = '1' WHERE id = '$durum'");
+	                    $vt->query("UPDATE emlak_form SET durum  = '1' WHERE id = '$durum'");
 	                    onay();
 	            }
 	        }
@@ -94,8 +94,8 @@
                     </thead>
                     <tbody>
                     	<?php
-                    		$query=mysql_query("SELECT * FROM emlak_form ORDER BY sira ASC");
-                    		while ($row=mysql_fetch_array($query)) {
+                    		$query=$vt->query("SELECT * FROM emlak_form ORDER BY sira ASC");
+                    		while ($row=$query->fetch()) {
                     	?>
                     	<tr> 
                         <tr> 
@@ -120,10 +120,10 @@
 	                    	</th>
 	                    	<th class=""> 
 	                    	<?php
-	                    		$formkat=mysql_query("SELECT * FROM emlak_form_kat where eformid = '$row[id]'");
-	                    		while ($formkatver=mysql_fetch_array($formkat)) {
-									$kategori=mysql_query("SELECT * FROM emlak_kategori where kat_id = '$formkatver[kat]'");
-									$kategoriver=mysql_fetch_array($kategori);
+	                    		$formkat=$vt->query("SELECT * FROM emlak_form_kat where eformid = '$row[id]'");
+	                    		while ($formkatver=$formkat->fetch()) {
+									$kategori=$vt->query("SELECT * FROM emlak_kategori where kat_id = '$formkatver[kat]'");
+									$kategoriver=$kategori->fetch();
 									echo '<span class="btn btn-default btn-xs" style="margin-bottom:5px;">'.$kategoriver[kat_adi].'</span> ';	                    			
 	                    		}
 	                    	?>
@@ -232,8 +232,8 @@
 	<section class="content">
 		<?php 
 			$id = $_GET[id];
-			$sil = mysql_query("DELETE FROM emlak_form where id = '$id'");
-			$silformkat = mysql_query("DELETE FROM emlak_form_kat where eformid = '$id'");
+			$sil = $vt->query("DELETE FROM emlak_form where id = '$id'");
+			$silformkat = $vt->query("DELETE FROM emlak_form_kat where eformid = '$id'");
 			if ($sil || $silformkat) {				
 				onay("Başarılı bir şekilde silindi");
 				go("index.php?do=islem&emlak=emlak_form",0.5);
@@ -247,7 +247,7 @@
 <form method="post" action="" enctype="multipart/form-data">
 	<section class="content">
 			<?php 
-				$eform = mysql_fetch_assoc(mysql_query("SHOW TABLE STATUS LIKE 'emlak_form'"));					
+				$eform = $vt->query("SHOW TABLE STATUS LIKE 'emlak_form'")->fetch();					
 				$efi = $eform['Auto_increment'];
 			 ?>
 			<?php
@@ -263,11 +263,11 @@
 						hata('<strong>"Başlık"</strong> ve <strong>"Gösterilecek Kategoriler"</strong> boş olamaz!');
 					} else {
 						foreach ($kat as $k) {
-							$isekli=mysql_query("SELECT * FROM emlak_kategori where kat_id = '$k'");
-							$i=mysql_fetch_array($isekli);
-							$ekle = mysql_query("INSERT INTO emlak_form_kat (kat, eformid, ilansekli) VALUES ('$k','$efi','$i[ilansekli]')");
+							$isekli=$vt->query("SELECT * FROM emlak_kategori where kat_id = '$k'");
+							$i=$isekli->fetch();
+							$ekle = $vt->query("INSERT INTO emlak_form_kat (kat, eformid, ilansekli) VALUES ('$k','$efi','$i[ilansekli]')");
 						}
-						$adekle = mysql_query("INSERT INTO emlak_form (deg,ad, seo, ozet, ikon) VALUES ('$deg','$ad','$seo','$ozet','$ikon')");						
+						$adekle = $vt->query("INSERT INTO emlak_form (deg,ad, seo, ozet, ikon) VALUES ('$deg','$ad','$seo','$ozet','$ikon')");						
 						if ($ekle && $adekle) {
 							onay("Emlak formları başarılı bir şekilde eklenmiştir.");
 						}
@@ -329,15 +329,15 @@
 					  <div class="col-sm-10">
 		                	<select name="kat[]" style="min-height: 500px;" multiple class="form-control">
 		                		<?php 
-		                			$qkat=mysql_query("SELECT * FROM emlak_kategori WHERE kat_ustid = 0");
-		                			while($kategori=mysql_fetch_assoc($qkat)) {
+		                			$qkat=$vt->query("SELECT * FROM emlak_kategori WHERE kat_ustid = 0");
+		                			while($kategori=$qkat->fetch()) {
 		                		?>
 			                    <optgroup label="<?=$kategori["kat_adi"];?>">
 									<option value="<?=$kategori["kat_id"];?>"> <?=$kategori["kat_adi"];?> </option>
 									<?php 
 										$katid = $kategori["kat_id"];
-										$qust = mysql_query("SELECT * FROM emlak_kategori where kat_ustid = '$katid'");
-										while($ustkat=mysql_fetch_array($qust)) {
+										$qust = $vt->query("SELECT * FROM emlak_kategori where kat_ustid = '$katid'");
+										while($ustkat=$qust->fetch()) {
 									?>
 									<option value="<?=$ustkat["kat_id"];?>"> -- <?=$ustkat["kat_adi"];?> </option>
 									<?php } ?>
@@ -369,12 +369,12 @@
 					$sira=$_POST['sira'];	
 					$ozet=$_POST['ozet'];	
 					$ikon=$_POST['ikon'];					
-					$formd = mysql_query("UPDATE emlak_form SET ad = '$ad', seo = '$seo', deg = '$deg', sira = '$sira', ozet = '$ozet', ikon = '$ikon' where id = '$id'");
-					$forms = mysql_query("DELETE FROM emlak_form_kat WHERE eformid = '$id'");
+					$formd = $vt->query("UPDATE emlak_form SET ad = '$ad', seo = '$seo', deg = '$deg', sira = '$sira', ozet = '$ozet', ikon = '$ikon' where id = '$id'");
+					$forms = $vt->query("DELETE FROM emlak_form_kat WHERE eformid = '$id'");
 					foreach ($kat as $k) {
-						$isekli=mysql_query("SELECT * FROM emlak_kategori where kat_id = '$k'");
-						$i=mysql_fetch_array($isekli);
-						$ekle = mysql_query("INSERT INTO emlak_form_kat (kat, eformid, ilansekli) VALUES ('$k','$id','$i[ilansekli]')");
+						$isekli=$vt->query("SELECT * FROM emlak_kategori where kat_id = '$k'");
+						$i=$isekli->fetch();
+						$ekle = $vt->query("INSERT INTO emlak_form_kat (kat, eformid, ilansekli) VALUES ('$k','$id','$i[ilansekli]')");
 					}					
 					if ($forms) {
 						onay("Başarılı bir şekilde güncellendi.");
@@ -385,12 +385,12 @@
 		  		}
 		  	?>
 		  	<?php
-		  		$e = mysql_fetch_array(mysql_query("SELECT * FROM emlak_form where id = '$id'"));		  		
-		  		$emlakformkat = mysql_fetch_array(mysql_query("SELECT * FROM emlak_form_kat where eformid = '$id'"));
+		  		$e = $vt->query("SELECT * FROM emlak_form where id = '$id'")->fetch();		  		
+		  		$emlakformkat = $vt->query("SELECT * FROM emlak_form_kat where eformid = '$id'")->fetch();
 		  		$efk = $emlakformkat['kat'];
 		  		$ayir = explode(",", $efk);
 		  		$esitle = $ayir;
-		  		$katsec = mysql_fetch_array(mysql_query("SELECT * FROM emlak_kategori where kat_id = '$efk'"));
+		  		$katsec = $vt->query("SELECT * FROM emlak_kategori where kat_id = '$efk'")->fetch();
 		  		$formver = $katsec[kat_id];
 			?>
 	 	<div class="box">
@@ -446,21 +446,21 @@
 					  <label class="col-sm-2 control-label">Gösterilecek Kategoriler:</label>
 					  <div class="col-sm-10">
 					  	<?php 
-							$emlakformkat = mysql_fetch_array(mysql_query("SELECT * FROM emlak_form_kat where eformid = '$id'"));
+							$emlakformkat = $vt->query("SELECT * FROM emlak_form_kat where eformid = '$id'")->fetch();
 							$al = $emlakformkat["kat"];
 							$eformidver = $emlakformkat["eformid"];
 							$ayire = explode(",", $al);
 						?>
 	                	<select name="kat[]" style="min-height: 500px;" multiple class="form-control">
 	                		<?php
-	                			$qkat=mysql_query("SELECT * FROM emlak_kategori WHERE kat_ustid = 0");
-	                			while($kategori=mysql_fetch_assoc($qkat)) {										
+	                			$qkat=$vt->query("SELECT * FROM emlak_kategori WHERE kat_ustid = 0");
+	                			while($kategori=$qkat->fetch()) {										
 	                		?> 
 		                    <optgroup label="<?=$kategori["kat_adi"];?>">
 								<option 
 								<?php   
-									$formkatver = mysql_query("select * from emlak_form_kat where eformid = '$id'");									
-			                		while ($efk=mysql_fetch_array($formkatver)) {
+									$formkatver = $vt->query("select * from emlak_form_kat where eformid = '$id'");									
+			                		while ($efk=$formkatver->fetch()) {
 			                			if ($efk[kat] == $kategori["kat_id"]) {				                				
 			                				echo "selected ";
 			                			}
@@ -469,13 +469,13 @@
 								value="<?=$kategori["kat_id"];?>"> <?=$kategori["kat_adi"];?> </option>									
 								<?php 
 									$katid = $kategori["kat_id"];
-									$qust = mysql_query("SELECT * FROM emlak_kategori where kat_ustid = '$katid'");
-									while($ustkat=mysql_fetch_array($qust)) {
+									$qust = $vt->query("SELECT * FROM emlak_kategori where kat_ustid = '$katid'");
+									while($ustkat=$qust->fetch()) {
 								?>
 								<option 
 								<?php   
-									$formkatver = mysql_query("select * from emlak_form_kat where eformid = '$id'");									
-			                		while ($efk=mysql_fetch_array($formkatver)) {
+									$formkatver = $vt->query("select * from emlak_form_kat where eformid = '$id'");									
+			                		while ($efk=$formkatver->fetch()) {
 			                			if ($efk[kat] == $ustkat["kat_id"]) {				                				
 			                				echo "selected ";
 			                			}
@@ -493,8 +493,8 @@
 					  <label class="col-sm-2 control-label">Sıra:</label>
 					  <div class="col-sm-10">
 					  	<?php 
-					  		$e=mysql_query("SELECT * FROM emlak_form WHERE id ='$id'");
-					  		$ecek=mysql_fetch_assoc($e);
+					  		$e=$vt->query("SELECT * FROM emlak_form WHERE id ='$id'");
+					  		$ecek=$e->fetch();
 					  	?>
 					  	<input type="text" name="sira" class="form-control" value="<?=$ecek[sira];?>">
 					  </div>

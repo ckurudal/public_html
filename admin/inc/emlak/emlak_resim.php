@@ -14,9 +14,9 @@
 	
 	$kapakislem = $_GET['islemno'];
 	
-	$ilan = mysql_query("SELECT * FROM emlak_ilan where id = '$id'");
+	$ilan = $vt->query("SELECT * FROM emlak_ilan where id = '$id'");
 	
-	$i = mysql_fetch_array($ilan);
+	$i = $ilan->fetch();
 	
 	$islemno = $i['emlakno']; 
 	
@@ -66,22 +66,22 @@
  
 	 if ($kapak == "degistir") {
 	  
-	    $kapakver = mysql_query("update emlak_resim set 
+	    $kapakver = $vt->query("update emlak_resim set 
 			kapak	=	'0'
 			WHERE id != '$resimid' and emlakno = $islemno; 
 		 "); 
 		 
-		 $kapakver1 = mysql_query("update emlak_resim set 
+		 $kapakver1 = $vt->query("update emlak_resim set 
 			kapak	=	'1'
 			WHERE id = '$resimid' and emlakno = $islemno; 
 		 ");
 	   
-		 $kapakver3 = mysql_query("update emlak_resim set 
+		 $kapakver3 = $vt->query("update emlak_resim set 
 			sira	=	'1'
 			WHERE sira = '0' and emlakno = $islemno; 
 		 "); 
 		 
-		 $kapakver2 = mysql_query("update emlak_resim set 
+		 $kapakver2 = $vt->query("update emlak_resim set 
 			sira	=	'0'
 			WHERE kapak = '1' and emlakno = $islemno; 
 		 "); 
@@ -95,9 +95,9 @@
 							
 		// resim dosyalarini sil
 		
-		$resimdosya = mysql_query("select * from emlak_resim where id = '$resimid'");
+		$resimdosya = $vt->query("select * from emlak_resim where id = '$resimid'");
 			
-		$resver = mysql_fetch_array($resimdosya);
+		$resver = $resimdosya->fetch();
 			 
 			//echo $resver["resimad"]."<br>";
 			
@@ -109,11 +109,11 @@
 			
 			@unlink("$targetDir");  
 		
-	    $resimsil=mysql_query("DELETE FROM emlak_resim where id = '$resimid'"); 
+	    $resimsil=$vt->query("DELETE FROM emlak_resim where id = '$resimid'"); 
 		
 		if ($resver['kapak'] == 1) {
 			
-			$kapak = mysql_query("update emlak_resim set kapak = '1', sira = '0' where emlakno = '$islemno' order by id asc limit 1");
+			$kapak = $vt->query("update emlak_resim set kapak = '1', sira = '0' where emlakno = '$islemno' order by id asc limit 1");
 			
 		}
 		
@@ -126,7 +126,7 @@
 		$idr 	= $_POST["idr"]; 
 		
 		for ($i=0; $i<count($idr); $i++) {
-			$resim=mysql_query("update emlak_resim set
+			$resim=$vt->query("update emlak_resim set
 				sira	=	'".$sira[$i]."'
 			where id = '".$idr[$i]."'");
 		} 
@@ -181,8 +181,8 @@
 			<div class="row">
 			<?php   
 				$resimno = $i["emlakno"]; 
-				$resimver = mysql_query("SELECT * FROM emlak_resim WHERE emlakno='$resimno' ORDER BY sira ASC");
-				while ($resimcek = mysql_fetch_array($resimver, MYSQL_ASSOC)) { 
+				$resimver = $vt->query("SELECT * FROM emlak_resim WHERE emlakno='$resimno' ORDER BY sira ASC");
+				while ($resimcek = $resimver->fetch()) { 
 				
 			?>
 			<div id="tekli" class="col-md-3">
