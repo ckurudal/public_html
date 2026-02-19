@@ -49,8 +49,8 @@
                                 <?php endif; ?>
                                 <option value=""> İl Seçiniz </option> 
                                 <?php 
-                                    $iller = mysql_query("select * from sehir order by adi asc");
-                                    while($il=mysql_fetch_array($iller)) {
+                                    $stmt_iller = $vt->query("select * from sehir order by adi asc");
+                                    while($il=$stmt_iller->fetch()) {
                                 ?>
                                 <option value="<?=$il['sehir_key'];?>"> <?=$il['adi'];?> </option>
                                 <?php } ?>

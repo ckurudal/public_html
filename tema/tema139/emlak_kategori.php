@@ -594,21 +594,21 @@ else if ($kat_ilan_kategori[1] == $kategori["seo"]) {
                                             $emlak_ilanlar = $vt->query("SELECT * FROM emlak_ilan WHERE durum = 0 AND katid = '".$kategori["kat_id"]."' AND ilantipi = '".$kategori_ilantipi["id"]."' ORDER BY fiyat $fiyat LIMIT $nereden, $kacar");
                                         }
                                         foreach ($emlak_ilanlar as $liste) {
-                                            $resver = mysql_query("SELECT * FROM emlak_resim where emlakno = '".$liste["emlakno"]."' && kapak = '1'");
-                                            $resl = mysql_fetch_array($resver);
-                                            $iller = mysql_query("SELECT * FROM sehir where sehir_key = '".$liste["il"]."'");
-                                            $il = mysql_fetch_array($iller);
-                                            $ilceler = mysql_query("SELECT * FROM ilce where ilce_key = '".$liste["ilce"]."'");
-                                            $ilce = mysql_fetch_array($ilceler);
-                                            $mahalle_ver = mysql_query("SELECT * FROM mahalle where mahalle_id = '".$liste["mahalle"]."'");
-                                            $mahalle = mysql_fetch_array($mahalle_ver);
+                                            $stmt_resim = $vt->prepare("SELECT * FROM emlak_resim where emlakno = ? AND kapak = '1'");
+                                            $stmt_resim->execute([$liste["emlakno"]]); $resl = $stmt_resim->fetch();
+                                            $stmt_il = $vt->prepare("SELECT * FROM sehir where sehir_key = ?");
+                                            $stmt_il->execute([$liste["il"]]); $il = $stmt_il->fetch();
+                                            $stmt_ilce = $vt->prepare("SELECT * FROM ilce where ilce_key = ?");
+                                            $stmt_ilce->execute([$liste["ilce"]]); $ilce = $stmt_ilce->fetch();
+                                            $stmt_mah = $vt->prepare("SELECT * FROM mahalle where mahalle_id = ?");
+                                            $stmt_mah->execute([$liste["mahalle"]]); $mahalle = $stmt_mah->fetch();
                                             $ekleyen = $vt->query("SELECT * FROM yonetici WHERE id = '".$liste["yonetici_id"]."'")->fetch();
-                                            $ilantipi = mysql_query("SELECT * FROM emlak_ilantipi where id = '".$liste["ilantipi"]."' && durum != 1");
-                                            $it = mysql_fetch_array($ilantipi);
-                                            $ilansekli = mysql_query("SELECT * FROM emlak_ilansekli where id = '".$liste["ilansekli"]."' && durum != 1");
-                                            $sekil = mysql_fetch_array($ilansekli);
-                                            $kategori = mysql_query("SELECT * FROM emlak_kategori where kat_id = '".$liste["katid"]."' && kat_durum = 1");
-                                            $kat = mysql_fetch_array($kategori);
+                                            $stmt_ilantipi = $vt->prepare("SELECT * FROM emlak_ilantipi where id = ? AND durum != 1");
+                                            $stmt_ilantipi->execute([$liste["ilantipi"]]); $it = $stmt_ilantipi->fetch();
+                                            $stmt_sekli = $vt->prepare("SELECT * FROM emlak_ilansekli where id = ? AND durum != 1");
+                                            $stmt_sekli->execute([$liste["ilansekli"]]); $sekil = $stmt_sekli->fetch();
+                                            $stmt_kat = $vt->prepare("SELECT * FROM emlak_kategori where kat_id = ? AND kat_durum = 1");
+                                            $stmt_kat->execute([$liste["katid"]]); $kat = $stmt_kat->fetch();
                                             $doping_ilan = $vt->query("SELECT * FROM doping_ilanlari WHERE ilan_id = '".$liste["id"]."'AND odeme_durumu = 'Ödendi' AND bitis_tarihi > '".date('Y-m-d')."'")->fetch();
                                             $ilan_id = $liste["id"];
                                             $uye_id = $ekleyen["id"];

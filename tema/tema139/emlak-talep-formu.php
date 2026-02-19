@@ -46,7 +46,8 @@
                 $adres = $_POST["il"] ."," . $_POST["ilce"] ."," . $_POST["mahalle"];
                 
 
-                $talep1 = mysql_query("INSERT INTO emlak_mesajemlaktalep (adsoyad, tel, email, mesaj, tarih, taleptur, adres, emlaktipi, kategori, minfiyat, maxfiyat, fiyatkur) values ('$adsoyad','$tel','$email','$mesaj','$tarih', 'Gayrimenkul arıyorum','$adres','$emlaktipi','$kategori','$minfiyat','$maxfiyat','$fiyatkur')");
+                $stmt_talep1 = $vt->prepare("INSERT INTO emlak_mesajemlaktalep (adsoyad, tel, email, mesaj, tarih, taleptur, adres, emlaktipi, kategori, minfiyat, maxfiyat, fiyatkur) values (?,?,?,?,?,?,?,?,?,?,?,?)");
+                $talep1 = $stmt_talep1->execute([$adsoyad, $tel, $email, $mesaj, $tarih, 'Gayrimenkul arıyorum', $adres, $emlaktipi, $kategori, $minfiyat, $maxfiyat, $fiyatkur]);
 
                 if ($talep1 == true) {
                     echo '<h5 class="alert alert-success"><i class="fa fa-check fa-lg pull-left"></i> Talebiniz başarıyla gönderildi. En kısa sürede tarafınıza dönüş yapılacaktır.</h5>';
@@ -68,7 +69,8 @@
                 
                 $talepturu = $_POST["talepturu"];
 
-                $talep2 = mysql_query("INSERT INTO emlak_mesajemlaktalep (adsoyad, tel, email, mesaj, tarih, taleptur, adres, emlaktipi, kategori) values ('$adsoyad','$tel','$email','$mesaj','$tarih', '$talepturu','$adres','$emlaktipi','$kategori')");
+                $stmt_talep2 = $vt->prepare("INSERT INTO emlak_mesajemlaktalep (adsoyad, tel, email, mesaj, tarih, taleptur, adres, emlaktipi, kategori) values (?,?,?,?,?,?,?,?,?)");
+                $talep2 = $stmt_talep2->execute([$adsoyad, $tel, $email, $mesaj, $tarih, $talepturu, $adres, $emlaktipi, $kategori]);
 
                 if ($talep2 == true) {
                     echo '<h5 class="alert alert-success"><i class="fa fa-check fa-lg pull-left"></i> Talebiniz başarıyla gönderildi. En kısa sürede tarafınıza dönüş yapılacaktır.</h5>';
@@ -165,8 +167,8 @@
                                                         <select name="emlaktipi" class="form-control">
                                                             <option>Seçiniz</option>
                                                             <?php
-                                                                $ilantipiv = mysql_query("SELECT * FROM emlak_ilantipi where durum = 0");
-                                                                while($tip = mysql_fetch_array($ilantipiv)) {
+                                                                $stmt_ilantipi = $vt->query("SELECT * FROM emlak_ilantipi where durum = 0");
+                                                                while($tip = $stmt_ilantipi->fetch()) {
                                                             ?>
                                                             <option value="<?=$tip["ad"];?>"><?=$tip["ad"];?></option>
                                                             <?php } ?>
@@ -179,13 +181,14 @@
                                                         <select name="kategori" class="form-control">
                                                             <option>Seçiniz</option>
                                                             <?php
-                                                                $kategoriler = mysql_query("SELECT * FROM emlak_kategori where kat_ustid = 0 && kat_durum = 1");
-                                                                while($kat = mysql_fetch_array($kategoriler)) {
+                                                                $stmt_katler = $vt->query("SELECT * FROM emlak_kategori where kat_ustid = 0 AND kat_durum = 1");
+                                                                while($kat = $stmt_katler->fetch()) {
                                                             ?>
                                                                 <optgroup label="<?=$kat["kat_adi"];?>">
                                                                 <?php
-                                                                    $kategoriler2 = mysql_query("SELECT * FROM emlak_kategori where kat_ustid = '".$kat["kat_id"]."' && kat_durum = 1");
-                                                                    while($kat2 = mysql_fetch_array($kategoriler2)) {
+                                                                    $stmt_katler2 = $vt->prepare("SELECT * FROM emlak_kategori where kat_ustid = ? AND kat_durum = 1");
+                                                                    $stmt_katler2->execute([$kat["kat_id"]]);
+                                                                    while($kat2 = $stmt_katler2->fetch()) {
                                                                 ?>
                                                                 <option value="<?=$kat2["kat_adi"];?>"><?=$kat2["kat_adi"];?></option>                                                              
                                                                 <?php } ?>
@@ -207,8 +210,8 @@
                                                             <div class="col-md-4">
                                                                 <select name="fiyatkur" class="form-control">
                                                                     <?php
-                                                                        $fiyatkur = mysql_query("SELECT * FROM para_birimi where id");
-                                                                        while($kur = mysql_fetch_array($fiyatkur)) {
+                                                                        $stmt_kur = $vt->query("SELECT * FROM para_birimi");
+                                                                        while($kur = $stmt_kur->fetch()) {
                                                                     ?>
                                                                     <option value="<?=$kur["ad"];?>"><?=$kur["ad"];?></option>
                                                                     <?php } ?>
@@ -225,8 +228,8 @@
                                                             <select name="il" id="il" class="form-control select2">
                                                                 <option selected="selected"> İl Seçiniz </option> 
                                                                 <?php 
-                                                                    $iller = mysql_query("select * from sehir order by sehir_key asc");
-                                                                    while($il=mysql_fetch_array($iller)) {
+                                                                    $stmt_iller = $vt->query("select * from sehir order by sehir_key asc");
+                                                                    while($il=$stmt_iller->fetch()) {
                                                                 ?>
                                                                 <option value="<?=$il['sehir_key'];?>"> <?=$il['adi'];?> </option>
                                                                 <?php } ?>
@@ -325,8 +328,8 @@
                                                         <select name="emlaktipi" class="form-control">
                                                             <option>Seçiniz</option>
                                                             <?php
-                                                                $ilantipiv = mysql_query("SELECT * FROM emlak_ilantipi where durum = 0");
-                                                                while($tip = mysql_fetch_array($ilantipiv)) {
+                                                                $stmt_ilantipi = $vt->query("SELECT * FROM emlak_ilantipi where durum = 0");
+                                                                while($tip = $stmt_ilantipi->fetch()) {
                                                             ?>
                                                             <option value="<?=$tip["ad"];?>"><?=$tip["ad"];?></option>
                                                             <?php } ?>
@@ -339,13 +342,14 @@
                                                         <select name="kategori" class="form-control">
                                                             <option>Seçiniz</option>
                                                             <?php
-                                                                $kategoriler = mysql_query("SELECT * FROM emlak_kategori where kat_ustid = 0 && kat_durum = 1");
-                                                                while($kat = mysql_fetch_array($kategoriler)) {
+                                                                $stmt_katler = $vt->query("SELECT * FROM emlak_kategori where kat_ustid = 0 AND kat_durum = 1");
+                                                                while($kat = $stmt_katler->fetch()) {
                                                             ?>
                                                                 <optgroup label="<?=$kat["kat_adi"];?>">
                                                                 <?php
-                                                                    $kategoriler2 = mysql_query("SELECT * FROM emlak_kategori where kat_ustid = '".$kat["kat_id"]."' && kat_durum = 1");
-                                                                    while($kat2 = mysql_fetch_array($kategoriler2)) {
+                                                                    $stmt_katler2 = $vt->prepare("SELECT * FROM emlak_kategori where kat_ustid = ? AND kat_durum = 1");
+                                                                    $stmt_katler2->execute([$kat["kat_id"]]);
+                                                                    while($kat2 = $stmt_katler2->fetch()) {
                                                                 ?>
                                                                 <option value="<?=$kat2["kat_adi"];?>"><?=$kat2["kat_adi"];?></option>                                                              
                                                                 <?php } ?>
@@ -372,8 +376,8 @@
                                                             <select name="il" id="il" class="form-control select2">
                                                                 <option selected="selected"> İl Seçiniz </option> 
                                                                 <?php 
-                                                                    $iller = mysql_query("select * from sehir order by sehir_key asc");
-                                                                    while($il=mysql_fetch_array($iller)) {
+                                                                    $stmt_iller = $vt->query("select * from sehir order by sehir_key asc");
+                                                                    while($il=$stmt_iller->fetch()) {
                                                                 ?>
                                                                 <option value="<?=$il['sehir_key'];?>"> <?=$il['adi'];?> </option>
                                                                 <?php } ?>

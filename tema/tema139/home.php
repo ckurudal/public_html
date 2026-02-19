@@ -1178,8 +1178,8 @@
             </div>
             <div class="row">
                 <?php
-                    $habersayfa = mysql_query("SELECT * FROM haber WHERE durum = 0 LIMIT 1");
-                    while($bsayfa = mysql_fetch_array($habersayfa)) {
+                    $stmt_habersayfa = $vt->query("SELECT * FROM haber WHERE durum = 0 LIMIT 1");
+                    while($bsayfa = $stmt_habersayfa->fetch()) {
                         $bkat = $vt->query("SELECT * FROM haber_kategori WHERE id = '".$bsayfa["kategori"]."'")->fetch(); 
                 ?>
                 <div class="col-lg-12 col-md-12 col-xl-6 col-sm-12 mb-5">
@@ -1208,8 +1208,8 @@
                 <div class="col-12 col-md-12 col-lg-12 col-xl-6">
                     <div class="row">
                         <?php
-                            $habersayfa = mysql_query("SELECT * FROM haber WHERE durum = 0 LIMIT 1,4");
-                            while($bsayfa = mysql_fetch_array($habersayfa)) {
+                            $stmt_habersayfa2 = $vt->query("SELECT * FROM haber WHERE durum = 0 LIMIT 1,4");
+                            while($bsayfa = $stmt_habersayfa2->fetch()) {
                                 $bkat = $vt->query("SELECT * FROM haber_kategori WHERE id = '".$bsayfa["kategori"]."'")->fetch(); 
                         ?>
                         <div class="col-sm-12 col-lg-6 col-md-6">
@@ -1254,8 +1254,8 @@
             </div>
             <div class="row">
                 <?php
-                    $habersayfa = mysql_query("SELECT * FROM blog WHERE durum = 0 LIMIT 1");
-                    while($bsayfa = mysql_fetch_array($habersayfa)) {
+                    $stmt_blogsayfa = $vt->query("SELECT * FROM blog WHERE durum = 0 LIMIT 1");
+                    while($bsayfa = $stmt_blogsayfa->fetch()) {
                         $bkat = $vt->query("SELECT * FROM blog_kategori WHERE id = '".$bsayfa["kategori"]."'")->fetch(); 
                 ?>
                 <div class="col-lg-12 col-md-12 col-xl-6 col-sm-12 mb-5">
@@ -1284,8 +1284,8 @@
                 <div class="col-12 col-md-12 col-lg-12 col-xl-6">
                     <div class="row">
                         <?php
-                            $habersayfa = mysql_query("SELECT * FROM blog WHERE durum = 0 LIMIT 1,4");
-                            while($bsayfa = mysql_fetch_array($habersayfa)) {
+                            $stmt_blogsayfa2 = $vt->query("SELECT * FROM blog WHERE durum = 0 LIMIT 1,4");
+                            while($bsayfa = $stmt_blogsayfa2->fetch()) {
                                 $bkat = $vt->query("SELECT * FROM blog_kategori WHERE id = '".$bsayfa["kategori"]."'")->fetch(); 
                         ?>
                         <div class="col-sm-12 col-lg-6 col-md-6">

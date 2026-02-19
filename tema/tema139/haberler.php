@@ -6,11 +6,13 @@
 
     $haberdetay = $_GET["haberdetay"];
     
-    $haberlar = mysql_query("SELECT * FROM haber where id = '$detay'");
-    $habers = mysql_fetch_array($haberlar); 
+    $stmt_haber = $vt->prepare("SELECT * FROM haber where id = ?");
+    $stmt_haber->execute([$detay]);
+    $habers = $stmt_haber->fetch();
 
-    $haberkatlar = mysql_query("SELECT * FROM haber_kategori where id = '".$kategori."'");
-    $kat = mysql_fetch_array($haberkatlar);
+    $stmt_haberkat = $vt->prepare("SELECT * FROM haber_kategori where id = ?");
+    $stmt_haberkat->execute([$kategori]);
+    $kat = $stmt_haberkat->fetch();
 
 ?>
 <!doctype html>
@@ -55,8 +57,8 @@
                 <div class="row">
                     <?php if (!$kategori && !$detay) { ?>
                     <?php
-                        $habersayfa = mysql_query("SELECT * FROM haber");
-                        while($bsayfa = mysql_fetch_array($habersayfa)) {
+                        $stmt_habersayfa = $vt->query("SELECT * FROM haber");
+                        while($bsayfa = $stmt_habersayfa->fetch()) {
                             $bkat = $vt->query("SELECT * FROM haber_kategori WHERE id = '".$bsayfa["kategori"]."'")->fetch(); 
                     ?>
                     <div class="col-xl-12 col-lg-12 col-md-12 mb-5">
@@ -95,8 +97,9 @@
                     <?php } ?>
                     <?php if ($kategori && !$detay) { ?>
                     <?php
-                       $habersayfa = mysql_query("SELECT * FROM haber where kategori = '$kategori'");
-                        while($bsayfa = mysql_fetch_array($habersayfa)) {
+                       $stmt_habersayfa2 = $vt->prepare("SELECT * FROM haber where kategori = ?");
+                        $stmt_habersayfa2->execute([$kategori]);
+                        while($bsayfa = $stmt_habersayfa2->fetch()) {
                             $bkat = $vt->query("SELECT * FROM haber_kategori WHERE id = '".$bsayfa["kategori"]."'")->fetch(); 
                     ?>
 
@@ -133,8 +136,9 @@
                     <?php } ?>
                     <?php if ($detay) { ?>
                     <?php
-                       $detayb = mysql_query("SELECT * FROM haber where id = '$detay'");
-                        $b = mysql_fetch_array($detayb);
+                       $stmt_detayb = $vt->prepare("SELECT * FROM haber where id = ?");
+                        $stmt_detayb->execute([$detay]);
+                        $b = $stmt_detayb->fetch();
                             
                     ?>
                     <div class="col-xl-12 col-lg-12 col-md-12">
@@ -186,8 +190,8 @@
                             <div class="item-list">
                                 <ul class="list-group mb-0"> 
                                     <?php 
-                                        $haberkat = mysql_query("SELECT * FROM haber_kategori where id");
-                                        while($haberbaslik = mysql_fetch_array($haberkat)) {
+                                        $stmt_haberkat2 = $vt->query("SELECT * FROM haber_kategori");
+                                        while($haberbaslik = $stmt_haberkat2->fetch()) {
                                     ?>
                                     <li class="list-group-item border-bottom-0">
                                         <a href="/<?=$haberbaslik["seo"];?>-haberkategori-<?=$haberbaslik["id"];?>" class="text-dark btn-block"><?=$haberbaslik["baslik"];?></a>

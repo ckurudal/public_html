@@ -112,10 +112,11 @@
                                     if (!$email || !$sifre) {
                                         echo '<h6 class="alert alert-danger"><i class="fa fa-warning fa-lg"></i> Email ve şifre giriniz.</h6>';
                                     } else {
-                                        $query = mysql_query("SELECT * FROM yonetici WHERE email = '$email' && pass = '".md5($sifre)."' && durum = 0");
+                                        $stmt_login = $vt->prepare("SELECT * FROM yonetici WHERE email = ? AND pass = ? AND durum = 0");
+                                        $stmt_login->execute([$email, md5($sifre)]);
 
-                                        if (mysql_affected_rows()) {
-                                            $row = row($query);
+                                        if ($stmt_login->rowCount()) {
+                                            $row = $stmt_login->fetch();
                                             $_SESSION = array (
                                                 "uyelogin" => true,
                                                 "id" => $row["id"],
@@ -362,15 +363,18 @@
                                 $tel = $_POST["tel"];
                                 $sozlesme = $_POST["sozlesme"];
 
-                                $kontroluye = mysql_query("SELECT * FROM yonetici");
-                                $uye = mysql_fetch_assoc($kontroluye);
+                                // check email/tel uniqueness handled below
+                                $stmt_chk_email = $vt->prepare("SELECT id FROM yonetici where email = ?");
+                                $stmt_chk_email->execute([$email]);
+                                $stmt_chk_tel = $vt->prepare("SELECT id FROM yonetici where tel = ?");
+                                $stmt_chk_tel->execute([$tel]);
 
                                 ?>
                                 <?php if (empty($email)) {
 
                                     hata_alert("E-posta adresi boş bırakılamaz. Lütfen bir e-posta giriniz.");
 
-                                } else if (mysql_num_rows(mysql_query("SELECT * FROM yonetici where email = '$email'"))) {
+                                } else if ($stmt_chk_email->rowCount()) {
 
                                     hata_alert("E-posta başka bir üye tarafından kullanılıyor. Lütfen farklı bir e-posta giriniz.");
 
@@ -378,13 +382,14 @@
 
                                     hata_alert("Şifrelerin aynı olduğunda emin olunuz.");
 
-                                } else if (mysql_num_rows(mysql_query("SELECT * FROM yonetici where tel = '$tel'"))) {
+                                } else if ($stmt_chk_tel->rowCount()) {
 
                                     hata_alert("Telefon kullanılıyor. Lütfen farklı bir telefon giriniz.");
 
                                 } else {
 
-                                    $bireyseluyelik = mysql_query("INSERT INTO yonetici (email,pass,adsoyad,seo,tel,yetki,tarih,eposta_bildirim,sms_bildirim) values ('$email','$pass','$adsoyad','$seo','$tel','1','$tarih','1','1')");
+                                    $stmt_bireysel = $vt->prepare("INSERT INTO yonetici (email,pass,adsoyad,seo,tel,yetki,tarih,eposta_bildirim,sms_bildirim) values (?,?,?,?,?,?,?,?,?)");
+                                    $bireyseluyelik = $stmt_bireysel->execute([$email, $pass, $adsoyad, $seo, $tel, '1', $tarih, '1', '1']);
 
                                     if ($bireyseluyelik == true) {
 
@@ -491,8 +496,10 @@
                                 $tarih = date("d.m.Y");
                                 $sozlesme = $_POST["sozlesme"];
 
-                                $kontroluye = mysql_query("SELECT * FROM yonetici");
-                                $uye = mysql_fetch_assoc($kontroluye);
+                                $stmt_chk_email2 = $vt->prepare("SELECT id FROM yonetici where email = ?");
+                                $stmt_chk_email2->execute([$email]);
+                                $stmt_chk_tel2 = $vt->prepare("SELECT id FROM yonetici where tel = ?");
+                                $stmt_chk_tel2->execute([$tel]);
 
                                 ?>
 
@@ -500,7 +507,7 @@
 
                                     hata_alert("E-posta adresi boş bırakılamaz. Lütfen bir e-posta giriniz.");
 
-                                } else if (mysql_num_rows(mysql_query("SELECT * FROM yonetici where email = '$email'"))) {
+                                } else if ($stmt_chk_email2->rowCount()) {
 
                                     hata_alert("E-posta başka bir üye tarafından kullanılıyor. Lütfen farklı bir e-posta giriniz.");
 
@@ -508,23 +515,23 @@
 
                                     hata_alert("Şifrelerin aynı olduğunda emin olunuz.");
 
-                                } else if (mysql_num_rows(mysql_query("SELECT * FROM yonetici where tel = '$tel'"))) {
+                                } else if ($stmt_chk_tel2->rowCount()) {
 
                                     hata_alert("Telefon kullanılıyor. Lütfen farklı bir telefon giriniz.");
 
                                 } else {
 
-                                    $kurumsaluyelik = mysql_query("INSERT INTO yonetici (email,pass,adsoyad,seo,il,ilce,tel,yetki,tarih, eposta_bildirim, sms_bildirim) values ('$email','$pass','$adsoyad','$seo','$il','$ilce','$tel','2','$tarih','1','1')");
+                                    $stmt_kurumsal = $vt->prepare("INSERT INTO yonetici (email,pass,adsoyad,seo,il,ilce,tel,yetki,tarih, eposta_bildirim, sms_bildirim) values (?,?,?,?,?,?,?,?,?,?,?)");
+                                    $kurumsaluyelik = $stmt_kurumsal->execute([$email, $pass, $adsoyad, $seo, $il, $ilce, $tel, '2', $tarih, '1', '1']);
 
-                                    $uyeson = mysql_query("SELECT * FROM yonetici order by id desc limit 1");
-                                    $sayid = mysql_fetch_array($uyeson);
+                                    $sayid_id = (int)$vt->lastInsertId();
 
-                                    $ofisekle = mysql_query("INSERT INTO subeler (adi,yetkiliuye) values ('$firmadi','".$sayid["id"]."')");
+                                    $stmt_ofisekle = $vt->prepare("INSERT INTO subeler (adi,yetkiliuye) values (?,?)");
+                                    $stmt_ofisekle->execute([$firmadi, $sayid_id]);
+                                    $oliste_id = (int)$vt->lastInsertId();
 
-                                    $ofisliste = mysql_query("SELECT * FROM subeler order by id desc limit 1");
-                                    $oliste = mysql_fetch_array($ofisliste);
-
-                                    $ofis_uye_ata =  $vt->query("UPDATE yonetici SET ofis = '".$oliste["id"]."' WHERE id = '".$sayid["id"]."'");
+                                    $stmt_ofis_ata = $vt->prepare("UPDATE yonetici SET ofis = ? WHERE id = ?");
+                                    $ofis_uye_ata = $stmt_ofis_ata->execute([$oliste_id, $sayid_id]);
 
                                     $sms_mesaj = "Tebrikler ".$adsoyad.", kurumsal üyeliğiniz başarılı bir şekilde oluşturulmuştur. Üyelik Bilgileriniz: ".$email." Şifre: ".$_POST["pass"]."";
                                     $mesaj = "Tebrikler ".$adsoyad.", kurumsal üyeliğiniz başarılı bir şekilde oluşturulmuştur.<br><h3><strong>Üyelik Bilgileriniz:</strong></h3>E-posta: ".$email."<br> Şifre: ".$_POST["pass"]."";
@@ -533,7 +540,7 @@
 
                                     mail_gonder($email, $sms_mesaj, $mesaj);
 
-                                    echo $oliste["id"];
+                                    echo $oliste_id;
 
                                     go("index.php?do=hesabim&islem=girisyap&hareket=onay",0);
 
@@ -554,8 +561,8 @@
                                         <select name="il" id="il" class="select2-hidden-accessible">
                                             <option selected="selected"> İl Seçiniz * </option>
                                             <?php
-                                            $iller = mysql_query("select * from sehir order by sehir_key asc");
-                                            while($il=mysql_fetch_array($iller)) {
+                                            $stmt_iller = $vt->query("select * from sehir order by sehir_key asc");
+                                            while($il=$stmt_iller->fetch()) {
                                                 ?>
                                                 <option value="<?=$il['sehir_key'];?>"> <?=$il['adi'];?> </option>
                                             <?php } ?>

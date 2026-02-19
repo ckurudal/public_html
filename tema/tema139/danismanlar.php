@@ -6,11 +6,16 @@
     $ilver = isset($_GET["ilver"]) ? $_GET["ilver"] : "";
     $iller = $vt->query("select * from sehir where sehir_key = '".$ilver."'")->fetch();
 
-    $danismanlarid = mysql_query("SELECT * FROM yonetici where id = '$id'");
-    $d = mysql_fetch_array($danismanlarid);
+    $stmt_d = $vt->prepare("SELECT * FROM yonetici where id = ?");
+    $stmt_d->execute([$id]);
+    $d = $stmt_d->fetch();
 
-    $emlakofisi = mysql_fetch_array(mysql_query("SELECT * FROM subeler where id = '".$d["ofis"]."'"));
-    $kurumsalemlakofisi = mysql_fetch_array(mysql_query("SELECT * FROM subeler where yetkiliuye = '".$d["id"]."'"));
+    $stmt_emlakofisi = $vt->prepare("SELECT * FROM subeler where id = ?");
+    $stmt_emlakofisi->execute([$d["ofis"]]);
+    $emlakofisi = $stmt_emlakofisi->fetch();
+    $stmt_kurumsalofisi = $vt->prepare("SELECT * FROM subeler where yetkiliuye = ?");
+    $stmt_kurumsalofisi->execute([$d["id"]]);
+    $kurumsalemlakofisi = $stmt_kurumsalofisi->fetch();
     
     $danismanlarQuery = "SELECT * FROM yonetici where durum = 0 AND yetki != 0";
     $danismanlarBind = array();
@@ -25,8 +30,9 @@
         $danismanlarBind[":il"] = $ilver;
     }
 
-    $danismanlar = mysql_query("SELECT * FROM yonetici where id = '$id'");
-    $dan = mysql_fetch_array($danismanlar);
+    $stmt_dan = $vt->prepare("SELECT * FROM yonetici where id = ?");
+    $stmt_dan->execute([$id]);
+    $dan = $stmt_dan->fetch();
 
 ?>
 <!doctype html>
@@ -73,8 +79,8 @@
                                 <?php endif; ?>
                                 <option value=""> İl Seçiniz </option> 
                                 <?php 
-                                    $iller = mysql_query("select * from sehir order by adi asc");
-                                    while($il=mysql_fetch_array($iller)) {
+                                    $stmt_iller = $vt->query("select * from sehir order by adi asc");
+                                    while($il=$stmt_iller->fetch()) {
                                 ?>
                                 <option value="<?=$il['sehir_key'];?>"> <?=$il['adi'];?> </option>
                                 <?php } ?>
@@ -108,7 +114,7 @@
                 $danismanlar->execute($danismanlarBind);
                 while($dan = $danismanlar->fetch(PDO::FETCH_ASSOC)) {
 
-                    $subeler = mysql_query("SELECT * FROM subeler where");
+                    // $subeler removed (invalid query with no condition)
             ?>
             <div class="col-lg-3 col-md-4 mb-5">
                 <div class="card">

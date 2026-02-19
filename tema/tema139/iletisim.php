@@ -40,7 +40,8 @@
 
                 } else {
 
-                    $mesajekle = mysql_query("INSERT INTO emlak_mesajiletisim (adsoyad, email, tel, mesaj, tarih) values ('$adsoyad','$email','$tel','$mesaj','$tarih')");
+                    $stmt_mesaj = $vt->prepare("INSERT INTO emlak_mesajiletisim (adsoyad, email, tel, mesaj, tarih) values (?,?,?,?,?)");
+                    $stmt_mesaj->execute([$adsoyad, $email, $tel, $mesaj, $tarih]);
 
                     echo '<h5 class="alert alert-success"><i class="fa fa-check"></i> Mesajınız başarılı bir şekilde gönderilmiştir. Kısa sürede size site yönetimi size dönüş yapacaktır.</h5>';
                     
@@ -87,8 +88,8 @@
                         <hr>
                         <ul class="nav nav-pills">
                             <?php
-                                $sitesosyal = mysql_query("SELECT ayar_sitesosyal.sosyallink, ayar_sosyal.icon FROM ayar_sitesosyal INNER JOIN ayar_sosyal ON ayar_sitesosyal.sosyalid=ayar_sosyal.id AND ayar_sitesosyal.siteid = '1' AND ayar_sosyal.durum = 0 AND ayar_sitesosyal.sosyallink != '' ORDER BY ayar_sosyal.sira ASC");
-                                while($sosyal = mysql_fetch_array($sitesosyal)) {
+                                $stmt_sosyal = $vt->query("SELECT ayar_sitesosyal.sosyallink, ayar_sosyal.icon FROM ayar_sitesosyal INNER JOIN ayar_sosyal ON ayar_sitesosyal.sosyalid=ayar_sosyal.id AND ayar_sitesosyal.siteid = '1' AND ayar_sosyal.durum = 0 AND ayar_sitesosyal.sosyallink != '' ORDER BY ayar_sosyal.sira ASC");
+                                while($sosyal = $stmt_sosyal->fetch()) {
                             ?>
                             <li>
                                 <a class="btn btn-default mr-2" href="<?=$sosyal["sosyallink"];?>" target="_blank"> <i class="<?=$sosyal["icon"];?>"></i> <?=$sosyal["baslik"];?> </a>                             
@@ -162,14 +163,16 @@
                 <br>
                 <div class="row">
                     <?php
-                        $subelerimiz = mysql_query("SELECT * FROM subeler where id");
-                        while($sube = mysql_fetch_array($subelerimiz)) {
+                        $stmt_subeler = $vt->query("SELECT * FROM subeler");
+                        while($sube = $stmt_subeler->fetch()) {
 
-                            $iller = mysql_query("SELECT * FROM sehir where sehir_key = '".$sube["il"]."'");
-                            $il = mysql_fetch_array($iller);
+                            $stmt_il = $vt->prepare("SELECT * FROM sehir where sehir_key = ?");
+                            $stmt_il->execute([$sube["il"]]);
+                            $il = $stmt_il->fetch();
 
-                            $ilceler = mysql_query("SELECT * FROM ilce where ilce_key = '".$sube["ilce"]."'");
-                            $ilce = mysql_fetch_array($ilceler);
+                            $stmt_ilce = $vt->prepare("SELECT * FROM ilce where ilce_key = ?");
+                            $stmt_ilce->execute([$sube["ilce"]]);
+                            $ilce = $stmt_ilce->fetch();
                     ?>
                     <div class="col-md-6">
                         <div class="card">
