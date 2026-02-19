@@ -216,7 +216,7 @@
 						<div class="row"> 
 						
 							<?php									
-								$fiyatkur = $vt->query("SELECT * FROM para_birimi where id ORDER BY id ASC  ")->fetchAll();
+								$fiyatkur = $vt->query("SELECT * FROM para_birimi ORDER BY id ASC")->fetchAll();
 								foreach ($fiyatkur AS $kur)
 								{
 							?>

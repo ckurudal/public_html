@@ -557,8 +557,8 @@ $('.gflag').click(function(){
         Karşılaştırma Listesi
         <span id="karsilastir-sayac" class="kb-sayac">0</span>
     </div>
-    <button id="karsilastir-listele-btn" onclick="EmlakAI.Karsilastir.goster()">Karşılaştır</button>
-    <button id="karsilastir-temizle-btn" onclick="EmlakAI.Karsilastir.liste=[]; EmlakAI.Karsilastir.kaydet(); EmlakAI.Karsilastir.guncelle();">Temizle</button>
+    <button id="karsilastir-listele-btn">Karşılaştır</button>
+    <button id="karsilastir-temizle-btn">Temizle</button>
 </div>
 
 <!-- BACK TO TOP -->

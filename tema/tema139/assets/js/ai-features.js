@@ -293,4 +293,20 @@ document.addEventListener('DOMContentLoaded', function() {
             window.scrollTo({ top: 0, behavior: 'smooth' });
         });
     }
+
+    // Comparison bar buttons
+    var listeleBtn = document.getElementById('karsilastir-listele-btn');
+    if (listeleBtn) {
+        listeleBtn.addEventListener('click', function() {
+            EmlakAI.Karsilastir.goster();
+        });
+    }
+    var temizleBtn = document.getElementById('karsilastir-temizle-btn');
+    if (temizleBtn) {
+        temizleBtn.addEventListener('click', function() {
+            EmlakAI.Karsilastir.liste = [];
+            EmlakAI.Karsilastir.kaydet();
+            EmlakAI.Karsilastir.guncelle();
+        });
+    }
 });

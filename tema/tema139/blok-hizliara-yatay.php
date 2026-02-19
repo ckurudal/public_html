@@ -67,7 +67,7 @@ while($tipver = $ilantipver2stmt2->fetch()) {
 
 <!-- <option value="">Emlak Şekli</option> -->
 <?php
-$ilansekliver_stmt = $vt->query("SELECT * FROM emlak_ilansekli where id && durum = 0");
+$ilansekliver_stmt = $vt->query("SELECT * FROM emlak_ilansekli WHERE durum = 0");
 while($sekilver = $ilansekliver_stmt->fetch()) {
 ?>
 <option value="<?=$sekilver["id"];?>"><?=$sekilver["baslik"];?></option>
