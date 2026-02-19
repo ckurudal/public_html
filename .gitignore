@@ -1,0 +1,28 @@
+# ── Yerel geliştirme yapılandırması (commit edilmez) ──────────
+sistem/baglan.local.php
+
+# ── Yüklenen dosyalar (commit edilmez) ────────────────────────
+uploads/resim/*
+!uploads/resim/.gitkeep
+uploads/proje_resim/*
+!uploads/proje_resim/.gitkeep
+
+# ── Geçici ve önbellek dosyaları ──────────────────────────────
+*.log
+error_log
+/admin/error_log
+*.cache
+.DS_Store
+Thumbs.db
+
+# ── IDE/Editör dosyaları ──────────────────────────────────────
+*.swp
+*.swo
+*~
+.idea/
+
+# ── Docker veri klasörü ───────────────────────────────────────
+docker/mysql_data/
+
+# ── Bağımlılıklar (zaten repo'da mevcut, yeniden yüklenmez) ──
+# node_modules/

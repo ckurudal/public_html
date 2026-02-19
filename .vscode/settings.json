@@ -1,0 +1,43 @@
+{
+  "editor.tabSize": 4,
+  "editor.insertSpaces": true,
+  "editor.detectIndentation": false,
+  "editor.formatOnSave": false,
+  "files.encoding": "utf8",
+  "files.eol": "\n",
+
+  // PHP Intelephense ayarları
+  "intelephense.environment.phpVersion": "8.3.0",
+  "intelephense.files.maxSize": 5000000,
+  "intelephense.diagnostics.enable": true,
+
+  // PHP Xdebug
+  "php.debug.executablePath": "/usr/bin/php",
+
+  // Dosya ilişkilendirmeleri
+  "files.associations": {
+    "*.php": "php"
+  },
+
+  // Arama ve dosya görmezden gelme
+  "files.exclude": {
+    "**/.git": true,
+    "**/node_modules": true
+  },
+  "search.exclude": {
+    "**/bower_components": true,
+    "**/node_modules": true,
+    "uploads/resim/**": true,
+    "admin/bower_components/**": true,
+    "admin/plugins/**": true,
+    "admin/dist/**": true,
+    "tema/tema139/assets/plugins/**": true
+  },
+
+  // Docker entegrasyonu
+  "docker.showStartPage": false,
+
+  // Terminal
+  "terminal.integrated.defaultProfile.linux": "bash",
+  "terminal.integrated.defaultProfile.windows": "Git Bash"
+}

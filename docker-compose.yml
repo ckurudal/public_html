@@ -1,0 +1,70 @@
+version: '3.8'
+
+services:
+
+  # PHP 8.3 + Apache web server
+  web:
+    build: .
+    container_name: emlakbudur_web
+    ports:
+      - "8080:80"
+    volumes:
+      - .:/var/www/html
+      - ./docker/php.ini:/usr/local/etc/php/conf.d/custom.ini
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DB_HOST: db
+      DB_NAME: emlakbudur_joker
+      DB_USER: emlak_user
+      DB_PASS: emlak_pass
+      SITE_URL: http://localhost:8080
+    networks:
+      - emlaknet
+
+  # MySQL 8 database
+  db:
+    image: mysql:8.0
+    container_name: emlakbudur_db
+    restart: unless-stopped
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: root_pass
+      MYSQL_DATABASE: emlakbudur_joker
+      MYSQL_USER: emlak_user
+      MYSQL_PASSWORD: emlak_pass
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./emlakbudur_joker.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot_pass"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - emlaknet
+
+  # phpMyAdmin - Veritabanı yönetim arayüzü
+  phpmyadmin:
+    image: phpmyadmin:latest
+    container_name: emlakbudur_phpmyadmin
+    restart: unless-stopped
+    ports:
+      - "8081:80"
+    environment:
+      PMA_HOST: db
+      PMA_USER: emlak_user
+      PMA_PASSWORD: emlak_pass
+    depends_on:
+      - db
+    networks:
+      - emlaknet
+
+volumes:
+  mysql_data:
+
+networks:
+  emlaknet:
+    driver: bridge

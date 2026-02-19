@@ -1,0 +1,29 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Xdebug ile PHP Hata Ayıkla (Docker)",
+      "type": "php",
+      "request": "launch",
+      "port": 9003,
+      "pathMappings": {
+        "/var/www/html": "${workspaceFolder}"
+      },
+      "hostname": "localhost",
+      "log": false,
+      "ignore": [
+        "**/admin/bower_components/**",
+        "**/tema/tema139/assets/plugins/**"
+      ]
+    },
+    {
+      "name": "Xdebug ile PHP Hata Ayıkla (Yerel)",
+      "type": "php",
+      "request": "launch",
+      "port": 9003,
+      "pathMappings": {
+        "${workspaceFolder}": "${workspaceFolder}"
+      }
+    }
+  ]
+}
