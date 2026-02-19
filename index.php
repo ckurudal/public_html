@@ -125,6 +125,11 @@
 						                    <a href="/admin" target="_blank" class="dropdown-toggle btn btn-primary" style="padding:8px 15px;">
 						                        <i class="fa fa-send"></i> Yönetim Paneli Demosu
 						                    </a>
+						                </li>
+						                <li class="dropdown">
+						                    <a href="javascript:void(0)" onclick="document.getElementById('siteFrame').src='<?=htmlspecialchars(URL, ENT_QUOTES, 'UTF-8');?>/emlak-talep-formu/?talep=1'" class="dropdown-toggle btn btn-info" style="padding:8px 15px;">
+						                        <i class="fa fa-file-text-o"></i> Emlak Talep Formu Demosu
+						                    </a>
 						                </li>  
 			                            <li class="dropdown">
 						                    <a href="/index.php" target="_blank" class="dropdown-toggle btn btn-danger" style="padding:8px 15px;" data-toggle="dropdown">
@@ -141,7 +146,7 @@
 							</div>
 						</div>
 					</div>
-					<iframe src="<?=URL;?>" style="width: 100%; height: 97%; border: 0; padding: 0;">
+					<iframe id="siteFrame" src="<?=URL;?>" style="width: 100%; height: 97%; border: 0; padding: 0;">
 					</iframe>
 					<!-- jQuery 3 -->
 					<script src="admin/bower_components/jquery/dist/jquery.min.js"></script>
