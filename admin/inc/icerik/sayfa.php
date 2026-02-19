@@ -38,8 +38,6 @@
 
 			if ($sayfaekle == true) {
 				go("index.php?do=islem&icerik=sayfa&islem=liste&hareket=onay",0);
-			} else {
-				
 			}
 
 			// resim yukleme

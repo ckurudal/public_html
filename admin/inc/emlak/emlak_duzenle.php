@@ -363,9 +363,7 @@
 				}
 				if ($eilanduzenle) {
 					go("index.php?do=islem&emlak=emlak_ilanlar&hareket=onay&id=$id",0);
-				} else {
-					
-                } 
+				} 
 			}
 		?>
 	<div class="row">

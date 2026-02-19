@@ -75,8 +75,6 @@
 
             if ($kaydetmah) {
                 go("index.php?do=islem&emlak=mahallebul&islem=onay",0);
-            } else {
-                
             }
 
         }

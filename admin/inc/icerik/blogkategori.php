@@ -28,8 +28,6 @@
 
 			if ($blogkategoriekle == true) {
 				go("index.php?do=islem&icerik=blogkategori&islem=liste&hareket=onay",0);
-			} else {
-				
 			}
 		}
 

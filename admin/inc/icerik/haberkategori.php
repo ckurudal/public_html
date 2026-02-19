@@ -28,8 +28,6 @@
 
 			if ($haberkategoriekle == true) {
 				go("index.php?do=islem&icerik=haberkategori&islem=liste&hareket=onay",0);
-			} else {
-				
 			}
 		}
 

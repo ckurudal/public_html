@@ -39,8 +39,6 @@
 
 			if ($haberekle == true) {
 				go("index.php?do=islem&icerik=haber&islem=liste&hareket=onay",0);
-			} else {
-				
 			}
 
 			// resim yukleme

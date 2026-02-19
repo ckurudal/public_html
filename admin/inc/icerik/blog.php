@@ -39,8 +39,6 @@
 
 			if ($blogekle == true) {
 				go("index.php?do=islem&icerik=blog&islem=liste&hareket=onay",0);
-			} else {
-				
 			}
 
 			// resim yukleme

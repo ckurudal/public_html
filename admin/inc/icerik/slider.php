@@ -73,8 +73,6 @@
 				    }
 				}
 				go("index.php?do=icerik/slider&hareket=onay",0);
-			} else {
-				
 			}
 		}
 
@@ -118,8 +116,6 @@
 				    }
 				}
 				go("index.php?do=icerik/slider&hareket=onay",0);
-			} else {
-				
 			}
 		}
 

@@ -35,8 +35,6 @@
 
 			if ($ekle == true) {
 				go("index.php?do=islem&icerik=altmenu&islem=liste&hareket=onay",0);
-			} else {
-				
 			}
 		}
 
@@ -45,8 +43,6 @@
 
 			if ($kaydet == true) {
 				go("index.php?do=islem&icerik=altmenu&islem=liste&hareket=onay",0);
-			} else {
-				
 			}
 		}
 

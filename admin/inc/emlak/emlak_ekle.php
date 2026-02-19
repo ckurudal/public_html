@@ -328,7 +328,6 @@ if (isset($_POST["emlakekle"]))
     if (empty($baslik))
     {
         // hata_alert("Başlık boş bırakılamaz. Lütfen başlık giriniz.");
-    } else {
     }
     if ($ekle) {
         if (isset($_POST["resimsira"]) && is_array($_POST["resimsira"])) {

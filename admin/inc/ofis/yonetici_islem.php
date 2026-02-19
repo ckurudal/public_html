@@ -157,8 +157,6 @@
 						if (yetki() == 1) {go("index.php?do=islem&ofis=yonetici&islem=liste&uye=bireysel&hareket=onay",0);}
 						if (yetki() == 2) {go("index.php?do=islem&ofis=yonetici&islem=duzenle&id={$_SESSION["id"]}&tab_goster=magaza_paketleri&tab_goster=danismanlari",0);}
 						if (yetki() == 3) {go("index.php?do=islem&ofis=yonetici&islem=liste&uye=danisman&hareket=onay",0);} 
-					} else {
-						
 					}
 				}
 			}

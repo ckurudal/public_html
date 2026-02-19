@@ -28,8 +28,6 @@
 
 			if ($sayfakategoriekle == true) {
 				go("index.php?do=islem&icerik=sayfakategori&islem=liste&hareket=onay",0);
-			} else {
-				
 			}
 		}
 
